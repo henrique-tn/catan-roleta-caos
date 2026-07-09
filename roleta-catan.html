@@ -158,21 +158,24 @@
   .entry{
     position:relative; background:var(--parch); color:var(--parch-text); border-radius:6px;
     padding:9px 30px 9px 12px; border-left:5px solid #999; box-shadow:0 3px 8px rgba(0,0,0,.3);
-    animation:slideIn .35s ease;
+    animation:slideIn .35s ease; cursor:pointer; transition:transform .15s, box-shadow .15s;
   }
+  .entry:hover{transform:translateX(-3px); box-shadow:0 4px 12px rgba(0,0,0,.45);}
+  .entry:active{transform:scale(.97);}
+  @media (max-width:820px){ .entry:hover{transform:none;} }
   .entry.leve{border-left-color:var(--leve1);}
   .entry.media{border-left-color:var(--media1);}
   .entry.caos{border-left-color:var(--caos1);}
   .entry.new{outline:2px solid var(--gold); outline-offset:1px;}
   .entry .e-title{font-family:'Cinzel',Georgia,serif; font-size:.9rem; font-weight:700; color:#5a3a1a; line-height:1.3;}
   .entry .e-title b{color:#8a6b45; font-weight:700; margin-right:5px; font-size:.76rem;}
-  .entry .e-desc{font-size:.82rem; line-height:1.4; margin-top:3px;}
   .entry .e-x{
     position:absolute; top:6px; right:6px; width:20px; height:20px; border:none; border-radius:50%;
     background:#0000000f; color:#5a3a1a; cursor:pointer; font-size:.72rem; line-height:1;
     display:flex; align-items:center; justify-content:center;
   }
   .entry .e-x:hover{background:var(--caos1); color:#fff;}
+  .entry .e-hint{font-size:.68rem; color:#8a6b45; font-style:italic; margin-top:3px; opacity:.75;}
   @keyframes slideIn{from{transform:translateX(20px); opacity:0;} to{transform:translateX(0); opacity:1;}}
 
   /* toast (replaces alert) */
@@ -207,10 +210,7 @@
     .panel-head{margin-bottom:4px; font-size:.82rem;}
     #active-list{flex-direction:row; overflow-x:auto; overflow-y:hidden; gap:8px;}
     #active-empty{margin-top:0; align-self:center; font-size:.82rem;}
-    .entry{flex:0 0 auto; min-width:190px; max-width:190px; max-height:84px; overflow:hidden; padding:6px 26px 6px 10px;}
-    .entry .e-desc{
-      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-    }
+    .entry{flex:0 0 auto; min-width:150px; max-width:190px; max-height:84px; overflow:hidden; padding:6px 26px 6px 10px;}
     #toast{bottom:108px;}
   }
 </style>
@@ -284,7 +284,7 @@ const RULES = [
  {n:"Mão na Cabeça", d:"Até o próximo 7: quando sair 7, o último a pôr a mão na cabeça te dá 1 recurso.", t:"leve"},
  {n:"Dança das Cadeiras", d:"Todos levantam e trocam de lugar na mesa (as peças ficam!). Boa sorte lendo o jogo de outro ângulo.", t:"leve"},
  {n:"Discurso do Campeão", d:"Faça agora um discurso de vitória de 30 segundos. Se a mesa aplaudir, pegue 1 recurso à sua escolha.", t:"leve"},
- // ---- MÉDIAS (11-20) ----
+ // ---- MÉDIAS ----
  {n:"Mercado Livre", d:"Até seu próximo turno, TODOS trocam com o banco a 3:1.", t:"media"},
  {n:"Mão Aberta", d:"Jogue com suas cartas viradas para cima na mesa até seu próximo turno.", t:"media"},
  {n:"Grande Rodízio", d:"Agora: todos passam 1 carta de recurso (escolhida por quem passa) para o jogador da esquerda.", t:"media"},
@@ -295,7 +295,27 @@ const RULES = [
  {n:"Comissário da Bolsa", d:"Até seu próximo turno, cada troca entre outros jogadores te rende 1 recurso do banco (à sua escolha).", t:"media"},
  {n:"Sete é Festa", d:"No próximo 7, quem rolou move o ladrão e rouba de DOIS jogadores diferentes.", t:"media"},
  {n:"Paz Mundial", d:"O ladrão volta para o deserto AGORA e ninguém pode movê-lo por 1 rodada completa.", t:"media"},
- // ---- CAOS (21-30) ----
+ {n:"Pedágio Real", d:"Até seu próximo turno, cada estrada que qualquer jogador construir te rende 1 recurso do banco.", t:"media"},
+ {n:"Porto Clandestino", d:"Até seu próximo turno, VOCÊ troca com o banco a 2:1 em qualquer recurso.", t:"media"},
+ {n:"Espionagem", d:"Olhe agora a mão de 1 jogador à sua escolha. Só olhe. Sofra em silêncio.", t:"media"},
+ {n:"Troca Casada", d:"Escolha um jogador: vocês DEVEM trocar 1 carta agora. Cada um escolhe a que entrega.", t:"media"},
+ {n:"Greve dos Pedreiros", d:"Ninguém pode construir estradas até seu próximo turno.", t:"media"},
+ {n:"Feriado Bancário", d:"Ninguém pode comprar carta de desenvolvimento até seu próximo turno.", t:"media"},
+ {n:"Imposto Urbano", d:"Cada jogador paga ao banco 1 recurso por CIDADE que tiver no tabuleiro.", t:"media"},
+ {n:"Aposta do Vidente", d:"Anuncie um número (2-12): se a próxima rolagem acertar, cada jogador te paga 1 recurso. Errou? Você paga 1 ao banco.", t:"media"},
+ {n:"Zona Franca", d:"Escolha 1 hexágono: o ladrão não pode entrar nele por 2 rodadas.", t:"media"},
+ {n:"Sindicato dos Ladrões", d:"O próximo Cavaleiro jogado (por qualquer um) rouba 2 cartas em vez de 1.", t:"media"},
+ {n:"Auditoria Real", d:"Todos revelam AGORA quantas cartas de desenvolvimento guardam na mão.", t:"media"},
+ {n:"Dízimo", d:"Todos doam 1 carta ao banco, começando por você. O último a doar entrega 2.", t:"media"},
+ {n:"Mercador Errante", d:"Pegue 1 recurso do banco à sua escolha; em troca, dê 1 carta sua ao jogador com menos pontos.", t:"media"},
+ {n:"Toque de Recolher", d:"Até seu próximo turno, cada jogador pode fazer no máximo 1 troca no próprio turno.", t:"media"},
+ {n:"Recruta Apressado", d:"Até seu próximo turno, cartas de desenvolvimento podem ser jogadas no turno em que foram compradas.", t:"media"},
+ {n:"Safra Seletiva", d:"Escolha um número (exceto 7): se sair antes do seu próximo turno, colha 2 recursos à sua escolha.", t:"media"},
+ {n:"Seguro Colonial", d:"Se você for roubado (ladrão ou carta) antes do seu próximo turno, o banco repõe 1 carta à sua escolha.", t:"media"},
+ {n:"Obras Públicas", d:"Sua próxima estrada é grátis, cortesia da coroa. Construa quando quiser.", t:"media"},
+ {n:"Bolsa de Valores", d:"Declare 1 recurso: até seu próximo turno, cada carta dele vale por 2 nas trocas com o banco (para todos).", t:"media"},
+ {n:"Censo Imperial", d:"Até seu próximo turno, todos são obrigados a responder com sinceridade quantas cartas têm na mão.", t:"media"},
+ // ---- CAOS ----
  {n:"Robin Hood", d:"Mova o ladrão agora para um hexágono de quem está em 1º lugar e roube 1 carta dele.", t:"caos"},
  {n:"Comunismo de Ovelhas", d:"Todas as ovelhas da mesa vão para a mão de quem tem menos pontos de vitória.", t:"caos"},
  {n:"Reforma Agrária", d:"Escolha 2 jogadores (pode incluir você): eles trocam 2 cartas aleatórias entre si.", t:"caos"},
@@ -306,6 +326,26 @@ const RULES = [
  {n:"Golpe de Estado", d:"Troque sua mão INTEIRA com a do jogador que tem menos cartas que você. Ninguém tem? Nada acontece.", t:"caos"},
  {n:"Ladrão de Aluguel", d:"Mova o ladrão para onde quiser agora e roube 1 carta — cortesia da casa.", t:"caos"},
  {n:"Colheita Dupla", d:"A próxima rolagem de dados (que não seja 7) produz recursos em DOBRO para todos.", t:"caos"},
+ {n:"Pirataria", d:"Roube 1 carta aleatória de CADA jogador da mesa. Arrr!", t:"caos"},
+ {n:"Praga dos Ratos", d:"Todos com 6+ cartas descartam metade da mão (arredonda pra baixo), como num 7 coletivo.", t:"caos"},
+ {n:"Terremoto", d:"Cada jogador (na ordem) realoca 1 estrada própria para outra posição válida do seu território.", t:"caos"},
+ {n:"Dado Viciado", d:"Escolha o resultado da sua próxima rolagem (2 a 12, menos 7). Nem precisa rolar.", t:"caos"},
+ {n:"Sete Fantasma", d:"O próximo 7 do jogo é anulado: ignora e rola de novo.", t:"caos"},
+ {n:"Falência do Banco", d:"Ninguém pode trocar com o banco por 1 rodada completa. Só resta a diplomacia.", t:"caos"},
+ {n:"Idade das Trevas", d:"A próxima rolagem de dados não produz NADA para ninguém. O número sai, todos choram.", t:"caos"},
+ {n:"Queimada", d:"Declare 1 recurso: TODOS (você incluso) descartam todas as cartas dele.", t:"caos"},
+ {n:"Duelo de Titãs", d:"Desafie alguém no pedra-papel-tesoura (melhor de 3): o perdedor dá 2 cartas aleatórias ao vencedor.", t:"caos"},
+ {n:"Tribunal Popular", d:"Votação simultânea (dedo no 3): o jogador eleito 'mais perigoso' descarta 2 cartas aleatórias.", t:"caos"},
+ {n:"Troca de Corpos", d:"No próximo turno, você joga PELO jogador à sua esquerda e ele joga pelo seu império. Boa sorte.", t:"caos"},
+ {n:"Rei por um Dia", d:"Jogue 2 turnos seguidos agora. A mesa tem direito garantido de vaia.", t:"caos"},
+ {n:"Motim no Exército", d:"O Maior Exército fica suspenso (vale 0 pontos) até o dono jogar outro Cavaleiro.", t:"caos"},
+ {n:"Estrada Fantasma", d:"A Maior Estrada fica suspensa (vale 0 pontos) até o dono construir mais uma estrada.", t:"caos"},
+ {n:"Nova Capital", d:"Mova 1 vila sua (não cidade) para qualquer cruzamento livre e válido do tabuleiro.", t:"caos"},
+ {n:"Corretor Sem Escrúpulos", d:"Sua próxima vila pode ignorar a regra da distância mínima. Vizinho bom é vizinho colado.", t:"caos"},
+ {n:"Corrida do Ouro", d:"Todos rolam 1 dado: o maior pega 3 recursos à escolha do banco. Empate? Rolam de novo.", t:"caos"},
+ {n:"Maldição do Sete", d:"Até seu próximo turno, quem rolar 7 também entrega 1 carta aleatória a quem está em último.", t:"caos"},
+ {n:"Reforma Tributária", d:"Todos passam a mão INTEIRA para o jogador da esquerda. Sem choro, é a lei.", t:"caos"},
+ {n:"Êxodo Forçado", d:"A mesa vota no hexágono mais rico do tabuleiro: o ladrão vai pra lá e você rouba 1 carta de alguém dali.", t:"caos"},
 ];
 
 const COLORS = {leve:["#6a994e","#588157"], media:["#dda15e","#c98a3d"], caos:["#bc4b3c","#9d3b2e"]};
@@ -335,14 +375,15 @@ let drawn = new Set(), rotation = 0, spinning = false;
     const x0=cx+rRing*Math.cos(rad(a0)), y0=cy+rRing*Math.sin(rad(a0));
     const x1=cx+rRing*Math.cos(rad(a1)), y1=cy+rRing*Math.sin(rad(a1));
     const fill = COLORS[RULES[i].t][i%2];
-    s+=`<path d="M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${rRing},${rRing} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z" fill="${fill}" stroke="#2a1a0c" stroke-width="1.6"/>`;
+    s+=`<path d="M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${rRing},${rRing} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z" fill="${fill}" stroke="#2a1a0c" stroke-width="${N>40?0.9:1.6}"/>`;
     const am=(a0+a1)/2;
     const tx=cx+rTxt*Math.cos(rad(am)), ty=cy+rTxt*Math.sin(rad(am));
-    s+=`<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" fill="#fff" font-size="14" font-weight="bold" font-family="Georgia,serif" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${tx.toFixed(1)},${ty.toFixed(1)})" style="text-shadow:0 1px 2px #0008">${i+1}</text>`;
-    // category emoji on the segment that starts each block of 10
-    if(i%10===4 || i%10===5){
+    const numFS = N>40 ? 8 : 14, emoFS = N>40 ? 11 : 17;
+    s+=`<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" fill="#fff" font-size="${numFS}" font-weight="bold" font-family="Georgia,serif" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${tx.toFixed(1)},${ty.toFixed(1)})" style="text-shadow:0 1px 2px #0008">${i+1}</text>`;
+    // category emoji sprinkled along each block
+    if(i%10===5){
       const ex=cx+rEmo*Math.cos(rad(am)), ey=cy+rEmo*Math.sin(rad(am));
-      s+=`<text x="${ex.toFixed(1)}" y="${ey.toFixed(1)}" font-size="17" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${ex.toFixed(1)},${ey.toFixed(1)})">${EMOJI[RULES[i].t]}</text>`;
+      s+=`<text x="${ex.toFixed(1)}" y="${ey.toFixed(1)}" font-size="${emoFS}" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${ex.toFixed(1)},${ey.toFixed(1)})">${EMOJI[RULES[i].t]}</text>`;
     }
   }
   // inner depth shading + gold trims + studs on wooden ring
@@ -390,7 +431,7 @@ function tickSchedule(total){
 }
 
 // ---- persistence ----
-const LS = "catan-roleta-v1";
+const LS = "catan-roleta-v2"; // v2: lista de regras expandida (índices antigos incompatíveis)
 function save(){
   try{
     localStorage.setItem(LS, JSON.stringify({
@@ -428,8 +469,8 @@ function renderActive(newUid){
   listEl.innerHTML = active.map(a=>`
     <li class="entry ${a.t}${a.uid===newUid?' new':''}" data-uid="${a.uid}">
       <div class="e-title"><b>#${a.idx+1}</b>${esc(a.n)}</div>
-      <div class="e-desc">${esc(a.d)}</div>
       <button class="e-x" data-uid="${a.uid}" title="Resolver / remover" aria-label="Remover regra">✕</button>
+      <div class="e-hint">toque para reler</div>
     </li>`).join("");
   const has = active.length > 0;
   emptyEl.style.display = has ? "none" : "";
@@ -441,10 +482,15 @@ function addActive(idx){
   save(); renderActive(uid);
 }
 listEl.addEventListener("click", e=>{
-  const b = e.target.closest(".e-x"); if(!b) return;
-  const uid = +b.dataset.uid;
-  active = active.filter(a=>a.uid!==uid);
-  save(); renderActive();
+  const b = e.target.closest(".e-x");
+  if(b){
+    const uid = +b.dataset.uid;
+    active = active.filter(a=>a.uid!==uid);
+    save(); renderActive();
+    return;
+  }
+  const li = e.target.closest(".entry");
+  if(li) showReview(+li.dataset.uid);
 });
 document.getElementById("clearActive").addEventListener("click", ()=>{
   if(active.length){ active = []; save(); renderActive(); }
@@ -463,10 +509,36 @@ function hideResult(){
   backdrop.classList.remove("show");
 }
 function dismissResult(){
-  if(pendingIdx === null) return;
   const idx = pendingIdx; pendingIdx = null;
   hideResult();
-  addActive(idx);
+  if(idx !== null) addActive(idx);   // sorteio novo → guarda no painel; releitura → só fecha
+}
+
+// ---- fill parchment (used by spin AND review) ----
+function fillResult(idx, review){
+  const r = RULES[idx];
+  resultEl.querySelector(".num").textContent = `⚜ REGRA #${idx+1} ⚜`;
+  resultEl.querySelector("h2").textContent = r.n;
+  resultEl.querySelector("p").textContent = r.d;
+  const seal = resultEl.querySelector(".seal");
+  seal.textContent = `${EMOJI[r.t]} ${TAGNAME[r.t]}`;
+  seal.className = "seal "+r.t;
+  resultEl.querySelector(".tap-hint").textContent = review ? "toque para fechar" : "toque para guardar em “Em vigor”";
+  resultEl.classList.remove("show","caos-hit");
+  resultEl.style.display = "block";
+  void resultEl.offsetWidth;             // reinicia a animação
+  resultEl.classList.add("show");
+  if(!review && r.t==="caos") resultEl.classList.add("caos-hit");
+  backdrop.classList.add("show");
+}
+
+// ---- review: clique numa regra "Em vigor" traz o pergaminho de volta ----
+function showReview(uid){
+  const a = active.find(x=>x.uid===uid);
+  if(!a) return;
+  clearTimeout(dismissTimer);
+  pendingIdx = null;                     // releitura não re-adiciona ao painel
+  fillResult(a.idx, true);               // sem auto-fechar: leia com calma
 }
 backdrop.addEventListener("click", dismissResult);
 resultEl.addEventListener("click", dismissResult);
@@ -494,17 +566,7 @@ function spin(){
   wheel.style.transform = `rotate(${rotation}deg)`;
   tickSchedule(4800);
   setTimeout(()=>{
-    const r = RULES[idx];
-    resultEl.querySelector(".num").textContent = `⚜ REGRA #${idx+1} ⚜`;
-    resultEl.querySelector("h2").textContent = r.n;
-    resultEl.querySelector("p").textContent = r.d;
-    const seal = resultEl.querySelector(".seal");
-    seal.textContent = `${EMOJI[r.t]} ${TAGNAME[r.t]}`;
-    seal.className = "seal "+r.t;
-    resultEl.style.display = "block";
-    resultEl.classList.add("show");
-    backdrop.classList.add("show");
-    if(r.t==="caos") resultEl.classList.add("caos-hit");
+    fillResult(idx, false);
     tick(600,.12); setTimeout(()=>tick(900,.1),120);
     drawn.add(idx); pendingIdx = idx; save();
     updateRemaining();
