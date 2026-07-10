@@ -224,6 +224,22 @@
   }
   .cr-add:active{transform:translateY(2px); box-shadow:0 1px 0 #8a6a24;}
 
+  /* share rules between devices (code / link / import) */
+  .cr-share{border-top:1px dashed #b89b6a; margin-top:16px; padding-top:12px; display:flex; flex-direction:column; gap:9px;}
+  .cr-share-title{font-family:'MedievalSharp',Georgia,cursive; color:#5a3a1a; font-size:.95rem; letter-spacing:.5px;}
+  .cr-share-btns{display:flex; gap:10px; flex-wrap:wrap;}
+  .cr-share-btns button, .cr-import-row button{
+    background:none; border:1px solid #8a6b45; color:#5a3a1a; border-radius:7px; padding:7px 13px;
+    font-family:'MedievalSharp',Georgia,cursive; cursor:pointer; font-size:.85rem; letter-spacing:.5px;
+  }
+  .cr-share-btns button:hover, .cr-import-row button:hover{background:#5a3a1a; color:var(--parch);}
+  .cr-import-row{display:flex; gap:8px;}
+  .cr-import-row input{
+    flex:1; min-width:0; background:#ffffff70; border:1px solid #b89b6a; border-radius:6px; padding:7px 10px;
+    font-family:'Alegreya',Georgia,serif; font-size:.9rem; color:var(--parch-text);
+  }
+  .cr-import-row input:focus{outline:2px solid var(--gold2);}
+
   /* "Regras em vigor" side panel */
   #active-panel{
     position:fixed; top:0; right:0; width:284px; height:100vh; z-index:30;
@@ -480,6 +496,17 @@
       <label><input type="radio" name="cr-cat" value="caos"> <span id="cr-cat-caos" style="color:var(--caos2)">🔥 Caos</span></label>
     </div>
     <button id="cr-add" class="cr-add" type="button">Adicionar à roleta</button>
+  </div>
+  <div class="cr-share">
+    <div class="cr-share-title" id="cr-share-title">⇄ Levar para outro aparelho</div>
+    <div class="cr-share-btns">
+      <button id="cr-copy-code" type="button">Copiar código</button>
+      <button id="cr-copy-link" type="button">Copiar link</button>
+    </div>
+    <div class="cr-import-row">
+      <input type="text" id="cr-import" placeholder="Cole aqui um código ou link">
+      <button id="cr-import-btn" type="button">Importar</button>
+    </div>
   </div>
 </div>
 
@@ -1443,6 +1470,15 @@ Object.assign(UI["fr"],    {histTitle:"Déjà tirées",   histEmpty:"Rien encore
   myRules:"✍ Mes règles", crNamePh:"Nom de la règle", crDescPh:"Que se passe-t-il ? Écris-la comme on la lirait à voix haute à table.", crAdd:"Ajouter à la roue", crEmpty:"Pas encore de règles à toi.", crNeed:"Remplis le nom et la description.", crAdded:"Règle ajoutée à la roue !"});
 Object.assign(UI["it"],    {histTitle:"Già uscite",    histEmpty:"Ancora niente, gira! 🎲", lived:(k,n)=>`${k}/${n} regole vissute`,
   myRules:"✍ Le mie regole", crNamePh:"Nome della regola", crDescPh:"Cosa succede? Scrivila come verrebbe letta ad alta voce al tavolo.", crAdd:"Aggiungi alla ruota", crEmpty:"Ancora nessuna regola tua.", crNeed:"Compila nome e descrizione.", crAdded:"Regola aggiunta alla ruota!"});
+
+// share / transfer labels
+Object.assign(UI["pt-BR"], {shareTitle:"⇄ Levar para outro aparelho", copyCode:"Copiar código", copyLink:"Copiar link", importPh:"Cole aqui um código ou link", importBtn:"Importar", copied:"Copiado!", importBad:"Código inválido.", importedN:n=>`${n} regra(s) importada(s)!`, importNone:"Nada novo para importar.", importConfirm:n=>`Importar ${n} regra(s) deste link?`});
+Object.assign(UI["pt-PT"], {shareTitle:"⇄ Levar para outro aparelho", copyCode:"Copiar código", copyLink:"Copiar ligação", importPh:"Cola aqui um código ou ligação", importBtn:"Importar", copied:"Copiado!", importBad:"Código inválido.", importedN:n=>`${n} regra(s) importada(s)!`, importNone:"Nada de novo para importar.", importConfirm:n=>`Importar ${n} regra(s) desta ligação?`});
+Object.assign(UI["en"],    {shareTitle:"⇄ Take to another device", copyCode:"Copy code", copyLink:"Copy link", importPh:"Paste a code or link here", importBtn:"Import", copied:"Copied!", importBad:"Invalid code.", importedN:n=>`${n} rule(s) imported!`, importNone:"Nothing new to import.", importConfirm:n=>`Import ${n} rule(s) from this link?`});
+Object.assign(UI["es"],    {shareTitle:"⇄ Llevar a otro dispositivo", copyCode:"Copiar código", copyLink:"Copiar enlace", importPh:"Pega aquí un código o enlace", importBtn:"Importar", copied:"¡Copiado!", importBad:"Código no válido.", importedN:n=>`¡${n} regla(s) importada(s)!`, importNone:"Nada nuevo que importar.", importConfirm:n=>`¿Importar ${n} regla(s) de este enlace?`});
+Object.assign(UI["de"],    {shareTitle:"⇄ Auf ein anderes Gerät mitnehmen", copyCode:"Code kopieren", copyLink:"Link kopieren", importPh:"Code oder Link hier einfügen", importBtn:"Importieren", copied:"Kopiert!", importBad:"Ungültiger Code.", importedN:n=>`${n} Regel(n) importiert!`, importNone:"Nichts Neues zu importieren.", importConfirm:n=>`${n} Regel(n) aus diesem Link importieren?`});
+Object.assign(UI["fr"],    {shareTitle:"⇄ Emporter sur un autre appareil", copyCode:"Copier le code", copyLink:"Copier le lien", importPh:"Colle ici un code ou un lien", importBtn:"Importer", copied:"Copié !", importBad:"Code invalide.", importedN:n=>`${n} règle(s) importée(s) !`, importNone:"Rien de nouveau à importer.", importConfirm:n=>`Importer ${n} règle(s) depuis ce lien ?`});
+Object.assign(UI["it"],    {shareTitle:"⇄ Portare su un altro dispositivo", copyCode:"Copia codice", copyLink:"Copia link", importPh:"Incolla qui un codice o un link", importBtn:"Importa", copied:"Copiato!", importBad:"Codice non valido.", importedN:n=>`${n} regola/e importata/e!`, importNone:"Niente di nuovo da importare.", importConfirm:n=>`Importare ${n} regola/e da questo link?`});
 const wheel = document.getElementById("wheel");
 let drawn = new Set(), drawnOrder = [], rotation = 0, spinning = false;
 
@@ -1692,6 +1728,11 @@ function applyLang(){
   document.getElementById("custom-empty").textContent = u.crEmpty;
   document.getElementById("cr-cat-media").textContent = "🌾 " + u.tag.media.split(",")[0];
   document.getElementById("cr-cat-caos").textContent = "🔥 " + u.tag.caos.split(",")[0];
+  document.getElementById("cr-share-title").textContent = u.shareTitle;
+  document.getElementById("cr-copy-code").textContent = u.copyCode;
+  document.getElementById("cr-copy-link").textContent = u.copyLink;
+  document.getElementById("cr-import").placeholder = u.importPh;
+  document.getElementById("cr-import-btn").textContent = u.importBtn;
   document.getElementById("panel-title").textContent = u.inEffect;
   document.getElementById("clearActive").textContent = u.clear;
   emptyEl.innerHTML = u.empty;
@@ -1780,6 +1821,66 @@ document.getElementById("custom-list").addEventListener("click", e=>{
   active = active.filter(a=>a.idx!==idx); active.forEach(a=>{ a.idx = adj(a.idx); });
   if(pendingIdx===idx) pendingIdx = null; else if(pendingIdx!==null) pendingIdx = adj(pendingIdx);
   save(); buildWheel(); updateRemaining(); renderProgress(); renderActive(); renderCustom();
+});
+
+// ---- share / transfer custom rules between devices (no server: the code carries the rules) ----
+function encodeShare(){
+  const json = JSON.stringify(CUSTOM.map(r=>({n:r.n, d:r.d, t:r.t})));
+  const b64 = btoa(String.fromCharCode(...new TextEncoder().encode(json)));
+  return "CATAN1-" + b64.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function decodeShare(str){
+  try{
+    let s = String(str).trim();
+    const m = s.match(/#r=([A-Za-z0-9_-]+)/);          // full link pasted
+    if(m) s = "CATAN1-" + m[1];
+    if(!s.startsWith("CATAN1-")) return null;
+    let b64 = s.slice(7).replace(/-/g,"+").replace(/_/g,"/");
+    while(b64.length % 4) b64 += "=";
+    const bytes = Uint8Array.from(atob(b64), c=>c.charCodeAt(0));
+    const arr = JSON.parse(new TextDecoder().decode(bytes));
+    if(!Array.isArray(arr)) return null;
+    return arr
+      .filter(r=>r && typeof r.n==="string" && typeof r.d==="string" && (r.t==="media"||r.t==="caos"))
+      .map(r=>({n:r.n.slice(0,40), d:r.d.slice(0,220), t:r.t}));
+  }catch(e){ return null; }
+}
+function copyText(t){
+  const ok = ()=>toast(UI[lang].copied);
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(ok).catch(()=>fallbackCopy(t, ok));
+  } else fallbackCopy(t, ok);
+}
+function fallbackCopy(t, ok){
+  const ta = document.createElement("textarea");
+  ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); ok(); }catch(e){}
+  ta.remove();
+}
+function mergeRules(arr){
+  const key = r=>r.n+"\u0001"+r.d+"\u0001"+r.t;
+  const have = new Set(CUSTOM.map(key));
+  let added = 0;
+  arr.forEach(r=>{ if(!have.has(key(r))){ CUSTOM.push(r); have.add(key(r)); added++; } });
+  if(added){ save(); buildWheel(); updateRemaining(); renderProgress(); renderCustom(); }
+  return added;
+}
+document.getElementById("cr-copy-code").addEventListener("click", ()=>{
+  if(!CUSTOM.length){ toast(UI[lang].crEmpty); return; }
+  copyText(encodeShare());
+});
+document.getElementById("cr-copy-link").addEventListener("click", ()=>{
+  if(!CUSTOM.length){ toast(UI[lang].crEmpty); return; }
+  copyText(location.origin + location.pathname + "#r=" + encodeShare().slice(7));
+});
+document.getElementById("cr-import-btn").addEventListener("click", ()=>{
+  const input = document.getElementById("cr-import");
+  const arr = decodeShare(input.value);
+  if(!arr || !arr.length){ toast(UI[lang].importBad); return; }
+  const n = mergeRules(arr);
+  toast(n ? UI[lang].importedN(n) : UI[lang].importNone);
+  input.value = "";
 });
 
 document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ closeHelp(); closeCustom(); setMenu(false); } });
@@ -1895,6 +1996,17 @@ function spin(){
 load();
 buildWheel();  // wheel reflects the saved category filters
 applyLang();   // sets all UI text for the saved language + renders active list + remaining
+// rules arriving via share link (#r=...): confirm, merge, clean the URL
+try{
+  if(location.hash.startsWith("#r=")){
+    const arr = decodeShare(location.hash);
+    history.replaceState(null, "", location.pathname + location.search);
+    if(arr && arr.length && confirm(UI[lang].importConfirm(arr.length))){
+      const n = mergeRules(arr);
+      toast(n ? UI[lang].importedN(n) : UI[lang].importNone);
+    }
+  }
+}catch(e){}
 // first visit: show the how-to once
 try{
   if(!localStorage.getItem("catan-seen-help")){
