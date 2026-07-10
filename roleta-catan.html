@@ -13,6 +13,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#2a1a0c">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎲%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,6 +30,9 @@
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{height:100%; overflow:hidden;}
+  button, select, .hub, .entry, .hist-item, .hub-item{touch-action:manipulation;}
+  button, .ghost-btn, .hub, .hub-inner, .entry, .hist-item, .hub-item, .panel-head, .side-head, h1, .sub{user-select:none; -webkit-user-select:none;}
+  button:focus-visible, select:focus-visible, a:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
   body{
     font-family:'Alegreya',Georgia,serif; color:#f3e9d8; height:100vh; overflow:hidden;
     display:flex; flex-direction:column; align-items:center; padding:16px 16px 20px;
@@ -320,6 +324,7 @@
   }
   .entry .e-x:hover{background:var(--caos1); color:#fff;}
   .entry .e-hint{font-size:.68rem; color:#8a6b45; font-style:italic; margin-top:3px; opacity:.75;}
+  .entry:not(:first-child) .e-hint{display:none;}   /* one hint is enough; the rest is noise */
   @keyframes slideIn{from{transform:translateX(20px); opacity:0;} to{transform:translateX(0); opacity:1;}}
 
   /* toast (replaces alert) */
@@ -437,6 +442,14 @@
     .entry{flex:0 0 auto; min-width:150px; max-width:190px; max-height:84px; overflow:hidden; padding:6px 26px 6px 10px;}
     #toast{bottom:112px;}
     body.panel-empty #toast{bottom:56px;}
+
+    /* iPhone X+: keep the strip and toast above the home indicator */
+    #active-panel{height:calc(96px + env(safe-area-inset-bottom)); padding-bottom:calc(6px + env(safe-area-inset-bottom));}
+    #active-panel.empty{height:calc(40px + env(safe-area-inset-bottom)); padding-bottom:env(safe-area-inset-bottom);}
+    body{padding-bottom:calc(104px + env(safe-area-inset-bottom));}
+    body.panel-empty{padding-bottom:calc(52px + env(safe-area-inset-bottom));}
+    #toast{bottom:calc(112px + env(safe-area-inset-bottom));}
+    body.panel-empty #toast{bottom:calc(56px + env(safe-area-inset-bottom));}
 
     /* mobile audit: less noise in the options popup, bigger touch targets, no iOS focus zoom */
     .legend{display:none;}                     /* filter checkboxes already carry color + emoji */
@@ -1800,6 +1813,8 @@ function setMenu(open){
 }
 optionsToggle.addEventListener("click", ()=>setMenu(!sideLeft.classList.contains("open")));
 menuBackdrop.addEventListener("click", ()=>setMenu(false));
+// crossing to desktop with the menu open would leave the dark overlay stuck
+window.addEventListener("resize", ()=>{ if(innerWidth>820 && sideLeft.classList.contains("open")) setMenu(false); });
 
 // ---- language dropdown ----
 const langSelect = document.getElementById("langSelect");
@@ -2044,6 +2059,16 @@ document.getElementById("hub-list").addEventListener("click", e=>{
 });
 
 document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ closeHelp(); closeCustom(); closeHub(); setMenu(false); } });
+// space bar spins (unless typing or a modal/menu is open)
+document.addEventListener("keydown", e=>{
+  if(e.code!=="Space" && e.key!==" ") return;
+  const t = e.target;
+  if(t && (t.tagName==="INPUT" || t.tagName==="TEXTAREA" || t.tagName==="SELECT" || t.tagName==="BUTTON")) return;
+  if(helpEl.classList.contains("show") || customEl.classList.contains("show") || hubEl.classList.contains("show")) return;
+  if(sideLeft.classList.contains("open")) return;
+  e.preventDefault();
+  spin();
+});
 function addActive(idx){
   const r = getRule(idx), uid = uidSeq++;
   active.unshift({uid, idx, n:r.n, d:r.d, t:r.t});
