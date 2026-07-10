@@ -97,8 +97,8 @@
   /* language dropdown */
   #langSelect{
     background:#2a1a0c; color:var(--muted); border:1px solid #ffffff22; border-radius:8px;
-    padding:5px 8px; font-family:'MedievalSharp',Georgia,cursive; font-size:.72rem; letter-spacing:1px;
-    cursor:pointer; max-width:150px;
+    padding:5px 8px; font-family:'Alegreya',Georgia,serif; font-size:.82rem; letter-spacing:0;
+    cursor:pointer; min-width:0; max-width:170px; text-overflow:ellipsis;
   }
   #langSelect:hover, #langSelect:focus{border-color:var(--gold); color:#fff; outline:none;}
   #langSelect option{background:#2a1a0c; color:#f3e9d8;}
@@ -339,8 +339,8 @@
     <span id="side-title">⚙ Opções</span>
     <select id="langSelect" aria-label="Idioma / Language">
       <option value="en">English</option>
-      <option value="pt-BR">Português (Brasil)</option>
-      <option value="pt-PT">Português (Portugal)</option>
+      <option value="pt-BR">Português (BR)</option>
+      <option value="pt-PT">Português (PT)</option>
       <option value="es">Español</option>
       <option value="de">Deutsch</option>
       <option value="fr">Français</option>
@@ -1433,7 +1433,7 @@ function spin(){
     pendingIdx = idx; save();
     updateRemaining(); renderProgress();
     spinning = false; btn.disabled = false;
-    dismissTimer = setTimeout(dismissResult, 3500);
+    dismissTimer = setTimeout(dismissResult, 6000);
   }, 5200);
 }
 
