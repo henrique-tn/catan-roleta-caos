@@ -173,7 +173,7 @@
     border-radius:24px; font-size:.9rem; color:#fff; font-weight:bold; letter-spacing:1px;
     box-shadow:0 2px 5px rgba(0,0,0,.3), inset 0 1px 0 #fff5;
   }
-  .seal.leve{background:linear-gradient(180deg,var(--leve1),var(--leve2));}
+  .seal.leve, .seal.house{background:linear-gradient(180deg,var(--leve1),var(--leve2));}
   .seal.media{background:linear-gradient(180deg,var(--media1),var(--media2));}
   .seal.caos{background:linear-gradient(180deg,var(--caos1),var(--caos2));}
 
@@ -219,6 +219,7 @@
   }
   .hub-item.media{border-left-color:var(--media2);}
   .hub-item.caos{border-left-color:var(--caos2);}
+  .hub-item.house{border-left-color:var(--leve2);}
   .hub-row{display:flex; align-items:baseline; gap:7px; font-size:.95rem;}
   .hub-row b{color:#8a6b45; font-size:.76rem; flex:0 0 auto;}
   .hub-row span{font-family:'MedievalSharp',Georgia,cursive; color:#5a3a1a;}
@@ -249,6 +250,7 @@
   }
   .cr-item.media{border-left-color:var(--media2);}
   .cr-item.caos{border-left-color:var(--caos2);}
+  .cr-item.house{border-left-color:var(--leve2);}
   .cr-item b{display:block; color:#5a3a1a; font-family:'MedievalSharp',Georgia,cursive; font-size:.92rem;}
   .cr-item .cr-x{
     position:absolute; top:8px; right:8px; width:22px; height:22px; border:none; border-radius:50%;
@@ -264,9 +266,6 @@
   }
   .cr-form input:focus, .cr-form textarea:focus{outline:2px solid var(--gold2);}
   .cr-form textarea{min-height:72px; resize:vertical;}
-  .cr-cats{display:flex; gap:20px; font-size:1rem;}
-  .cr-cats label{display:flex; align-items:center; gap:7px; cursor:pointer;}
-  .cr-cats input{accent-color:var(--gold2);}
   .cr-add{
     font-family:'MedievalSharp',Georgia,cursive; font-size:1rem; letter-spacing:1px; cursor:pointer;
     padding:10px 18px; border:none; border-radius:8px; color:#3a2b12;
@@ -315,7 +314,7 @@
   .entry:hover{transform:translateX(-3px); box-shadow:0 4px 12px rgba(0,0,0,.45);}
   .entry:active{transform:scale(.97);}
   @media (max-width:820px){ .entry:hover{transform:none;} }
-  .entry.leve{border-left-color:var(--leve1);}
+  .entry.leve, .entry.house{border-left-color:var(--leve1);}
   .entry.media{border-left-color:var(--media1);}
   .entry.caos{border-left-color:var(--caos1);}
   .entry.new{outline:2px solid var(--gold); outline-offset:1px;}
@@ -378,7 +377,7 @@
   }
   .hist-item:hover{color:#f3e9d8; background:#ffffff14; text-decoration:none;}
   .hist-item b{color:#e8d5ae; margin-right:5px; font-size:.76rem;}
-  .hist-item.leve{border-left-color:var(--leve1);}
+  .hist-item.leve, .hist-item.house{border-left-color:var(--leve1);}
   .hist-item.media{border-left-color:var(--media1);}
   .hist-item.caos{border-left-color:var(--caos1);}
   #hist-empty{color:var(--muted); font-style:italic; font-size:.82rem; opacity:.7;}
@@ -504,6 +503,7 @@
     <label><input type="checkbox" id="norepeat" checked> <span id="t-norepeat">Sem repetir</span></label>
     <label><input type="checkbox" id="fMedia" checked> <span id="t-media" style="color:var(--media1)">🌾 Clássicas</span></label>
     <label><input type="checkbox" id="fCaos" checked> <span id="t-caos" style="color:var(--caos1)">🔥 Caos</span></label>
+    <label id="houseLabel" hidden><input type="checkbox" id="fHouse" checked> <span id="t-house" style="color:var(--leve1)">🏠 House Rules</span></label>
     <label><input type="checkbox" id="sound" checked> <span id="t-som">🔊 Som</span></label>
   </div>
   <div id="remaining"></div>
@@ -587,10 +587,6 @@
   <div class="cr-form">
     <input type="text" id="cr-name" maxlength="40" placeholder="Nome da regra">
     <textarea id="cr-desc" maxlength="220" placeholder="O que acontece? Escreva como se fosse lida em voz alta na mesa."></textarea>
-    <div class="cr-cats">
-      <label><input type="radio" name="cr-cat" value="media" checked> <span id="cr-cat-media" style="color:var(--media2)">🌾 Clássica</span></label>
-      <label><input type="radio" name="cr-cat" value="caos"> <span id="cr-cat-caos" style="color:var(--caos2)">🔥 Caos</span></label>
-    </div>
     <button id="cr-add" class="cr-add" type="button">Adicionar à roleta</button>
   </div>
   <div class="cr-share">
@@ -1346,8 +1342,8 @@ const RULES_IT = [
  {n:"Invidia degli Dei", d:"Tutti quelli con più punti vittoria di te scartano 1 carta a caso."},
 ];
 
-const COLORS = {leve:["#6a994e","#588157"], media:["#dda15e","#c98a3d"], caos:["#bc4b3c","#9d3b2e"]};
-const EMOJI  = {leve:"🐑", media:"🌾", caos:"🔥"};
+const COLORS = {leve:["#6a994e","#588157"], media:["#dda15e","#c98a3d"], caos:["#bc4b3c","#9d3b2e"], house:["#6a994e","#588157"]};
+const EMOJI  = {leve:"🐑", media:"🌾", caos:"🔥", house:"🏠"};
 
 // ---- i18n ----
 let lang = "pt-BR";
@@ -1604,6 +1600,10 @@ Object.assign(UI["de"],    {hubBtn:"📚 Alle Regeln", hubHint:n=>`Tippe auf ein
 Object.assign(UI["fr"],    {hubBtn:"📚 Toutes les règles", hubHint:n=>`Touche un titre pour la lire. ✕ la retire de ta roue, ↩ la remet.${n?` · ${n} désactivée(s)`:""}`});
 Object.assign(UI["it"],    {hubBtn:"📚 Tutte le regole", hubHint:n=>`Tocca un titolo per leggerla. ✕ la toglie dalla tua ruota, ↩ la rimette.${n?` · ${n} disattivate`:""}`});
 
+// "House Rules": the category of user-created rules (label kept in English, boardgame lingo)
+const HOUSE_TAG = {"pt-BR":"House Rule, da sua mesa","pt-PT":"House Rule, da tua mesa",en:"House Rule, your table's own",es:"House Rule, de tu mesa",de:"House Rule, von eurem Tisch",fr:"House Rule, celle de ta table",it:"House Rule, del tuo tavolo"};
+Object.keys(UI).forEach(k=>{ UI[k].tag.house = HOUSE_TAG[k]; UI[k].houseLabel = "🏠 House Rules"; });
+
 // tab title + remove tooltip per language
 Object.assign(UI["pt-BR"], {docTitle:"Roleta do Caos · Catan", removeTip:"Resolvida / remover"});
 Object.assign(UI["pt-PT"], {docTitle:"Roleta do Caos · Catan", removeTip:"Resolvida / remover"});
@@ -1636,18 +1636,24 @@ function wedgePath(p){
   return `M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${rRing},${rRing} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z`;
 }
 function visibleIndices(){
-  const f = {media:fMedia.checked, caos:fCaos.checked};
-  const med = [], ca = [];
+  const f = {media:fMedia.checked, caos:fCaos.checked, house:fHouse.checked};
+  const med = [], ca = [], hou = [];
   for(let i=0;i<totalRules();i++){
     if(disabledSet.has(i)) continue;
     const r = getRule(i);
-    if(f[r.t]) (r.t==="media" ? med : ca).push(i);
+    if(!f[r.t]) continue;
+    (r.t==="media" ? med : r.t==="caos" ? ca : hou).push(i);
   }
   // interleave: 1 classic, 1 chaos, 1 classic... (single category = plain sequence)
   const out = [], L = Math.max(med.length, ca.length);
   for(let k=0;k<L;k++){
     if(k<med.length) out.push(med[k]);
     if(k<ca.length)  out.push(ca[k]);
+  }
+  // house rules spread evenly around the wheel instead of clumping
+  if(hou.length){
+    const gap = Math.floor(out.length/(hou.length+1));
+    hou.forEach((idx,j)=> out.splice(Math.min(out.length, (gap+1)*(j+1)), 0, idx));
   }
   return out;
 }
@@ -1706,7 +1712,7 @@ function requestWheelRebuild(){
 
 // ---- pool / remaining ----
 function pool(){
-  const f = {media:fMedia.checked, caos:fCaos.checked};
+  const f = {media:fMedia.checked, caos:fCaos.checked, house:fHouse.checked};
   const out = [];
   for(let i=0;i<totalRules();i++){
     if(disabledSet.has(i)) continue;
@@ -1719,8 +1725,8 @@ function updateRemaining(){
   remaining.textContent = norepeat.checked ? UI[lang].remaining(n) : "";
   document.getElementById("hub-count").textContent = n;   // count lives in the wheel's center
 }
-["norepeat","fMedia","fCaos","sound"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
-  if(id==="fMedia"||id==="fCaos") requestWheelRebuild();   // category toggled → rebuild the wheel
+["norepeat","fMedia","fCaos","fHouse","sound"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
+  if(id==="fMedia"||id==="fCaos"||id==="fHouse") requestWheelRebuild();   // category toggled → rebuild the wheel
   updateRemaining(); save();
 }));
 
@@ -1753,7 +1759,7 @@ function save(){
   try{
     localStorage.setItem(LS, JSON.stringify({
       drawn:[...drawn], drawnOrder, active, uidSeq, lang, custom:CUSTOM, disabled:[...disabledSet],
-      f:{media:fMedia.checked, caos:fCaos.checked, norepeat:norepeat.checked, sound:sound.checked}
+      f:{media:fMedia.checked, caos:fCaos.checked, house:fHouse.checked, norepeat:norepeat.checked, sound:sound.checked}
     }));
   }catch(e){}
 }
@@ -1762,17 +1768,20 @@ function load(){
     const s = JSON.parse(localStorage.getItem(LS));
     if(!s) return;
     CUSTOM = Array.isArray(s.custom)
-      ? s.custom.filter(r=>r && typeof r.n==="string" && typeof r.d==="string" && (r.t==="media"||r.t==="caos"))
+      ? s.custom.filter(r=>r && typeof r.n==="string" && typeof r.d==="string")
+                .map(r=>({n:r.n, d:r.d, t:"house"}))   // created rules are all House Rules now
       : [];
     drawn  = new Set((s.drawn || []).filter(i=>i>=0 && i<totalRules()));
     drawnOrder = Array.isArray(s.drawnOrder) ? s.drawnOrder.filter(i=>drawn.has(i)) : [...drawn];
     disabledSet = new Set((s.disabled || []).filter(i=>i>=0 && i<totalRules()));
     active = (Array.isArray(s.active) ? s.active : []).filter(a=>a && a.idx>=0 && a.idx<totalRules());
+    active.forEach(a=>{ if(a.idx>=RULES.length) a.t = "house"; });   // migrate stored custom entries
     uidSeq = s.uidSeq || (active.length + 1);
     if(UI[s.lang]) lang = s.lang;
     else if(s.lang==="pt") lang = "pt-BR";   // migração do toggle antigo PT/EN
     if(s.f){
       fMedia.checked=s.f.media; fCaos.checked=s.f.caos;
+      fHouse.checked = s.f.house !== false;
       norepeat.checked=s.f.norepeat; sound.checked=s.f.sound;
     }
   }catch(e){}
@@ -1808,13 +1817,14 @@ const histList = document.getElementById("hist-list");
 const histEmpty = document.getElementById("hist-empty");
 function renderProgress(){
   const u = UI[lang], TOTAL = Math.max(1, totalRules() - disabledSet.size);
-  const c = {media:0, caos:0};
+  const cats = CUSTOM.length ? ["media","caos","house"] : ["media","caos"];
+  const c = {media:0, caos:0, house:0};
   let livedCount = 0;
   drawn.forEach(i=>{ const r=getRule(i); if(r && !disabledSet.has(i)){ c[r.t]++; livedCount++; } });
   document.getElementById("stat-bar").innerHTML =
-    ["media","caos"].map(t=>`<i style="width:${(c[t]/TOTAL*100).toFixed(2)}%; background:${COLORS[t][0]}"></i>`).join("");
+    cats.map(t=>`<i style="width:${(c[t]/TOTAL*100).toFixed(2)}%; background:${COLORS[t][0]}"></i>`).join("");
   document.getElementById("stat-cats").innerHTML =
-    `<span>${EMOJI.media} ${c.media}</span><span>${EMOJI.caos} ${c.caos}</span>`;
+    cats.map(t=>`<span>${EMOJI[t]} ${c[t]}</span>`).join("");
   document.getElementById("stat-lived").textContent = u.lived(livedCount, TOTAL);
   document.getElementById("hist-title").textContent = u.histTitle;
   document.getElementById("hist-count").textContent = drawnOrder.length ? drawnOrder.length : "";
@@ -1874,8 +1884,7 @@ function applyLang(){
   document.getElementById("cr-desc").placeholder = u.crDescPh;
   document.getElementById("cr-add").textContent = u.crAdd;
   document.getElementById("custom-empty").textContent = u.crEmpty;
-  document.getElementById("cr-cat-media").textContent = "🌾 " + u.tag.media.split(",")[0];
-  document.getElementById("cr-cat-caos").textContent = "🔥 " + u.tag.caos.split(",")[0];
+  document.getElementById("t-house").textContent = u.houseLabel;
   document.getElementById("cr-share-title").textContent = u.shareTitle;
   document.getElementById("cr-copy-code").textContent = u.copyCode;
   document.getElementById("cr-copy-link").textContent = u.copyLink;
@@ -1938,6 +1947,11 @@ function renderCustom(){
   const has = CUSTOM.length > 0;
   list.style.display = has ? "" : "none";
   document.getElementById("custom-empty").style.display = has ? "none" : "";
+  updateHouseVisibility();
+}
+// the House Rules filter only exists once the table has created rules
+function updateHouseVisibility(){
+  document.getElementById("houseLabel").hidden = CUSTOM.length === 0;
 }
 function openCustom(){
   setMenu(false); closeHelp();
@@ -1961,9 +1975,8 @@ customBackdrop.addEventListener("click", closeCustom);
 document.getElementById("cr-add").addEventListener("click", ()=>{
   const name = document.getElementById("cr-name").value.trim();
   const desc = document.getElementById("cr-desc").value.trim();
-  const cat  = document.querySelector('input[name="cr-cat"]:checked').value;
   if(!name || !desc){ toast(UI[lang].crNeed); return; }
-  CUSTOM.push({n:name, d:desc, t:cat});
+  CUSTOM.push({n:name, d:desc, t:"house"});
   document.getElementById("cr-name").value = "";
   document.getElementById("cr-desc").value = "";
   save(); requestWheelRebuild(); updateRemaining(); renderProgress(); renderCustom();
@@ -2001,8 +2014,8 @@ function decodeShare(str){
     const arr = JSON.parse(new TextDecoder().decode(bytes));
     if(!Array.isArray(arr)) return null;
     return arr
-      .filter(r=>r && typeof r.n==="string" && typeof r.d==="string" && (r.t==="media"||r.t==="caos"))
-      .map(r=>({n:r.n.slice(0,40), d:r.d.slice(0,220), t:r.t}));
+      .filter(r=>r && typeof r.n==="string" && typeof r.d==="string")
+      .map(r=>({n:r.n.slice(0,40), d:r.d.slice(0,220), t:"house"}));   // imports (old codes too) land as House Rules
   }catch(e){ return null; }
 }
 function copyText(t){
@@ -2058,7 +2071,8 @@ function renderHub(){
   const u = UI[lang];
   document.getElementById("hub-hint").textContent = u.hubHint(disabledSet.size);
   let html = "";
-  ["media","caos"].forEach(t=>{
+  const cats = CUSTOM.length ? ["media","caos","house"] : ["media","caos"];
+  cats.forEach(t=>{
     html += `<div class="hub-sec">${EMOJI[t]} ${u.tag[t].split(",")[0]}</div>`;
     for(let i=0;i<totalRules();i++) if(getRule(i).t===t) html += hubItemHTML(i);
   });
@@ -2253,6 +2267,7 @@ function detectLang(){
   return "en";   // international default for everyone else
 }
 load();
+updateHouseVisibility();   // the House Rules filter shows only when created rules exist
 try{ if(!localStorage.getItem(LS)) lang = detectLang(); }catch(e){}   // first visit: follow the browser language
 if(SUPPORT_URL){
   const sb = document.getElementById("supportBtn");
