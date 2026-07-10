@@ -114,7 +114,7 @@
   #result{
     position:fixed; z-index:50; display:none; cursor:pointer;
     left:50%; top:50%; transform:translate(-50%,-50%);
-    width:min(580px,94vw); max-height:90vh; overflow:auto;
+    width:min(580px,94vw); overflow:visible;
     background:
       radial-gradient(ellipse at 20% 10%, rgba(120,80,30,.10), transparent 50%),
       radial-gradient(ellipse at 85% 90%, rgba(120,80,30,.14), transparent 45%),
@@ -1101,22 +1101,31 @@ const UI = {
 const RULES_L10N = {"pt-PT":RULES_PTPT, en:RULES_EN, es:RULES_ES, de:RULES_DE, fr:RULES_FR, it:RULES_IT};
 const ruleName = i => (lang==="pt-BR" ? RULES[i].n : RULES_L10N[lang][i].n);
 const ruleDesc = i => (lang==="pt-BR" ? RULES[i].d : RULES_L10N[lang][i].d);
-const N = RULES.length, SEG = 360/N;
 const wheel = document.getElementById("wheel");
 let drawn = new Set(), rotation = 0, spinning = false;
 
 // wheel geometry (shared by builder and winner highlight)
 const GEO = {cx:200, cy:200, rRing:178};
 const rad = a=>(a-90)*Math.PI/180;
-function wedgePath(i){
-  const {cx,cy,rRing}=GEO, a0=i*SEG, a1=(i+1)*SEG;
+let segList = [];   // segment position -> rule index (only the categories currently enabled)
+let SEG = 360;      // degrees per segment, depends on how many are visible
+function wedgePath(p){
+  const {cx,cy,rRing}=GEO, a0=p*SEG, a1=(p+1)*SEG;
   const x0=cx+rRing*Math.cos(rad(a0)), y0=cy+rRing*Math.sin(rad(a0));
   const x1=cx+rRing*Math.cos(rad(a1)), y1=cy+rRing*Math.sin(rad(a1));
   return `M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${rRing},${rRing} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z`;
 }
+function visibleIndices(){
+  const f = {leve:fLeve.checked, media:fMedia.checked, caos:fCaos.checked};
+  return RULES.map((r,i)=>i).filter(i=>f[RULES[i].t]);
+}
 
-// ---- build wheel ----
-(function(){
+// ---- build wheel from the enabled categories ----
+function buildWheel(){
+  clearWinner();
+  segList = visibleIndices();
+  const M = segList.length;
+  SEG = M ? 360/M : 360;
   const cx=200, cy=200, rOut=198, rRing=178, rTxt=162, rEmo=110;
   let s = `<defs>
     <radialGradient id="woodring" cx="35%" cy="30%" r="90%">
@@ -1126,25 +1135,23 @@ function wedgePath(i){
       <stop offset="0%" stop-color="#000" stop-opacity="0"/><stop offset="82%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".35"/>
     </radialGradient>
   </defs>`;
-  // wooden outer ring
   s += `<circle cx="${cx}" cy="${cy}" r="${rOut}" fill="url(#woodring)" stroke="#2a1a0c" stroke-width="2"/>`;
-  // segments
-  for(let i=0;i<N;i++){
-    const a0=i*SEG, a1=(i+1)*SEG, am=(a0+a1)/2;
-    const fill = COLORS[RULES[i].t][i%2];
-    s+=`<path d="${wedgePath(i)}" fill="${fill}" stroke="#2a1a0c" stroke-width="${N>40?0.9:1.6}"/>`;
-    // number only every 5th segment (milestones) — avoids illegible clutter at 70 slices
-    if((i+1)%5===0){
+  const step = M<=30 ? 1 : 5;               // show every number when few, every 5th when many
+  const emoEvery = Math.max(1, Math.round(M/6));
+  const sw = M>40 ? 0.9 : (M>20 ? 1.3 : 1.8);
+  for(let p=0;p<M;p++){
+    const i=segList[p], a0=p*SEG, a1=(p+1)*SEG, am=(a0+a1)/2;
+    s+=`<path d="${wedgePath(p)}" fill="${COLORS[RULES[i].t][p%2]}" stroke="#2a1a0c" stroke-width="${sw}"/>`;
+    if(step===1 || (p+1)%step===0){
+      const fs = M<=20 ? 15 : (M<=40 ? 12 : 11);
       const tx=cx+rTxt*Math.cos(rad(am)), ty=cy+rTxt*Math.sin(rad(am));
-      s+=`<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" fill="#fff" font-size="12" font-weight="bold" font-family="Georgia,serif" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${tx.toFixed(1)},${ty.toFixed(1)})" style="text-shadow:0 1px 2px #0008">${i+1}</text>`;
+      s+=`<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" fill="#fff" font-size="${fs}" font-weight="bold" font-family="Georgia,serif" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${tx.toFixed(1)},${ty.toFixed(1)})" style="text-shadow:0 1px 2px #0008">${i+1}</text>`;
     }
-    // category emoji once per block of 10
-    if(i%10===5){
+    if(M>6 && p % emoEvery === Math.floor(emoEvery/2)){
       const ex=cx+rEmo*Math.cos(rad(am)), ey=cy+rEmo*Math.sin(rad(am));
       s+=`<text x="${ex.toFixed(1)}" y="${ey.toFixed(1)}" font-size="13" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${ex.toFixed(1)},${ey.toFixed(1)})">${EMOJI[RULES[i].t]}</text>`;
     }
   }
-  // inner depth shading + gold trims + studs on wooden ring
   s += `<circle cx="${cx}" cy="${cy}" r="${rRing}" fill="url(#depth)"/>`;
   s += `<path id="win-seg" d=""/>`;   // winner highlight overlay (updated on each spin)
   s += `<circle cx="${cx}" cy="${cy}" r="${rRing}" fill="none" stroke="#e2b755" stroke-width="2.5"/>`;
@@ -1153,11 +1160,15 @@ function wedgePath(i){
     const a=k*30+15, sx=cx+188*Math.cos(rad(a)), sy=cy+188*Math.sin(rad(a));
     s += `<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="4" fill="#e2b755" stroke="#8a6a24" stroke-width="1"/>`;
   }
+  if(M===0){
+    s += `<text x="${cx}" y="${cy}" fill="#e2b75588" font-size="16" text-anchor="middle" dominant-baseline="middle" font-family="Georgia,serif">—</text>`;
+  }
   wheel.innerHTML = s;
-})();
-function highlightWinner(idx){
+}
+function highlightWinner(pos){
   const w=document.getElementById("win-seg");
-  w.setAttribute("d", wedgePath(idx));
+  if(!w) return;
+  w.setAttribute("d", wedgePath(pos));
   w.style.display="block";
   w.classList.remove("pulse"); void w.getBBox(); w.classList.add("pulse");
 }
@@ -1174,7 +1185,10 @@ function pool(){
 function updateRemaining(){
   remaining.textContent = norepeat.checked ? UI[lang].remaining(pool().length) : "";
 }
-["norepeat","fLeve","fMedia","fCaos","sound"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{updateRemaining(); save();}));
+["norepeat","fLeve","fMedia","fCaos","sound"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
+  if(id==="fLeve"||id==="fMedia"||id==="fCaos") buildWheel();   // category toggled → rebuild the wheel
+  updateRemaining(); save();
+}));
 
 // ---- tick sound (WebAudio, no files) ----
 let actx = null;
@@ -1398,7 +1412,8 @@ function spin(){
   if(pendingIdx !== null) dismissResult(); else hideResult();   // stash any open popup first
   clearWinner();
   const idx = p[Math.floor(Math.random()*p.length)];
-  const segCenter = idx*SEG + SEG/2;
+  const pos = segList.indexOf(idx);                 // where that rule sits on the current wheel
+  const segCenter = pos*SEG + SEG/2;
   const jitter = (Math.random()-0.5)*SEG*0.7;
   const target = 360*6 + (360 - segCenter) + jitter;
   rotation += target - (rotation % 360);
@@ -1406,7 +1421,7 @@ function spin(){
   tickSchedule(4800);
   setTimeout(()=>{
     fillResult(idx, false);
-    highlightWinner(idx);
+    highlightWinner(pos);
     tick(600,.12); setTimeout(()=>tick(900,.1),120);
     drawn.add(idx); pendingIdx = idx; save();
     updateRemaining();
@@ -1417,6 +1432,7 @@ function spin(){
 
 // ---- init ----
 load();
+buildWheel();  // wheel reflects the saved category filters
 applyLang();   // sets all UI text for the saved language + renders active list + remaining
 // first visit: show the how-to once
 try{
