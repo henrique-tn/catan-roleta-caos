@@ -15,6 +15,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#2a1a0c">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎲%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
@@ -344,6 +346,60 @@
     transition:opacity .3s, transform .3s; box-shadow:0 6px 18px rgba(0,0,0,.5); font-size:.98rem;
   }
   #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  #toast button{
+    margin-left:12px; background:none; border:1px solid var(--gold); color:var(--gold); border-radius:6px;
+    padding:4px 12px; cursor:pointer; font-family:'MedievalSharp',Georgia,cursive; font-size:.9rem; letter-spacing:.5px;
+  }
+  #toast button:hover{background:var(--gold); color:#3a2b12;}
+
+  /* themed confirm (ask) + player picker: small parchment dialogs above everything */
+  #ask-backdrop, #picker-backdrop{
+    position:fixed; inset:0; z-index:64; background:rgba(15,8,3,.6);
+    opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+  #ask-backdrop.show, #picker-backdrop.show{opacity:1; pointer-events:auto;}
+  #ask, #picker{
+    position:fixed; z-index:65; display:none; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:min(400px,92vw); text-align:center;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(120,80,30,.10), transparent 50%),
+      var(--parch);
+    color:var(--parch-text); border-radius:8px; padding:24px 22px 20px;
+    box-shadow:0 12px 30px rgba(0,0,0,.55), inset 0 0 60px rgba(120,80,30,.18);
+  }
+  #ask.show, #picker.show{display:block; animation:pop .3s ease;}
+  #ask p{font-size:1.1rem; line-height:1.5; margin-bottom:18px;}
+  #picker h3{font-family:'MedievalSharp',Georgia,cursive; font-size:1.3rem; color:#5a3a1a; margin-bottom:8px;}
+  #picker-q{font-size:1.02rem; margin-bottom:6px;}
+  .ask-btns{display:flex; gap:12px; justify-content:center;}
+  .ask-btns .cr-add{flex:1;}
+  .ask-no{
+    flex:1; background:none; border:1px solid #8a6b45; color:#5a3a1a; border-radius:8px; padding:10px 16px;
+    font-family:'MedievalSharp',Georgia,cursive; cursor:pointer; font-size:1rem; letter-spacing:.5px;
+  }
+  .ask-no:hover{background:#5a3a1a; color:var(--parch);}
+  .pick-grid{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:12px 0 6px;}
+  .pick-grid button{
+    width:52px; height:52px; border-radius:10px; border:1px solid #8a6b45; background:#ffffff70;
+    color:#5a3a1a; font-family:'MedievalSharp',Georgia,cursive; font-size:1.4rem; cursor:pointer;
+  }
+  .pick-grid button:hover{background:var(--gold); border-color:var(--gold2);}
+  #pick-result{font-family:'MedievalSharp',Georgia,cursive; font-size:2.1rem; color:#5a3a1a; margin:12px 0 16px; display:none;}
+
+  /* floating turn timer (rule #96): tap = restart, ✕ = stop */
+  #turn-timer{
+    position:fixed; right:16px; bottom:16px; z-index:52; display:none; text-align:center; cursor:pointer;
+    background:#2a1a0c; border:2px solid var(--gold); border-radius:14px; padding:10px 24px 12px;
+    box-shadow:0 8px 24px rgba(0,0,0,.5); user-select:none;
+  }
+  #turn-timer .tt-num{font-family:'MedievalSharp',Georgia,cursive; font-size:2.6rem; color:var(--gold); line-height:1;}
+  #turn-timer.urgent .tt-num{color:var(--caos1);}
+  #turn-timer .tt-hint{font-size:.7rem; color:var(--muted); font-style:italic; margin-top:2px;}
+  #turn-timer .tt-x{
+    position:absolute; top:-10px; right:-10px; width:24px; height:24px; border-radius:50%;
+    border:1px solid var(--gold); background:#2a1a0c; color:var(--gold); cursor:pointer; font-size:.72rem; line-height:1;
+  }
+  #timer-launch{width:100%; margin-top:12px; font-size:.95rem; padding:9px 14px;}
 
   .legend{display:flex; flex-direction:column; gap:10px; color:#dcc9a2; font-family:'MedievalSharp',Georgia,cursive; font-size:1.05rem; letter-spacing:.3px;}
   .legend .dot{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:8px; transform:rotate(45deg); vertical-align:middle;}
@@ -476,6 +532,7 @@
     body.panel-empty{padding-bottom:calc(52px + env(safe-area-inset-bottom));}
     #toast{bottom:calc(112px + env(safe-area-inset-bottom));}
     body.panel-empty #toast{bottom:calc(56px + env(safe-area-inset-bottom));}
+    #turn-timer{bottom:calc(112px + env(safe-area-inset-bottom)); right:10px;}
 
     /* mobile audit: less noise in the options popup, bigger touch targets, no iOS focus zoom */
     .legend{display:none;}                     /* filter checkboxes already carry color + emoji */
@@ -517,6 +574,7 @@
     <label><input type="checkbox" id="fCaos" checked> <span id="t-caos" style="color:var(--caos1)">🔥 Caos</span></label>
     <label id="houseLabel" hidden><input type="checkbox" id="fHouse" checked> <span id="t-house" style="color:var(--leve1)">🏠 House Rules</span></label>
     <label><input type="checkbox" id="sound" checked> <span id="t-som">🔊 Som</span></label>
+    <label id="wakeLabel"><input type="checkbox" id="fWake"> <span id="t-wake">🔆 Tela sempre acesa</span></label>
   </div>
   <div id="remaining"></div>
   <div class="legend">
@@ -534,6 +592,7 @@
     <div id="hist-empty">Nada ainda, gire! 🎲</div>
   </div>
   <div class="side-actions">
+    <button id="pickBtn" class="ghost-btn" type="button">🎯 Sortear jogador</button>
     <button id="hubBtn" class="ghost-btn" type="button">📚 Todas as regras</button>
     <button id="customBtn" class="ghost-btn" type="button">✍ Minhas regras</button>
     <button id="helpMenuItem" class="ghost-btn" type="button">📜 Como jogar</button>
@@ -564,6 +623,7 @@
   <p></p>
   <span class="seal"></span>
   <div id="inst-badge"></div>
+  <button id="timer-launch" class="cr-add" type="button" hidden>⏱ Cronometrar turnos (30s)</button>
   <div class="tap-hint">toque para guardar em “Em vigor”</div>
   <div id="dismiss-bar"></div>
 </div>
@@ -615,6 +675,34 @@
       <button id="cr-import-btn" type="button">Importar</button>
     </div>
   </div>
+</div>
+
+<div id="ask-backdrop"></div>
+<div id="ask" role="dialog" aria-modal="true">
+  <p id="ask-text"></p>
+  <div class="ask-btns">
+    <button id="ask-yes" class="cr-add" type="button">Confirmar</button>
+    <button id="ask-no" class="ask-no" type="button">Cancelar</button>
+  </div>
+</div>
+
+<div id="picker-backdrop"></div>
+<div id="picker" role="dialog" aria-modal="true">
+  <button id="pickerClose" class="help-close" type="button" aria-label="Fechar">✕</button>
+  <h3 id="picker-title">🎯 Sortear jogador</h3>
+  <p id="picker-q">Quantos jogadores?</p>
+  <div class="pick-grid" id="pick-grid"></div>
+  <div id="pick-result"></div>
+  <div class="ask-btns" id="pick-actions" style="display:none">
+    <button id="pick-again" class="cr-add" type="button">De novo</button>
+    <button id="pick-change" class="ask-no" type="button">Quantos?</button>
+  </div>
+</div>
+
+<div id="turn-timer" title="">
+  <button class="tt-x" type="button" aria-label="Fechar">✕</button>
+  <div class="tt-num">30</div>
+  <div class="tt-hint">tap ↺</div>
 </div>
 
 <div id="hub-backdrop"></div>
@@ -1645,6 +1733,15 @@ Object.assign(UI["de"],    {waitSpin:"Warte, bis der Dreh vorbei ist.", letsSpin
 Object.assign(UI["fr"],    {waitSpin:"Attends la fin du tour de roue.", letsSpin:"🎲 C'est parti !", instNow:"⚡ se résout tout de suite", instStay:"⏳ reste en vigueur", hintSave:"gardée dans « En vigueur », touche pour continuer", closeLbl:"Fermer"});
 Object.assign(UI["it"],    {waitSpin:"Aspetta la fine del giro.", letsSpin:"🎲 Si gira!", instNow:"⚡ si risolve subito", instStay:"⏳ resta in vigore", hintSave:"salvata in «In vigore», tocca per continuare", closeLbl:"Chiudi"});
 
+// shelf features: wake lock, undo, themed confirm, table tools
+Object.assign(UI["pt-BR"], {wake:"🔆 Tela sempre acesa", wakeFail:"O navegador não deixou manter a tela acesa.", crRemoved:"Regra removida.", undo:"Desfazer", yesLbl:"Confirmar", noLbl:"Cancelar", timerBtn:"⏱ Cronometrar turnos (30s)", pickPlayer:"🎯 Sortear jogador", howMany:"Quantos jogadores?", playerN:n=>`Jogador ${n}!`, again:"De novo"});
+Object.assign(UI["pt-PT"], {wake:"🔆 Ecrã sempre aceso", wakeFail:"O navegador não deixou manter o ecrã aceso.", crRemoved:"Regra removida.", undo:"Desfazer", yesLbl:"Confirmar", noLbl:"Cancelar", timerBtn:"⏱ Cronometrar turnos (30s)", pickPlayer:"🎯 Sortear jogador", howMany:"Quantos jogadores?", playerN:n=>`Jogador ${n}!`, again:"De novo"});
+Object.assign(UI["en"],    {wake:"🔆 Keep screen on", wakeFail:"The browser wouldn't keep the screen on.", crRemoved:"Rule removed.", undo:"Undo", yesLbl:"Confirm", noLbl:"Cancel", timerBtn:"⏱ Time the turns (30s)", pickPlayer:"🎯 Pick a player", howMany:"How many players?", playerN:n=>`Player ${n}!`, again:"Again"});
+Object.assign(UI["es"],    {wake:"🔆 Pantalla siempre activa", wakeFail:"El navegador no permitió mantener la pantalla activa.", crRemoved:"Regla eliminada.", undo:"Deshacer", yesLbl:"Confirmar", noLbl:"Cancelar", timerBtn:"⏱ Cronometrar turnos (30s)", pickPlayer:"🎯 Sortear jugador", howMany:"¿Cuántos jugadores?", playerN:n=>`¡Jugador ${n}!`, again:"Otra vez"});
+Object.assign(UI["de"],    {wake:"🔆 Bildschirm anlassen", wakeFail:"Der Browser hat es nicht erlaubt, den Bildschirm anzulassen.", crRemoved:"Regel entfernt.", undo:"Rückgängig", yesLbl:"Bestätigen", noLbl:"Abbrechen", timerBtn:"⏱ Züge stoppen (30s)", pickPlayer:"🎯 Spieler auslosen", howMany:"Wie viele Spieler?", playerN:n=>`Spieler ${n}!`, again:"Nochmal"});
+Object.assign(UI["fr"],    {wake:"🔆 Écran toujours allumé", wakeFail:"Le navigateur n'a pas permis de garder l'écran allumé.", crRemoved:"Règle supprimée.", undo:"Annuler", yesLbl:"Confirmer", noLbl:"Non", timerBtn:"⏱ Chronométrer les tours (30s)", pickPlayer:"🎯 Tirer un joueur", howMany:"Combien de joueurs ?", playerN:n=>`Joueur ${n} !`, again:"Encore"});
+Object.assign(UI["it"],    {wake:"🔆 Schermo sempre acceso", wakeFail:"Il browser non ha permesso di tenere lo schermo acceso.", crRemoved:"Regola rimossa.", undo:"Annulla", yesLbl:"Conferma", noLbl:"Annulla", timerBtn:"⏱ Cronometra i turni (30s)", pickPlayer:"🎯 Sorteggia giocatore", howMany:"Quanti giocatori?", playerN:n=>`Giocatore ${n}!`, again:"Ancora"});
+
 // donation page: set this to your PayPal.me / Ko-fi URL and the button appears
 const SUPPORT_URL = "";
 
@@ -1762,6 +1859,23 @@ function updateRemaining(){
   updateRemaining(); save();
 }));
 
+// ---- wake lock: keep the table's shared screen awake ----
+let wakeLock = null;
+async function applyWake(){
+  if(!("wakeLock" in navigator)) return;
+  if(fWake.checked){
+    try{
+      wakeLock = await navigator.wakeLock.request("screen");
+      wakeLock.addEventListener("release", ()=>{ wakeLock = null; });
+    }catch(e){ fWake.checked = false; save(); toast(UI[lang].wakeFail); }
+  } else if(wakeLock){ wakeLock.release(); wakeLock = null; }
+}
+// the OS drops the lock when the tab loses visibility; re-acquire on return
+document.addEventListener("visibilitychange", ()=>{
+  if(document.visibilityState === "visible" && fWake.checked) applyWake();
+});
+document.getElementById("fWake").addEventListener("change", ()=>{ applyWake(); save(); });
+
 // ---- tick sound (WebAudio, no files) ----
 let actx = null;
 function tick(freq=2200, gain=.06){
@@ -1792,7 +1906,7 @@ function save(){
   try{
     localStorage.setItem(LS, JSON.stringify({
       drawn:[...drawn], drawnOrder, active, uidSeq, lang, custom:CUSTOM, disabled:[...disabledSet],
-      f:{media:fMedia.checked, caos:fCaos.checked, house:fHouse.checked, norepeat:norepeat.checked, sound:sound.checked}
+      f:{media:fMedia.checked, caos:fCaos.checked, house:fHouse.checked, norepeat:norepeat.checked, sound:sound.checked, wake:fWake.checked, players}
     }));
   }catch(e){}
 }
@@ -1816,6 +1930,8 @@ function load(){
       fMedia.checked=s.f.media; fCaos.checked=s.f.caos;
       fHouse.checked = s.f.house !== false;
       norepeat.checked=s.f.norepeat; sound.checked=s.f.sound;
+      fWake.checked = !!s.f.wake;
+      if(Number.isInteger(s.f.players) && s.f.players>=2 && s.f.players<=8) players = s.f.players;
     }
   }catch(e){}
 }
@@ -1915,6 +2031,16 @@ function applyLang(){
   document.getElementById("t-media").textContent = u.medias;
   document.getElementById("t-caos").textContent = u.caos;
   document.getElementById("t-som").textContent = u.som;
+  document.getElementById("t-wake").textContent = u.wake;
+  document.getElementById("pickBtn").textContent = u.pickPlayer;
+  document.getElementById("picker-title").textContent = u.pickPlayer;
+  document.getElementById("picker-q").textContent = u.howMany;
+  document.getElementById("pick-again").textContent = u.again;
+  document.getElementById("pick-change").textContent = u.howMany;
+  document.getElementById("pickerClose").setAttribute("aria-label", u.closeLbl);
+  document.getElementById("ask-yes").textContent = u.yesLbl;
+  document.getElementById("ask-no").textContent = u.noLbl;
+  document.getElementById("timer-launch").textContent = u.timerBtn;
   document.getElementById("helpMenuItem").textContent = u.howto;
   document.getElementById("newGame").textContent = u.newgame;
   document.getElementById("customBtn").textContent = u.myRules;
@@ -2039,6 +2165,7 @@ document.getElementById("custom-list").addEventListener("click", e=>{
   const b = e.target.closest(".cr-x"); if(!b) return;
   if(spinning){ toast(UI[lang].waitSpin); return; }   // deleting mid-spin would orphan the in-flight winner index
   const k = +b.dataset.k, idx = RULES.length + k;
+  const removed = CUSTOM[k];                          // kept for Undo
   CUSTOM.splice(k,1);
   // fix references: drop the removed rule, shift indices above it down by 1
   const adj = i => (i>idx ? i-1 : i);
@@ -2048,6 +2175,10 @@ document.getElementById("custom-list").addEventListener("click", e=>{
   active = active.filter(a=>a.idx!==idx); active.forEach(a=>{ a.idx = adj(a.idx); });
   if(pendingIdx===idx) pendingIdx = null; else if(pendingIdx!==null) pendingIdx = adj(pendingIdx);
   save(); requestWheelRebuild(); updateRemaining(); renderProgress(); renderActive(); renderCustom();
+  toastAction(UI[lang].crRemoved, UI[lang].undo, ()=>{   // one wrong 27px tap shouldn't be forever
+    CUSTOM.push(removed);
+    save(); requestWheelRebuild(); updateRemaining(); renderProgress(); renderCustom();
+  });
 });
 
 // ---- share / transfer custom rules between devices (no server: the code carries the rules) ----
@@ -2167,15 +2298,109 @@ document.getElementById("hub-list").addEventListener("click", e=>{
   if(item) item.classList.toggle("open");
 });
 
+// ---- themed confirm dialog (replaces native confirm) ----
+const askEl = document.getElementById("ask");
+const askBackdrop = document.getElementById("ask-backdrop");
+let askYesFn = null;
+function ask(msg, onYes){
+  document.getElementById("ask-text").textContent = msg;
+  askYesFn = onYes;
+  askEl.style.display = "block"; void askEl.offsetWidth; askEl.classList.add("show");
+  askBackdrop.classList.add("show");
+  document.getElementById("ask-yes").focus();
+}
+function closeAsk(){
+  askEl.classList.remove("show"); askEl.style.display = "none";
+  askBackdrop.classList.remove("show"); askYesFn = null;
+}
+document.getElementById("ask-yes").addEventListener("click", ()=>{ const f = askYesFn; closeAsk(); if(f) f(); });
+document.getElementById("ask-no").addEventListener("click", closeAsk);
+askBackdrop.addEventListener("click", closeAsk);
+
+// ---- player picker: who spins? ----
+const pickerEl = document.getElementById("picker");
+const pickerBackdrop = document.getElementById("picker-backdrop");
+let players = 0;
+(function buildPickGrid(){
+  const g = document.getElementById("pick-grid");
+  for(let n=2;n<=8;n++){
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = n;
+    b.addEventListener("click", ()=>{ players = n; save(); rollPlayer(); });
+    g.appendChild(b);
+  }
+})();
+function rollPlayer(){
+  const n = 1 + Math.floor(Math.random()*players);
+  document.getElementById("pick-result").textContent = UI[lang].playerN(n);
+  document.getElementById("pick-result").style.display = "block";
+  document.getElementById("pick-grid").style.display = "none";
+  document.getElementById("picker-q").style.display = "none";
+  document.getElementById("pick-actions").style.display = "flex";
+  tick(900,.1); setTimeout(()=>tick(1300,.1),110);
+}
+function showPickGrid(){
+  document.getElementById("pick-result").style.display = "none";
+  document.getElementById("pick-grid").style.display = "flex";
+  document.getElementById("picker-q").style.display = "block";
+  document.getElementById("pick-actions").style.display = "none";
+}
+function openPicker(){
+  setMenu(false);
+  if(players >= 2) rollPlayer(); else showPickGrid();   // remembered table size = one-tap draw
+  pickerEl.style.display = "block"; void pickerEl.offsetWidth; pickerEl.classList.add("show");
+  pickerBackdrop.classList.add("show");
+}
+function closePicker(){
+  pickerEl.classList.remove("show"); pickerEl.style.display = "none";
+  pickerBackdrop.classList.remove("show");
+}
+document.getElementById("pickBtn").addEventListener("click", openPicker);
+document.getElementById("pickerClose").addEventListener("click", closePicker);
+pickerBackdrop.addEventListener("click", closePicker);
+document.getElementById("pick-again").addEventListener("click", rollPlayer);
+document.getElementById("pick-change").addEventListener("click", showPickGrid);
+
+// ---- floating turn timer (rule #96 Rodada Relâmpago): tap = restart, ✕ = stop ----
+const TIMED = {95:30};   // rule index -> seconds per turn
+let ttInt = null, ttLeft = 0, ttSecs = 30;
+const ttEl = document.getElementById("turn-timer");
+function renderTT(){
+  ttEl.querySelector(".tt-num").textContent = ttLeft;
+  ttEl.classList.toggle("urgent", ttLeft <= 5);
+}
+function startTurnTimer(secs){
+  ttSecs = secs; ttLeft = secs;
+  ttEl.style.display = "block";
+  renderTT();
+  clearInterval(ttInt);
+  ttInt = setInterval(()=>{
+    ttLeft--;
+    if(ttLeft <= 0){
+      tick(500,.15); setTimeout(()=>tick(400,.15),160); setTimeout(()=>tick(300,.18),320);
+      ttLeft = ttSecs;                       // rounds keep coming; timer restarts itself
+    } else if(ttLeft <= 5){ tick(1500,.08); }
+    renderTT();
+  }, 1000);
+}
+function stopTurnTimer(){ clearInterval(ttInt); ttInt = null; ttEl.style.display = "none"; }
+ttEl.addEventListener("click", ()=>{ ttLeft = ttSecs; renderTT(); });   // pass the turn: tap to restart
+ttEl.querySelector(".tt-x").addEventListener("click", e=>{ e.stopPropagation(); stopTurnTimer(); });
+document.getElementById("timer-launch").addEventListener("click", e=>{
+  e.stopPropagation();                       // don't let the parchment's dismiss-click fire twice
+  startTurnTimer(TIMED[shownIdx] || 30);
+  dismissResult();
+});
+
 document.addEventListener("keydown", e=>{
   if(e.key!=="Escape") return;
-  closeHelp(); closeCustom(); closeHub(); setMenu(false);
+  closeHelp(); closeCustom(); closeHub(); closeAsk(); closePicker(); setMenu(false);
   if(resultEl.classList.contains("show")) dismissResult();   // keyboard path to dismiss the parchment
 });
 // keep Tab inside whichever modal is open (focus trap)
 document.addEventListener("keydown", e=>{
   if(e.key!=="Tab") return;
-  const modal = [helpEl, customEl, hubEl].find(m=>m.classList.contains("show"));
+  const modal = [askEl, pickerEl, helpEl, customEl, hubEl].find(m=>m.classList.contains("show"));
   if(!modal) return;
   const foci = modal.querySelectorAll('button, [href], input, select, textarea');
   if(!foci.length) return;
@@ -2214,9 +2439,11 @@ document.getElementById("clearActive").addEventListener("click", ()=>{
   if(active.length){ active = []; save(); renderActive(); }
 });
 document.getElementById("newGame").addEventListener("click", ()=>{
-  if(!confirm(UI[lang].confirmNew)) return;
-  drawn.clear(); drawnOrder = []; active = []; uidSeq = 1; pendingIdx = null;
-  save(); renderActive(); renderProgress(); updateRemaining(); hideResult(); clearWinner(); setMenu(false);
+  setMenu(false);
+  ask(UI[lang].confirmNew, ()=>{
+    drawn.clear(); drawnOrder = []; active = []; uidSeq = 1; pendingIdx = null;
+    save(); renderActive(); renderProgress(); updateRemaining(); hideResult(); clearWinner();
+  });
 });
 
 // ---- popup show / dismiss (dismiss = tuck into panel) ----
@@ -2264,8 +2491,11 @@ function dismissResult(){
 }
 
 // ---- fill parchment (used by spin AND review) ----
+let shownIdx = null;   // whichever rule the parchment is currently displaying
 function fillResult(idx, review){
   const r = getRule(idx), u = UI[lang];
+  shownIdx = idx;
+  document.getElementById("timer-launch").hidden = !(idx < RULES.length && TIMED[idx]);
   resultEl.querySelector(".num").textContent = u.ruleTag(idx+1);
   resultEl.querySelector("h2").textContent = ruleName(idx);
   resultEl.querySelector("p").textContent = ruleDesc(idx);
@@ -2301,8 +2531,26 @@ resultEl.addEventListener("mouseleave", resumeDismiss);
 const toastEl = document.getElementById("toast");
 let toastTimer = null;
 function toast(msg){
-  toastEl.textContent = msg; toastEl.classList.add("show");
+  toastEl.textContent = msg; toastEl.style.pointerEvents = "";
+  toastEl.classList.add("show");
   clearTimeout(toastTimer); toastTimer = setTimeout(()=>toastEl.classList.remove("show"), 3400);
+}
+// toast with an action button (e.g. Undo); stays a bit longer and is clickable
+function toastAction(msg, btnLabel, fn){
+  toastEl.textContent = msg;
+  const b = document.createElement("button");
+  b.type = "button"; b.textContent = btnLabel;
+  b.addEventListener("click", ev=>{
+    ev.stopPropagation();
+    toastEl.classList.remove("show"); toastEl.style.pointerEvents = "";
+    clearTimeout(toastTimer);
+    fn();
+  });
+  toastEl.appendChild(b);
+  toastEl.style.pointerEvents = "auto";
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ toastEl.classList.remove("show"); toastEl.style.pointerEvents = ""; }, 6000);
 }
 
 // ---- spin ----
@@ -2377,6 +2625,13 @@ if(GC_CODE){
   gc.dataset.goatcounter = `https://${GC_CODE}.goatcounter.com/count`;
   document.head.appendChild(gc);
 }
+// wake lock: hide the toggle where unsupported; re-arm a saved preference
+if(!("wakeLock" in navigator)) document.getElementById("wakeLabel").hidden = true;
+else if(fWake.checked) applyWake();
+// PWA: offline cache + installability
+if("serviceWorker" in navigator){
+  try{ navigator.serviceWorker.register("sw.js"); }catch(e){}
+}
 buildWheel();  // wheel reflects the saved category filters
 applyLang();   // sets all UI text for the saved language + renders active list + remaining
 // rules arriving via share link (#r=...): confirm, merge, clean the URL
@@ -2384,9 +2639,11 @@ try{
   if(location.hash.startsWith("#r=")){
     const arr = decodeShare(location.hash);
     history.replaceState(null, "", location.pathname + location.search);
-    if(arr && arr.length && confirm(UI[lang].importConfirm(arr.length))){
-      const n = mergeRules(arr);
-      toast(n ? UI[lang].importedN(n) : UI[lang].importNone);
+    if(arr && arr.length){
+      ask(UI[lang].importConfirm(arr.length), ()=>{
+        const n = mergeRules(arr);
+        toast(n ? UI[lang].importedN(n) : UI[lang].importNone);
+      });
     }
   }
 }catch(e){}
