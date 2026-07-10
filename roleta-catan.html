@@ -160,13 +160,13 @@
   }
   .ghost-btn:hover{color:#fff; border-color:var(--gold);}
 
-  /* help parchment modal */
-  #help-backdrop{
+  /* parchment modals (help + custom rules) */
+  #help-backdrop, #custom-backdrop{
     position:fixed; inset:0; z-index:54; background:rgba(15,8,3,.6);
     opacity:0; pointer-events:none; transition:opacity .3s ease;
   }
-  #help-backdrop.show{opacity:1; pointer-events:auto;}
-  #help{
+  #help-backdrop.show, #custom-backdrop.show{opacity:1; pointer-events:auto;}
+  #help, #custom{
     position:fixed; z-index:55; display:none; left:50%; top:50%; transform:translate(-50%,-50%);
     width:min(560px,92vw); max-height:86vh; overflow:auto; text-align:left;
     background:
@@ -176,19 +176,53 @@
     color:var(--parch-text); border-radius:8px; padding:26px 30px 24px;
     box-shadow:0 12px 30px rgba(0,0,0,.55), inset 0 0 60px rgba(120,80,30,.18);
   }
-  #help.show{display:block; animation:pop .35s ease;}
-  #help h3{
+  #help.show, #custom.show{display:block; animation:pop .35s ease;}
+  #help h3, #custom h3{
     font-family:'MedievalSharp',Georgia,cursive; font-size:1.35rem; color:#5a3a1a;
     text-align:center; margin-bottom:14px; letter-spacing:1px;
   }
   #help p{margin:11px 0; line-height:1.55; font-size:1.04rem;}
   #help b{color:#5a3a1a;}
-  #help .help-close{
+  .help-close{
     position:absolute; top:10px; right:12px; width:28px; height:28px; border:none; border-radius:50%;
     background:#0000000f; color:#5a3a1a; cursor:pointer; font-size:1rem; line-height:1;
     display:flex; align-items:center; justify-content:center;
   }
-  #help .help-close:hover{background:var(--caos1); color:#fff;}
+  .help-close:hover{background:var(--caos1); color:#fff;}
+
+  /* custom rules: list + creation form */
+  #custom-list{list-style:none; display:flex; flex-direction:column; gap:6px; margin-bottom:6px; max-height:32vh; overflow-y:auto;}
+  .cr-item{
+    position:relative; padding:7px 32px 7px 12px; border-radius:6px; border-left:4px solid #999;
+    background:#00000010; font-size:.95rem; line-height:1.35;
+  }
+  .cr-item.media{border-left-color:var(--media2);}
+  .cr-item.caos{border-left-color:var(--caos2);}
+  .cr-item b{display:block; color:#5a3a1a; font-family:'MedievalSharp',Georgia,cursive; font-size:.92rem;}
+  .cr-item .cr-x{
+    position:absolute; top:8px; right:8px; width:22px; height:22px; border:none; border-radius:50%;
+    background:#0000000f; color:#5a3a1a; cursor:pointer; font-size:.75rem; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cr-item .cr-x:hover{background:var(--caos1); color:#fff;}
+  #custom-empty{font-style:italic; opacity:.7; font-size:.95rem; margin-bottom:6px;}
+  .cr-form{border-top:1px dashed #b89b6a; padding-top:14px; margin-top:8px; display:flex; flex-direction:column; gap:10px;}
+  .cr-form input[type=text], .cr-form textarea{
+    width:100%; background:#ffffff70; border:1px solid #b89b6a; border-radius:6px; padding:9px 11px;
+    font-family:'Alegreya',Georgia,serif; font-size:1rem; color:var(--parch-text);
+  }
+  .cr-form input:focus, .cr-form textarea:focus{outline:2px solid var(--gold2);}
+  .cr-form textarea{min-height:72px; resize:vertical;}
+  .cr-cats{display:flex; gap:20px; font-size:1rem;}
+  .cr-cats label{display:flex; align-items:center; gap:7px; cursor:pointer;}
+  .cr-cats input{accent-color:var(--gold2);}
+  .cr-add{
+    font-family:'MedievalSharp',Georgia,cursive; font-size:1rem; letter-spacing:1px; cursor:pointer;
+    padding:10px 18px; border:none; border-radius:8px; color:#3a2b12;
+    background:linear-gradient(180deg,#f0cb75,var(--gold) 45%,var(--gold2));
+    box-shadow:0 3px 0 #8a6a24, 0 5px 10px rgba(0,0,0,.3);
+  }
+  .cr-add:active{transform:translateY(2px); box-shadow:0 1px 0 #8a6a24;}
 
   /* "Regras em vigor" side panel */
   #active-panel{
@@ -379,6 +413,7 @@
     <div id="hist-empty">Nada ainda, gire! 🎲</div>
   </div>
   <div class="side-actions">
+    <button id="customBtn" class="ghost-btn" type="button">✍ Minhas regras</button>
     <button id="helpMenuItem" class="ghost-btn" type="button">📜 Como jogar</button>
     <button id="newGame" class="ghost-btn" type="button">↺ Nova partida</button>
   </div>
@@ -428,6 +463,23 @@
     <p><b>Modo Caos Programado:</b> a cada rodada completa, o jogador com menos pontos gira a roleta. Vingança dos lanternas!</p>
     <p><b>Regra de ouro:</b> a regra sorteada vale como escrita; dúvidas são decididas por votação da mesa (e a mesa sempre vota contra quem está ganhando).</p>
     <p><b>Em vigor:</b> cada regra sorteada fica guardada no painel lateral (rodapé no celular). Toque para reler; toque no ✕ quando ela se resolver.</p>
+  </div>
+</div>
+
+<div id="custom-backdrop"></div>
+<div id="custom" role="dialog" aria-modal="true" aria-label="Minhas regras">
+  <button id="customClose" class="help-close" type="button" aria-label="Fechar">✕</button>
+  <h3 id="cr-title">✍ Minhas regras</h3>
+  <ul id="custom-list"></ul>
+  <div id="custom-empty">Nenhuma regra sua ainda.</div>
+  <div class="cr-form">
+    <input type="text" id="cr-name" maxlength="40" placeholder="Nome da regra">
+    <textarea id="cr-desc" maxlength="220" placeholder="O que acontece? Escreva como se fosse lida em voz alta na mesa."></textarea>
+    <div class="cr-cats">
+      <label><input type="radio" name="cr-cat" value="media" checked> <span id="cr-cat-media" style="color:var(--media2)">🌾 Clássica</span></label>
+      <label><input type="radio" name="cr-cat" value="caos"> <span id="cr-cat-caos" style="color:var(--caos2)">🔥 Caos</span></label>
+    </div>
+    <button id="cr-add" class="cr-add" type="button">Adicionar à roleta</button>
   </div>
 </div>
 
@@ -1354,17 +1406,28 @@ const UI = {
 };
 // per-language rule texts; pt-BR is the canonical RULES array
 const RULES_L10N = {"pt-PT":RULES_PTPT, en:RULES_EN, es:RULES_ES, de:RULES_DE, fr:RULES_FR, it:RULES_IT};
-const ruleName = i => (lang==="pt-BR" ? RULES[i].n : RULES_L10N[lang][i].n);
-const ruleDesc = i => (lang==="pt-BR" ? RULES[i].d : RULES_L10N[lang][i].d);
+// user-created rules live after the 100 built-ins (#101+); same text in every language
+let CUSTOM = [];   // {n, d, t}
+const getRule = i => (i < RULES.length ? RULES[i] : CUSTOM[i - RULES.length]);
+const totalRules = () => RULES.length + CUSTOM.length;
+const ruleName = i => (i >= RULES.length ? CUSTOM[i-RULES.length].n : (lang==="pt-BR" ? RULES[i].n : RULES_L10N[lang][i].n));
+const ruleDesc = i => (i >= RULES.length ? CUSTOM[i-RULES.length].d : (lang==="pt-BR" ? RULES[i].d : RULES_L10N[lang][i].d));
 
 // stats / history labels per language
-Object.assign(UI["pt-BR"], {histTitle:"Já sorteadas", histEmpty:"Nada ainda, gire! 🎲", lived:(k,n)=>`${k}/${n} regras vividas`});
-Object.assign(UI["pt-PT"], {histTitle:"Já saíram",     histEmpty:"Nada ainda, gira! 🎲", lived:(k,n)=>`${k}/${n} regras vividas`});
-Object.assign(UI["en"],    {histTitle:"Drawn",         histEmpty:"Nothing yet, spin! 🎲", lived:(k,n)=>`${k}/${n} rules lived`});
-Object.assign(UI["es"],    {histTitle:"Ya salidas",    histEmpty:"Nada aún, ¡gira! 🎲",   lived:(k,n)=>`${k}/${n} reglas vividas`});
-Object.assign(UI["de"],    {histTitle:"Gezogen",       histEmpty:"Noch nichts, dreh! 🎲", lived:(k,n)=>`${k}/${n} Regeln erlebt`});
-Object.assign(UI["fr"],    {histTitle:"Déjà tirées",   histEmpty:"Rien encore, tourne ! 🎲", lived:(k,n)=>`${k}/${n} règles vécues`});
-Object.assign(UI["it"],    {histTitle:"Già uscite",    histEmpty:"Ancora niente, gira! 🎲", lived:(k,n)=>`${k}/${n} regole vissute`});
+Object.assign(UI["pt-BR"], {histTitle:"Já sorteadas", histEmpty:"Nada ainda, gire! 🎲", lived:(k,n)=>`${k}/${n} regras vividas`,
+  myRules:"✍ Minhas regras", crNamePh:"Nome da regra", crDescPh:"O que acontece? Escreva como se fosse lida em voz alta na mesa.", crAdd:"Adicionar à roleta", crEmpty:"Nenhuma regra sua ainda.", crNeed:"Preencha nome e descrição.", crAdded:"Regra adicionada à roleta!"});
+Object.assign(UI["pt-PT"], {histTitle:"Já saíram",     histEmpty:"Nada ainda, gira! 🎲", lived:(k,n)=>`${k}/${n} regras vividas`,
+  myRules:"✍ As minhas regras", crNamePh:"Nome da regra", crDescPh:"O que acontece? Escreve como se fosse lida em voz alta à mesa.", crAdd:"Adicionar à roleta", crEmpty:"Ainda não tens regras tuas.", crNeed:"Preenche o nome e a descrição.", crAdded:"Regra adicionada à roleta!"});
+Object.assign(UI["en"],    {histTitle:"Drawn",         histEmpty:"Nothing yet, spin! 🎲", lived:(k,n)=>`${k}/${n} rules lived`,
+  myRules:"✍ My rules", crNamePh:"Rule name", crDescPh:"What happens? Write it as it would be read aloud at the table.", crAdd:"Add to the wheel", crEmpty:"No rules of yours yet.", crNeed:"Fill in name and description.", crAdded:"Rule added to the wheel!"});
+Object.assign(UI["es"],    {histTitle:"Ya salidas",    histEmpty:"Nada aún, ¡gira! 🎲",   lived:(k,n)=>`${k}/${n} reglas vividas`,
+  myRules:"✍ Mis reglas", crNamePh:"Nombre de la regla", crDescPh:"¿Qué pasa? Escríbela como se leería en voz alta en la mesa.", crAdd:"Añadir a la ruleta", crEmpty:"Aún no tienes reglas tuyas.", crNeed:"Rellena nombre y descripción.", crAdded:"¡Regla añadida a la ruleta!"});
+Object.assign(UI["de"],    {histTitle:"Gezogen",       histEmpty:"Noch nichts, dreh! 🎲", lived:(k,n)=>`${k}/${n} Regeln erlebt`,
+  myRules:"✍ Meine Regeln", crNamePh:"Name der Regel", crDescPh:"Was passiert? Schreib sie so, wie sie am Tisch vorgelesen wird.", crAdd:"Zum Rad hinzufügen", crEmpty:"Noch keine eigenen Regeln.", crNeed:"Name und Beschreibung ausfüllen.", crAdded:"Regel zum Rad hinzugefügt!"});
+Object.assign(UI["fr"],    {histTitle:"Déjà tirées",   histEmpty:"Rien encore, tourne ! 🎲", lived:(k,n)=>`${k}/${n} règles vécues`,
+  myRules:"✍ Mes règles", crNamePh:"Nom de la règle", crDescPh:"Que se passe-t-il ? Écris-la comme on la lirait à voix haute à table.", crAdd:"Ajouter à la roue", crEmpty:"Pas encore de règles à toi.", crNeed:"Remplis le nom et la description.", crAdded:"Règle ajoutée à la roue !"});
+Object.assign(UI["it"],    {histTitle:"Già uscite",    histEmpty:"Ancora niente, gira! 🎲", lived:(k,n)=>`${k}/${n} regole vissute`,
+  myRules:"✍ Le mie regole", crNamePh:"Nome della regola", crDescPh:"Cosa succede? Scrivila come verrebbe letta ad alta voce al tavolo.", crAdd:"Aggiungi alla ruota", crEmpty:"Ancora nessuna regola tua.", crNeed:"Compila nome e descrizione.", crAdded:"Regola aggiunta alla ruota!"});
 const wheel = document.getElementById("wheel");
 let drawn = new Set(), drawnOrder = [], rotation = 0, spinning = false;
 
@@ -1382,7 +1445,10 @@ function wedgePath(p){
 function visibleIndices(){
   const f = {media:fMedia.checked, caos:fCaos.checked};
   const med = [], ca = [];
-  RULES.forEach((r,i)=>{ if(f[r.t]) (r.t==="media" ? med : ca).push(i); });
+  for(let i=0;i<totalRules();i++){
+    const r = getRule(i);
+    if(f[r.t]) (r.t==="media" ? med : ca).push(i);
+  }
   // interleave: 1 classic, 1 chaos, 1 classic... (single category = plain sequence)
   const out = [], L = Math.max(med.length, ca.length);
   for(let k=0;k<L;k++){
@@ -1413,7 +1479,7 @@ function buildWheel(){
   const sw = M>40 ? 0.9 : (M>20 ? 1.3 : 1.8);
   for(let p=0;p<M;p++){
     const i=segList[p], a0=p*SEG, a1=(p+1)*SEG, am=(a0+a1)/2;
-    s+=`<path d="${wedgePath(p)}" fill="${COLORS[RULES[i].t][p%2]}" stroke="#2a1a0c" stroke-width="${sw}"/>`;
+    s+=`<path d="${wedgePath(p)}" fill="${COLORS[getRule(i).t][p%2]}" stroke="#2a1a0c" stroke-width="${sw}"/>`;
     if(step===1 || (p+1)%step===0){
       const fs = M<=20 ? 15 : (M<=40 ? 12 : 11);
       const tx=cx+rTxt*Math.cos(rad(am)), ty=cy+rTxt*Math.sin(rad(am));
@@ -1421,7 +1487,7 @@ function buildWheel(){
     }
     if(M>6 && p % emoEvery === Math.floor(emoEvery/2)){
       const ex=cx+rEmo*Math.cos(rad(am)), ey=cy+rEmo*Math.sin(rad(am));
-      s+=`<text x="${ex.toFixed(1)}" y="${ey.toFixed(1)}" font-size="13" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${ex.toFixed(1)},${ey.toFixed(1)})">${EMOJI[RULES[i].t]}</text>`;
+      s+=`<text x="${ex.toFixed(1)}" y="${ey.toFixed(1)}" font-size="13" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${ex.toFixed(1)},${ey.toFixed(1)})">${EMOJI[getRule(i).t]}</text>`;
     }
   }
   s += `<circle cx="${cx}" cy="${cy}" r="${rRing}" fill="url(#depth)"/>`;
@@ -1452,7 +1518,11 @@ function clearWinner(){
 // ---- pool / remaining ----
 function pool(){
   const f = {media:fMedia.checked, caos:fCaos.checked};
-  return RULES.map((r,i)=>i).filter(i=>f[RULES[i].t] && !(norepeat.checked && drawn.has(i)));
+  const out = [];
+  for(let i=0;i<totalRules();i++){
+    if(f[getRule(i).t] && !(norepeat.checked && drawn.has(i))) out.push(i);
+  }
+  return out;
 }
 function updateRemaining(){
   remaining.textContent = norepeat.checked ? UI[lang].remaining(pool().length) : "";
@@ -1490,7 +1560,7 @@ const LS = "catan-roleta-v4"; // v4: 100 regras (50 Clássicas #1-50 + 50 Caos #
 function save(){
   try{
     localStorage.setItem(LS, JSON.stringify({
-      drawn:[...drawn], drawnOrder, active, uidSeq, lang,
+      drawn:[...drawn], drawnOrder, active, uidSeq, lang, custom:CUSTOM,
       f:{media:fMedia.checked, caos:fCaos.checked, norepeat:norepeat.checked, sound:sound.checked}
     }));
   }catch(e){}
@@ -1499,9 +1569,12 @@ function load(){
   try{
     const s = JSON.parse(localStorage.getItem(LS));
     if(!s) return;
-    drawn  = new Set(s.drawn || []);
+    CUSTOM = Array.isArray(s.custom)
+      ? s.custom.filter(r=>r && typeof r.n==="string" && typeof r.d==="string" && (r.t==="media"||r.t==="caos"))
+      : [];
+    drawn  = new Set((s.drawn || []).filter(i=>i>=0 && i<totalRules()));
     drawnOrder = Array.isArray(s.drawnOrder) ? s.drawnOrder.filter(i=>drawn.has(i)) : [...drawn];
-    active = Array.isArray(s.active) ? s.active : [];
+    active = (Array.isArray(s.active) ? s.active : []).filter(a=>a && a.idx>=0 && a.idx<totalRules());
     uidSeq = s.uidSeq || (active.length + 1);
     if(UI[s.lang]) lang = s.lang;
     else if(s.lang==="pt") lang = "pt-BR";   // migração do toggle antigo PT/EN
@@ -1541,9 +1614,9 @@ function renderActive(newUid){
 const histList = document.getElementById("hist-list");
 const histEmpty = document.getElementById("hist-empty");
 function renderProgress(){
-  const u = UI[lang], TOTAL = RULES.length;
+  const u = UI[lang], TOTAL = totalRules();
   const c = {media:0, caos:0};
-  drawn.forEach(i=>c[RULES[i].t]++);
+  drawn.forEach(i=>{ const r=getRule(i); if(r) c[r.t]++; });
   document.getElementById("stat-bar").innerHTML =
     ["media","caos"].map(t=>`<i style="width:${(c[t]/TOTAL*100).toFixed(2)}%; background:${COLORS[t][0]}"></i>`).join("");
   document.getElementById("stat-cats").innerHTML =
@@ -1553,7 +1626,7 @@ function renderProgress(){
   document.getElementById("hist-count").textContent = drawnOrder.length ? drawnOrder.length : "";
   histEmpty.textContent = u.histEmpty;
   histList.innerHTML = drawnOrder.slice().reverse().map(i=>
-    `<li class="hist-item ${RULES[i].t}" data-i="${i}" title="${esc(ruleName(i))}"><b>#${i+1}</b>${esc(ruleName(i))}</li>`).join("");
+    `<li class="hist-item ${getRule(i).t}" data-i="${i}" title="${esc(ruleName(i))}"><b>#${i+1}</b>${esc(ruleName(i))}</li>`).join("");
   const has = drawnOrder.length > 0;
   histEmpty.style.display = has ? "none" : "";
   histList.style.display  = has ? "" : "none";
@@ -1596,6 +1669,14 @@ function applyLang(){
   document.getElementById("t-som").textContent = u.som;
   document.getElementById("helpMenuItem").textContent = u.howto;
   document.getElementById("newGame").textContent = u.newgame;
+  document.getElementById("customBtn").textContent = u.myRules;
+  document.getElementById("cr-title").textContent = u.myRules;
+  document.getElementById("cr-name").placeholder = u.crNamePh;
+  document.getElementById("cr-desc").placeholder = u.crDescPh;
+  document.getElementById("cr-add").textContent = u.crAdd;
+  document.getElementById("custom-empty").textContent = u.crEmpty;
+  document.getElementById("cr-cat-media").textContent = "🌾 " + u.tag.media.split(",")[0];
+  document.getElementById("cr-cat-caos").textContent = "🔥 " + u.tag.caos.split(",")[0];
   document.getElementById("panel-title").textContent = u.inEffect;
   document.getElementById("clearActive").textContent = u.clear;
   emptyEl.innerHTML = u.empty;
@@ -1630,9 +1711,65 @@ function closeHelp(){
 document.getElementById("helpMenuItem").addEventListener("click", openHelp);
 document.getElementById("helpClose").addEventListener("click", closeHelp);
 helpBackdrop.addEventListener("click", closeHelp);
-document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ closeHelp(); setMenu(false); } });
+
+// ---- custom rules modal (saved per browser via localStorage, no login) ----
+const customEl = document.getElementById("custom");
+const customBackdrop = document.getElementById("custom-backdrop");
+function renderCustom(){
+  const list = document.getElementById("custom-list");
+  list.innerHTML = CUSTOM.map((r,k)=>`
+    <li class="cr-item ${r.t}">
+      <b>#${RULES.length+k+1} ${esc(r.n)}</b>${esc(r.d)}
+      <button class="cr-x" data-k="${k}" aria-label="Remover">✕</button>
+    </li>`).join("");
+  const has = CUSTOM.length > 0;
+  list.style.display = has ? "" : "none";
+  document.getElementById("custom-empty").style.display = has ? "none" : "";
+}
+function openCustom(){
+  setMenu(false); closeHelp();
+  renderCustom();
+  customEl.classList.remove("show");
+  customEl.style.display = "block";
+  void customEl.offsetWidth;
+  customEl.classList.add("show");
+  customBackdrop.classList.add("show");
+}
+function closeCustom(){
+  customEl.classList.remove("show");
+  customEl.style.display = "none";
+  customBackdrop.classList.remove("show");
+}
+document.getElementById("customBtn").addEventListener("click", openCustom);
+document.getElementById("customClose").addEventListener("click", closeCustom);
+customBackdrop.addEventListener("click", closeCustom);
+document.getElementById("cr-add").addEventListener("click", ()=>{
+  const name = document.getElementById("cr-name").value.trim();
+  const desc = document.getElementById("cr-desc").value.trim();
+  const cat  = document.querySelector('input[name="cr-cat"]:checked').value;
+  if(!name || !desc){ toast(UI[lang].crNeed); return; }
+  CUSTOM.push({n:name, d:desc, t:cat});
+  document.getElementById("cr-name").value = "";
+  document.getElementById("cr-desc").value = "";
+  save(); buildWheel(); updateRemaining(); renderProgress(); renderCustom();
+  toast(UI[lang].crAdded);
+});
+document.getElementById("custom-list").addEventListener("click", e=>{
+  const b = e.target.closest(".cr-x"); if(!b) return;
+  const k = +b.dataset.k, idx = RULES.length + k;
+  CUSTOM.splice(k,1);
+  // fix references: drop the removed rule, shift indices above it down by 1
+  const adj = i => (i>idx ? i-1 : i);
+  drawn = new Set([...drawn].filter(i=>i!==idx).map(adj));
+  drawnOrder = drawnOrder.filter(i=>i!==idx).map(adj);
+  active = active.filter(a=>a.idx!==idx); active.forEach(a=>{ a.idx = adj(a.idx); });
+  if(pendingIdx===idx) pendingIdx = null; else if(pendingIdx!==null) pendingIdx = adj(pendingIdx);
+  save(); buildWheel(); updateRemaining(); renderProgress(); renderActive(); renderCustom();
+});
+
+document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ closeHelp(); closeCustom(); setMenu(false); } });
 function addActive(idx){
-  const r = RULES[idx], uid = uidSeq++;
+  const r = getRule(idx), uid = uidSeq++;
   active.unshift({uid, idx, n:r.n, d:r.d, t:r.t});
   save(); renderActive(uid);
 }
@@ -1671,7 +1808,7 @@ function dismissResult(){
 
 // ---- fill parchment (used by spin AND review) ----
 function fillResult(idx, review){
-  const r = RULES[idx], u = UI[lang];
+  const r = getRule(idx), u = UI[lang];
   resultEl.querySelector(".num").textContent = u.ruleTag(idx+1);
   resultEl.querySelector("h2").textContent = ruleName(idx);
   resultEl.querySelector("p").textContent = ruleDesc(idx);
