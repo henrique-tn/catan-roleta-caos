@@ -426,8 +426,10 @@
     /* options behind a menu: the config rail becomes a centered popup */
     #optionsToggle{display:inline-block; margin-top:12px;}
     #side-left.open{
-      display:flex; flex-direction:column; gap:16px; position:fixed; left:50%; top:50%;
-      transform:translate(-50%,-50%); z-index:46; width:min(340px,92vw); max-height:86vh; overflow:auto;
+      display:flex; flex-direction:column; gap:16px; position:fixed; left:50%;
+      top:calc(50% - 50px);            /* biased up so the bottom clears the "Em vigor" strip */
+      transform:translate(-50%,-50%); z-index:46; width:min(340px,92vw);
+      max-height:calc(100vh - 124px - env(safe-area-inset-bottom)); overflow:auto;
       background:#2a1a0c; border:1px solid var(--gold); border-radius:12px; padding:20px 22px;
       box-shadow:0 12px 32px rgba(0,0,0,.6); font-size:1.05rem;
     }
