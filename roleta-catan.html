@@ -350,11 +350,17 @@
   .hist-head small{color:var(--muted); font-family:'Alegreya',Georgia,serif; font-size:.75rem; letter-spacing:0;}
   #hist-list{
     list-style:none; overflow-y:auto; display:flex; flex-direction:column; gap:4px; padding-right:4px;
-    scrollbar-width:thin; scrollbar-color:#ffffff26 transparent;
   }
-  #hist-list::-webkit-scrollbar{width:6px;}
-  #hist-list::-webkit-scrollbar-thumb{background:#ffffff22; border-radius:3px;}
-  #hist-list::-webkit-scrollbar-track{background:transparent;}
+
+  /* discreet scrollbars: dark surfaces get a faint light thumb, parchment gets brown */
+  #active-list, #hist-list, #side-left{scrollbar-width:thin; scrollbar-color:#ffffff26 transparent;}
+  #active-list::-webkit-scrollbar, #hist-list::-webkit-scrollbar, #side-left::-webkit-scrollbar{width:6px; height:6px;}
+  #active-list::-webkit-scrollbar-thumb, #hist-list::-webkit-scrollbar-thumb, #side-left::-webkit-scrollbar-thumb{background:#ffffff22; border-radius:3px;}
+  #active-list::-webkit-scrollbar-track, #hist-list::-webkit-scrollbar-track, #side-left::-webkit-scrollbar-track{background:transparent;}
+  #help, #custom, #hub, #hub-list, #custom-list{scrollbar-width:thin; scrollbar-color:#8a6b4555 transparent;}
+  #help::-webkit-scrollbar, #custom::-webkit-scrollbar, #hub::-webkit-scrollbar, #hub-list::-webkit-scrollbar, #custom-list::-webkit-scrollbar{width:6px; height:6px;}
+  #help::-webkit-scrollbar-thumb, #custom::-webkit-scrollbar-thumb, #hub::-webkit-scrollbar-thumb, #hub-list::-webkit-scrollbar-thumb, #custom-list::-webkit-scrollbar-thumb{background:#8a6b4550; border-radius:3px;}
+  #help::-webkit-scrollbar-track, #custom::-webkit-scrollbar-track, #hub::-webkit-scrollbar-track, #hub-list::-webkit-scrollbar-track, #custom-list::-webkit-scrollbar-track{background:transparent;}
   .hist-item{
     flex:0 0 auto;
     font-size:.84rem; color:var(--muted); cursor:pointer; padding:4px 8px; border-radius:5px;
@@ -431,6 +437,17 @@
     .entry{flex:0 0 auto; min-width:150px; max-width:190px; max-height:84px; overflow:hidden; padding:6px 26px 6px 10px;}
     #toast{bottom:112px;}
     body.panel-empty #toast{bottom:56px;}
+
+    /* mobile audit: less noise in the options popup, bigger touch targets, no iOS focus zoom */
+    .legend{display:none;}                     /* filter checkboxes already carry color + emoji */
+    #hist-list{max-height:30vh;}               /* history scrolls inside the popup instead of stretching it */
+    #hub-list{max-height:56vh;}
+    #help, #custom, #hub{padding:20px 16px 18px; width:min(560px,94vw);}
+    .hub-x, .cr-x{width:27px; height:27px; font-size:.85rem;}
+    .entry .e-x{width:24px; height:24px;}
+    .cr-import-row input{font-size:1rem;}      /* under 16px iOS zooms the page on focus */
+    .cr-share-btns{flex-wrap:nowrap;}
+    .cr-share-btns button{flex:1;}
   }
 </style>
 </head>
