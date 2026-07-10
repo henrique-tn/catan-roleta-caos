@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Roleta do Caos — Catan</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root{
     --leve1:#6a994e; --leve2:#588157;
@@ -18,7 +20,7 @@
   *{box-sizing:border-box; margin:0; padding:0;}
   html{height:100%; overflow:hidden;}
   body{
-    font-family:'Crimson Text',Georgia,serif; color:#f3e9d8; height:100vh; overflow:hidden;
+    font-family:'Alegreya',Georgia,serif; color:#f3e9d8; height:100vh; overflow:hidden;
     display:flex; flex-direction:column; align-items:center; padding:16px 16px 20px;
     background:
       radial-gradient(ellipse at 50% 0%, rgba(226,183,85,.08), transparent 55%),
@@ -33,7 +35,7 @@
     background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="56" height="97"><path d="M28 0l28 16v32L28 65 0 48V16z M28 65l28 16v16M28 65L0 81v16" fill="none" stroke="%23e2b755" stroke-width="1.5"/></svg>');
   }
   h1{
-    font-family:'Cinzel',Georgia,serif; font-weight:800; font-size:clamp(1.5rem,5vw,2.3rem);
+    font-family:'MedievalSharp',Georgia,cursive; font-weight:800; font-size:clamp(1.5rem,5vw,2.3rem);
     color:var(--gold); text-align:center; letter-spacing:2px;
     text-shadow:0 2px 0 #00000088, 0 0 24px rgba(226,183,85,.25);
   }
@@ -71,7 +73,7 @@
   .hub:active .hub-inner{transform:scale(.9);}
 
   button.spin{
-    margin-top:18px; font-family:'Cinzel',Georgia,serif; font-weight:800; letter-spacing:3px;
+    margin-top:18px; font-family:'MedievalSharp',Georgia,cursive; font-weight:800; letter-spacing:3px;
     font-size:1.15rem; padding:14px 52px; cursor:pointer; color:#3a2b12; position:relative;
     background:linear-gradient(180deg,#f0cb75,var(--gold) 45%,var(--gold2)); border:none; border-radius:10px;
     box-shadow:0 4px 0 #8a6a24, 0 8px 16px rgba(0,0,0,.45), inset 0 1px 0 #fff8;
@@ -83,7 +85,7 @@
   #side-left{display:none;}
   .side-head{
     display:flex; align-items:center; justify-content:space-between; gap:10px;
-    font-family:'Cinzel',Georgia,serif; color:var(--gold); letter-spacing:1px; font-size:1rem;
+    font-family:'MedievalSharp',Georgia,cursive; color:var(--gold); letter-spacing:1px; font-size:1rem;
     padding-bottom:8px; border-bottom:1px solid #ffffff14;
   }
   .controls{display:flex; flex-direction:column; gap:13px; color:var(--muted); font-size:1rem;}
@@ -95,7 +97,7 @@
   /* language dropdown */
   #langSelect{
     background:#2a1a0c; color:var(--muted); border:1px solid #ffffff22; border-radius:8px;
-    padding:5px 8px; font-family:'Cinzel',Georgia,serif; font-size:.72rem; letter-spacing:1px;
+    padding:5px 8px; font-family:'MedievalSharp',Georgia,cursive; font-size:.72rem; letter-spacing:1px;
     cursor:pointer; max-width:150px;
   }
   #langSelect:hover, #langSelect:focus{border-color:var(--gold); color:#fff; outline:none;}
@@ -140,7 +142,7 @@
     80%{transform:translate(calc(-50% + 3px),-50%)}
   }
   #result .num{font-size:.85rem; letter-spacing:3px; color:#8a6b45; font-weight:bold;}
-  #result h2{font-family:'Cinzel',Georgia,serif; font-size:1.6rem; margin:8px 0 10px; color:#5a3a1a;}
+  #result h2{font-family:'MedievalSharp',Georgia,cursive; font-size:1.6rem; margin:8px 0 10px; color:#5a3a1a;}
   #result p{font-size:1.15rem; line-height:1.55;}
   .seal{
     display:inline-flex; align-items:center; gap:8px; margin-top:14px; padding:5px 18px;
@@ -154,7 +156,7 @@
   /* small ghost buttons (Nova partida / limpar) */
   .ghost-btn{
     background:none; border:1px solid #ffffff22; color:var(--muted); border-radius:8px;
-    padding:6px 12px; cursor:pointer; font-family:'Cinzel',Georgia,serif; letter-spacing:1px; font-size:.85rem;
+    padding:6px 12px; cursor:pointer; font-family:'MedievalSharp',Georgia,cursive; letter-spacing:1px; font-size:.85rem;
   }
   .ghost-btn:hover{color:#fff; border-color:var(--gold);}
 
@@ -176,7 +178,7 @@
   }
   #help.show{display:block; animation:pop .35s ease;}
   #help h3{
-    font-family:'Cinzel',Georgia,serif; font-size:1.35rem; color:#5a3a1a;
+    font-family:'MedievalSharp',Georgia,cursive; font-size:1.35rem; color:#5a3a1a;
     text-align:center; margin-bottom:14px; letter-spacing:1px;
   }
   #help p{margin:11px 0; line-height:1.55; font-size:1.04rem;}
@@ -197,7 +199,7 @@
   }
   .panel-head{
     display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;
-    font-family:'Cinzel',Georgia,serif; color:var(--gold); letter-spacing:1px; font-size:1rem;
+    font-family:'MedievalSharp',Georgia,cursive; color:var(--gold); letter-spacing:1px; font-size:1rem;
   }
   #clearActive{font-size:.7rem; padding:3px 9px; text-transform:uppercase;}
   #active-list{
@@ -216,7 +218,7 @@
   .entry.media{border-left-color:var(--media1);}
   .entry.caos{border-left-color:var(--caos1);}
   .entry.new{outline:2px solid var(--gold); outline-offset:1px;}
-  .entry .e-title{font-family:'Cinzel',Georgia,serif; font-size:.9rem; font-weight:700; color:#5a3a1a; line-height:1.3;}
+  .entry .e-title{font-family:'MedievalSharp',Georgia,cursive; font-size:.9rem; font-weight:700; color:#5a3a1a; line-height:1.3;}
   .entry .e-title b{color:#8a6b45; font-weight:700; margin-right:5px; font-size:.76rem;}
   .entry .e-x{
     position:absolute; top:6px; right:6px; width:20px; height:20px; border:none; border-radius:50%;
@@ -238,6 +240,33 @@
 
   .legend{display:flex; flex-direction:column; gap:8px; color:var(--muted); font-size:.9rem;}
   .legend .dot{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:8px; transform:rotate(45deg); vertical-align:middle;}
+
+  /* table stats — progress bar + category tally */
+  #stats{display:flex; flex-direction:column; gap:6px; color:var(--muted); font-size:.82rem;}
+  .stat-bar{height:9px; border-radius:5px; background:#ffffff14; overflow:hidden; display:flex;}
+  .stat-bar i{display:block; height:100%;}
+  .stat-cats{display:flex; gap:14px; font-size:.9rem;}
+  .stat-lived{font-style:italic; opacity:.85;}
+
+  /* history of drawn rules — fills the rail, grows during the game */
+  #history{flex:1; min-height:0; display:flex; flex-direction:column; gap:6px;}
+  .hist-head{
+    font-family:'MedievalSharp',Georgia,cursive; color:var(--gold); letter-spacing:1px; font-size:.95rem;
+    border-bottom:1px solid #ffffff14; padding-bottom:4px; display:flex; justify-content:space-between; align-items:baseline;
+  }
+  .hist-head small{color:var(--muted); font-family:'Alegreya',Georgia,serif; font-size:.75rem; letter-spacing:0;}
+  #hist-list{list-style:none; overflow-y:auto; display:flex; flex-direction:column; gap:4px; padding-right:4px;}
+  .hist-item{
+    font-size:.84rem; color:var(--muted); cursor:pointer; padding:4px 8px; border-radius:5px;
+    border-left:3px solid #999; background:#ffffff08; text-decoration:line-through; text-decoration-color:#ffffff40;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:background .12s, color .12s;
+  }
+  .hist-item:hover{color:#f3e9d8; background:#ffffff14; text-decoration:none;}
+  .hist-item b{color:#e8d5ae; margin-right:5px; font-size:.76rem;}
+  .hist-item.leve{border-left-color:var(--leve1);}
+  .hist-item.media{border-left-color:var(--media1);}
+  .hist-item.caos{border-left-color:var(--caos1);}
+  #hist-empty{color:var(--muted); font-style:italic; font-size:.82rem; opacity:.7;}
 
   /* winning-segment highlight (drawn inside the SVG so it rotates with the wheel) */
   #win-seg{display:none; fill:none; stroke:#fff3c4; stroke-width:4; stroke-linejoin:round; pointer-events:none;
@@ -330,6 +359,16 @@
     <span><span class="dot" style="background:var(--leve1)"></span><span class="lg-leve">Leve — zoeira</span></span>
     <span><span class="dot" style="background:var(--media1)"></span><span class="lg-media">Média — mexe no jogo</span></span>
     <span><span class="dot" style="background:var(--caos1)"></span><span class="lg-caos">Caos — vira o jogo</span></span>
+  </div>
+  <div id="stats">
+    <div class="stat-bar" id="stat-bar"></div>
+    <div class="stat-cats" id="stat-cats"></div>
+    <div class="stat-lived" id="stat-lived"></div>
+  </div>
+  <div id="history">
+    <div class="hist-head"><span id="hist-title">Já sorteadas</span><small id="hist-count"></small></div>
+    <ul id="hist-list"></ul>
+    <div id="hist-empty">Nada ainda — gire! 🎲</div>
   </div>
   <div class="side-actions">
     <button id="helpMenuItem" class="ghost-btn" type="button">📜 Como jogar</button>
@@ -1101,8 +1140,17 @@ const UI = {
 const RULES_L10N = {"pt-PT":RULES_PTPT, en:RULES_EN, es:RULES_ES, de:RULES_DE, fr:RULES_FR, it:RULES_IT};
 const ruleName = i => (lang==="pt-BR" ? RULES[i].n : RULES_L10N[lang][i].n);
 const ruleDesc = i => (lang==="pt-BR" ? RULES[i].d : RULES_L10N[lang][i].d);
+
+// stats / history labels per language
+Object.assign(UI["pt-BR"], {histTitle:"Já sorteadas", histEmpty:"Nada ainda — gire! 🎲", lived:(k,n)=>`${k}/${n} regras vividas`});
+Object.assign(UI["pt-PT"], {histTitle:"Já saíram",     histEmpty:"Nada ainda — gira! 🎲", lived:(k,n)=>`${k}/${n} regras vividas`});
+Object.assign(UI["en"],    {histTitle:"Drawn",         histEmpty:"Nothing yet — spin! 🎲", lived:(k,n)=>`${k}/${n} rules lived`});
+Object.assign(UI["es"],    {histTitle:"Ya salidas",    histEmpty:"Nada aún — ¡gira! 🎲",   lived:(k,n)=>`${k}/${n} reglas vividas`});
+Object.assign(UI["de"],    {histTitle:"Gezogen",       histEmpty:"Noch nichts — dreh! 🎲", lived:(k,n)=>`${k}/${n} Regeln erlebt`});
+Object.assign(UI["fr"],    {histTitle:"Déjà tirées",   histEmpty:"Rien encore — tourne ! 🎲", lived:(k,n)=>`${k}/${n} règles vécues`});
+Object.assign(UI["it"],    {histTitle:"Già uscite",    histEmpty:"Ancora niente — gira! 🎲", lived:(k,n)=>`${k}/${n} regole vissute`});
 const wheel = document.getElementById("wheel");
-let drawn = new Set(), rotation = 0, spinning = false;
+let drawn = new Set(), drawnOrder = [], rotation = 0, spinning = false;
 
 // wheel geometry (shared by builder and winner highlight)
 const GEO = {cx:200, cy:200, rRing:178};
@@ -1218,7 +1266,7 @@ const LS = "catan-roleta-v2"; // v2: lista de regras expandida (índices antigos
 function save(){
   try{
     localStorage.setItem(LS, JSON.stringify({
-      drawn:[...drawn], active, uidSeq, lang,
+      drawn:[...drawn], drawnOrder, active, uidSeq, lang,
       f:{leve:fLeve.checked, media:fMedia.checked, caos:fCaos.checked, norepeat:norepeat.checked, sound:sound.checked}
     }));
   }catch(e){}
@@ -1228,6 +1276,7 @@ function load(){
     const s = JSON.parse(localStorage.getItem(LS));
     if(!s) return;
     drawn  = new Set(s.drawn || []);
+    drawnOrder = Array.isArray(s.drawnOrder) ? s.drawnOrder.filter(i=>drawn.has(i)) : [...drawn];
     active = Array.isArray(s.active) ? s.active : [];
     uidSeq = s.uidSeq || (active.length + 1);
     if(UI[s.lang]) lang = s.lang;
@@ -1263,6 +1312,37 @@ function renderActive(newUid){
   document.getElementById("active-panel").classList.toggle("empty", !has);
   document.body.classList.toggle("panel-empty", !has);
 }
+
+// ---- stats + history of drawn rules (left rail) ----
+const histList = document.getElementById("hist-list");
+const histEmpty = document.getElementById("hist-empty");
+function renderProgress(){
+  const u = UI[lang], TOTAL = RULES.length;
+  const c = {leve:0, media:0, caos:0};
+  drawn.forEach(i=>c[RULES[i].t]++);
+  document.getElementById("stat-bar").innerHTML =
+    ["leve","media","caos"].map(t=>`<i style="width:${(c[t]/TOTAL*100).toFixed(2)}%; background:${COLORS[t][0]}"></i>`).join("");
+  document.getElementById("stat-cats").innerHTML =
+    `<span>${EMOJI.leve} ${c.leve}</span><span>${EMOJI.media} ${c.media}</span><span>${EMOJI.caos} ${c.caos}</span>`;
+  document.getElementById("stat-lived").textContent = u.lived(drawn.size, TOTAL);
+  document.getElementById("hist-title").textContent = u.histTitle;
+  document.getElementById("hist-count").textContent = drawnOrder.length ? drawnOrder.length : "";
+  histEmpty.textContent = u.histEmpty;
+  histList.innerHTML = drawnOrder.slice().reverse().map(i=>
+    `<li class="hist-item ${RULES[i].t}" data-i="${i}" title="${esc(ruleName(i))}"><b>#${i+1}</b>${esc(ruleName(i))}</li>`).join("");
+  const has = drawnOrder.length > 0;
+  histEmpty.style.display = has ? "none" : "";
+  histList.style.display  = has ? "" : "none";
+}
+function reviewByIdx(idx){
+  clearTimeout(dismissTimer);
+  pendingIdx = null;          // reread doesn't re-add to the panel
+  fillResult(idx, true);
+}
+histList.addEventListener("click", e=>{
+  const li = e.target.closest(".hist-item");
+  if(li){ reviewByIdx(+li.dataset.i); setMenu(false); }
+});
 
 // ---- mobile options menu (the whole config rail becomes a popup) ----
 const sideLeft     = document.getElementById("side-left");
@@ -1304,6 +1384,7 @@ function applyLang(){
   langSelect.value = lang;
   updateRemaining();
   renderActive();
+  renderProgress();
 }
 function setLang(l){ if(!UI[l]) return; lang = l; save(); applyLang(); }
 langSelect.addEventListener("change", ()=> setLang(langSelect.value));
@@ -1349,8 +1430,8 @@ document.getElementById("clearActive").addEventListener("click", ()=>{
 });
 document.getElementById("newGame").addEventListener("click", ()=>{
   if(!confirm(UI[lang].confirmNew)) return;
-  drawn.clear(); active = []; uidSeq = 1;
-  save(); renderActive(); updateRemaining(); hideResult(); clearWinner(); setMenu(false);
+  drawn.clear(); drawnOrder = []; active = []; uidSeq = 1;
+  save(); renderActive(); renderProgress(); updateRemaining(); hideResult(); clearWinner(); setMenu(false);
 });
 
 // ---- popup show / dismiss (dismiss = tuck into panel) ----
@@ -1423,8 +1504,10 @@ function spin(){
     fillResult(idx, false);
     highlightWinner(pos);
     tick(600,.12); setTimeout(()=>tick(900,.1),120);
-    drawn.add(idx); pendingIdx = idx; save();
-    updateRemaining();
+    drawn.add(idx);
+    if(!drawnOrder.includes(idx)) drawnOrder.push(idx);
+    pendingIdx = idx; save();
+    updateRemaining(); renderProgress();
     spinning = false; btn.disabled = false;
     dismissTimer = setTimeout(dismissResult, 3500);
   }, 5200);
