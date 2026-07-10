@@ -92,10 +92,14 @@
   .side-actions{display:flex; flex-direction:column; gap:10px; margin-top:auto;}
   .side-actions .ghost-btn{text-align:center;}
   #remaining{color:var(--muted); font-size:.86rem; font-style:italic;}
-  /* language toggle pill */
-  #langToggle{display:flex; padding:0; overflow:hidden; border-radius:8px; font-size:.72rem;}
-  #langToggle span{padding:5px 9px; color:var(--muted); font-family:'Cinzel',Georgia,serif; letter-spacing:1px;}
-  #langToggle span.on{background:var(--gold); color:#3a2b12; font-weight:700;}
+  /* language dropdown */
+  #langSelect{
+    background:#2a1a0c; color:var(--muted); border:1px solid #ffffff22; border-radius:8px;
+    padding:5px 8px; font-family:'Cinzel',Georgia,serif; font-size:.72rem; letter-spacing:1px;
+    cursor:pointer; max-width:150px;
+  }
+  #langSelect:hover, #langSelect:focus{border-color:var(--gold); color:#fff; outline:none;}
+  #langSelect option{background:#2a1a0c; color:#f3e9d8;}
   #optionsToggle{display:none;}
   #menu-backdrop{display:none;}
 
@@ -304,7 +308,15 @@
 <aside id="side-left" aria-label="Opções">
   <div class="side-head">
     <span id="side-title">⚙ Opções</span>
-    <button id="langToggle" type="button" aria-label="Idioma / Language"><span data-l="pt">PT</span><span data-l="en">EN</span></button>
+    <select id="langSelect" aria-label="Idioma / Language">
+      <option value="en">English</option>
+      <option value="pt-BR">Português (Brasil)</option>
+      <option value="pt-PT">Português (Portugal)</option>
+      <option value="es">Español</option>
+      <option value="de">Deutsch</option>
+      <option value="fr">Français</option>
+      <option value="it">Italiano</option>
+    </select>
   </div>
   <div class="controls">
     <label><input type="checkbox" id="norepeat" checked> <span id="t-norepeat">Sem repetir</span></label>
@@ -526,13 +538,383 @@ const RULES_EN = [
  {n:"Forced Exodus", d:"The table votes on the richest hex on the board: the robber goes there and you steal 1 card from someone on it."},
 ];
 
+// Português europeu — tratamento por "tu", vocabulário PT-PT (alcunha, banca, telemóvel, lançar dados)
+const RULES_PTPT = [
+ {n:"Voto de Silêncio", d:"Até ao teu próximo turno não podes falar. Negoceia só por mímica. Falaste? Perdes 1 carta para a banca."},
+ {n:"Sotaque Obrigatório", d:"A mesa escolhe um sotaque. Falas assim até ao teu próximo turno. Saíste da personagem? -1 carta."},
+ {n:"Batismo", d:"A mesa escolhe a tua nova alcunha até ao fim do jogo. Quem te chamar pelo nome verdadeiro paga-te 1 recurso."},
+ {n:"Relator Desportivo", d:"O jogador à tua esquerda relata todo o teu próximo turno como um locutor de futebol. Golaço!"},
+ {n:"Cantoria do Dado", d:"Nesta ronda, canta um trecho de uma música antes de cada lançamento teu. Esqueceste-te? -1 carta."},
+ {n:"Terceira Pessoa", d:"Fala de ti apenas na 3.ª pessoa até ao teu próximo turno. Cada erro: a mesa pode apupar à vontade."},
+ {n:"Diplomata", d:"Antes de qualquer negociação tua, elogia sinceramente o adversário. Sem elogio, não há troca."},
+ {n:"Mão na Cabeça", d:"Até ao próximo 7: quando sair um 7, o último a pôr a mão na cabeça dá-te 1 recurso."},
+ {n:"Dança das Cadeiras", d:"Todos se levantam e trocam de lugar à mesa (as peças ficam!). Boa sorte a ler o jogo de outro ângulo."},
+ {n:"Discurso do Campeão", d:"Faz agora um discurso de vitória de 30 segundos. Se a mesa aplaudir, tira 1 recurso à tua escolha."},
+ {n:"Mercado Livre", d:"Até ao teu próximo turno, TODOS trocam com a banca a 3:1."},
+ {n:"Mão Aberta", d:"Joga com as cartas viradas para cima na mesa até ao teu próximo turno."},
+ {n:"Grande Rodízio", d:"Agora: todos passam 1 carta de recurso (escolhida por quem a dá) ao jogador da esquerda."},
+ {n:"Embargo Comercial", d:"Escolhe um jogador: ninguém pode negociar com ele durante 2 rondas."},
+ {n:"Aliança de Papel", d:"Tu e o jogador à tua direita não se podem roubar (ladrão ou cartas) durante 2 rondas."},
+ {n:"Doação Involuntária", d:"Quem tem mais cartas na mão dá 1 (à escolha dele) a quem tem menos. Empate? Dão os dois."},
+ {n:"Promoção Relâmpago", d:"A tua próxima construção custa 1 recurso a menos (escolhes qual não pagas)."},
+ {n:"Comissário da Bolsa", d:"Até ao teu próximo turno, cada troca entre os outros jogadores rende-te 1 recurso da banca (à tua escolha)."},
+ {n:"Sete é Festa", d:"No próximo 7, quem lançou move o ladrão e rouba a DOIS jogadores diferentes."},
+ {n:"Paz Mundial", d:"O ladrão volta para o deserto AGORA e ninguém o pode mover durante 1 ronda completa."},
+ {n:"Portagem Real", d:"Até ao teu próximo turno, cada estrada que qualquer jogador construir rende-te 1 recurso da banca."},
+ {n:"Porto Clandestino", d:"Até ao teu próximo turno, TU trocas com a banca a 2:1 em qualquer recurso."},
+ {n:"Espionagem", d:"Olha agora para a mão de 1 jogador à tua escolha. Só olhar. Sofre em silêncio."},
+ {n:"Troca Forçada", d:"Escolhe um jogador: TÊM de trocar 1 carta agora. Cada um escolhe a que entrega."},
+ {n:"Greve dos Pedreiros", d:"Ninguém pode construir estradas até ao teu próximo turno."},
+ {n:"Feriado Bancário", d:"Ninguém pode comprar cartas de desenvolvimento até ao teu próximo turno."},
+ {n:"Imposto Urbano", d:"Cada jogador paga à banca 1 recurso por cada CIDADE que tiver no tabuleiro."},
+ {n:"Aposta do Vidente", d:"Anuncia um número (2-12): se o próximo lançamento acertar, cada jogador paga-te 1 recurso. Falhaste? Pagas 1 à banca."},
+ {n:"Zona Franca", d:"Escolhe 1 hexágono: o ladrão não pode lá entrar durante 2 rondas."},
+ {n:"Grémio dos Ladrões", d:"O próximo Cavaleiro jogado (por quem for) rouba 2 cartas em vez de 1."},
+ {n:"Auditoria Real", d:"Todos revelam AGORA quantas cartas de desenvolvimento guardam na mão."},
+ {n:"Dízimo", d:"Todos doam 1 carta à banca, a começar por ti. O último a doar entrega 2."},
+ {n:"Mercador Errante", d:"Tira 1 recurso da banca à tua escolha; em troca, dá 1 carta tua ao jogador com menos pontos."},
+ {n:"Recolher Obrigatório", d:"Até ao teu próximo turno, cada jogador pode fazer no máximo 1 troca no próprio turno."},
+ {n:"Recruta Apressado", d:"Até ao teu próximo turno, as cartas de desenvolvimento podem ser jogadas no turno em que foram compradas."},
+ {n:"Colheita Seletiva", d:"Escolhe um número (exceto o 7): se sair antes do teu próximo turno, colhe 2 recursos à tua escolha."},
+ {n:"Seguro Colonial", d:"Se fores roubado (ladrão ou carta) antes do teu próximo turno, a banca repõe-te 1 carta à tua escolha."},
+ {n:"Obras Públicas", d:"A tua próxima estrada é grátis, cortesia da coroa. Constrói-a quando quiseres."},
+ {n:"Bolsa de Valores", d:"Declara 1 recurso: até ao teu próximo turno, cada carta dele vale por 2 nas trocas com a banca (para todos)."},
+ {n:"Censo Imperial", d:"Até ao teu próximo turno, todos são obrigados a dizer com sinceridade quantas cartas têm na mão."},
+ {n:"Robin dos Bosques", d:"Move o ladrão agora para um hexágono de quem está em 1.º lugar e rouba-lhe 1 carta."},
+ {n:"Comunismo das Ovelhas", d:"Todas as ovelhas da mesa vão para a mão de quem tem menos pontos de vitória."},
+ {n:"Reforma Agrária", d:"Escolhe 2 jogadores (podes incluir-te): trocam 2 cartas aleatórias entre si."},
+ {n:"Mundo Invertido", d:"O sentido do jogo inverte-se até alguém lançar um 7."},
+ {n:"Monopólio do Povo", d:"Declara 1 recurso: todos os que tiverem mais de 3 descartam até ficarem com 3."},
+ {n:"Leilão Maluco", d:"A banca leiloa 1 carta de desenvolvimento agora. Licitações em recursos; quem der mais, leva."},
+ {n:"Dado do Destino", d:"Lança 1 dado: par = ganhas 2 recursos à tua escolha; ímpar = descartas 2 ao acaso."},
+ {n:"Golpe de Estado", d:"Troca a tua mão INTEIRA com o jogador que tem menos cartas do que tu. Ninguém tem? Não acontece nada."},
+ {n:"Ladrão de Aluguer", d:"Move o ladrão para onde quiseres agora e rouba 1 carta — cortesia da casa."},
+ {n:"Colheita Dupla", d:"O próximo lançamento de dados (que não seja 7) produz recursos a DOBRAR para todos."},
+ {n:"Pirataria", d:"Rouba 1 carta ao acaso a CADA jogador da mesa. Arrr!"},
+ {n:"Praga de Ratos", d:"Todos com 6+ cartas descartam metade da mão (arredonda para baixo), como num 7 coletivo."},
+ {n:"Terramoto", d:"Cada jogador (por ordem) muda 1 estrada própria para outra posição válida do seu território."},
+ {n:"Dado Viciado", d:"Escolhe o resultado do teu próximo lançamento (2 a 12, menos o 7). Nem precisas de lançar."},
+ {n:"Sete Fantasma", d:"O próximo 7 do jogo é anulado: ignora e lança de novo."},
+ {n:"Falência da Banca", d:"Ninguém pode trocar com a banca durante 1 ronda completa. Resta a diplomacia."},
+ {n:"Idade das Trevas", d:"O próximo lançamento de dados não produz NADA para ninguém. O número sai, todos choram."},
+ {n:"Queimada", d:"Declara 1 recurso: TODOS (tu incluído) descartam todas as cartas dele."},
+ {n:"Duelo de Titãs", d:"Desafia alguém ao pedra-papel-tesoura (à melhor de 3): quem perder dá 2 cartas ao acaso ao vencedor."},
+ {n:"Tribunal Popular", d:"Votação simultânea (dedo aos 3): o jogador eleito «mais perigoso» descarta 2 cartas ao acaso."},
+ {n:"Troca de Corpos", d:"No próximo turno, jogas TU pelo jogador à tua esquerda e ele joga pelo teu império. Boa sorte."},
+ {n:"Rei por um Dia", d:"Joga 2 turnos seguidos agora. A mesa tem direito garantido ao apupo."},
+ {n:"Motim no Exército", d:"O Maior Exército fica suspenso (vale 0 pontos) até o dono jogar outro Cavaleiro."},
+ {n:"Estrada Fantasma", d:"A Maior Estrada fica suspensa (vale 0 pontos) até o dono construir mais uma estrada."},
+ {n:"Nova Capital", d:"Move 1 povoação tua (não cidade) para qualquer cruzamento livre e válido do tabuleiro."},
+ {n:"Corretor Sem Escrúpulos", d:"A tua próxima povoação pode ignorar a regra da distância mínima. Bom vizinho é vizinho colado."},
+ {n:"Corrida ao Ouro", d:"Todos lançam 1 dado: o mais alto tira 3 recursos à escolha da banca. Empate? Lançam de novo."},
+ {n:"Maldição do Sete", d:"Até ao teu próximo turno, quem lançar um 7 também entrega 1 carta ao acaso a quem está em último."},
+ {n:"Reforma Fiscal", d:"Todos passam a mão INTEIRA ao jogador da esquerda. Sem choro, é a lei."},
+ {n:"Êxodo Forçado", d:"A mesa vota no hexágono mais rico do tabuleiro: o ladrão vai para lá e tu roubas 1 carta a alguém dali."},
+];
+
+// Español — tuteo, términos de Catán (ladrón, poblado, carta de desarrollo, Gran Ejército, Gran Ruta Comercial)
+const RULES_ES = [
+ {n:"Voto de Silencio", d:"Hasta tu próximo turno no puedes hablar. Negocia solo con mímica. ¿Hablaste? Pierdes 1 carta, que va a la banca."},
+ {n:"Acento Obligatorio", d:"La mesa elige un acento. Hablas así hasta tu próximo turno. ¿Saliste del personaje? -1 carta."},
+ {n:"Bautizo", d:"La mesa elige tu nuevo apodo hasta el final de la partida. Quien te llame por tu nombre real te paga 1 recurso."},
+ {n:"Narrador Deportivo", d:"El jugador a tu izquierda narra todo tu próximo turno como un comentarista de fútbol. ¡Golazo!"},
+ {n:"Canto del Dado", d:"Esta ronda, canta un trozo de una canción antes de cada tirada tuya. ¿Se te olvidó? -1 carta."},
+ {n:"Tercera Persona", d:"Habla de ti mismo solo en tercera persona hasta tu próximo turno. Cada fallo: la mesa puede abuchear a gusto."},
+ {n:"Diplomático", d:"Antes de cualquier negociación tuya, elogia sinceramente a tu adversario. Sin elogio no hay trato."},
+ {n:"Manos a la Cabeza", d:"Hasta el próximo 7: cuando salga un 7, el último en ponerse la mano en la cabeza te da 1 recurso."},
+ {n:"Sillas Musicales", d:"Todos se levantan y cambian de sitio en la mesa (¡las piezas se quedan!). Suerte leyendo el tablero desde otro ángulo."},
+ {n:"Discurso del Campeón", d:"Da ahora un discurso de victoria de 30 segundos. Si la mesa aplaude, coge 1 recurso a tu elección."},
+ {n:"Mercado Libre", d:"Hasta tu próximo turno, TODOS comercian con la banca a 3:1."},
+ {n:"Mano Abierta", d:"Juega con tus cartas boca arriba sobre la mesa hasta tu próximo turno."},
+ {n:"Gran Rotación", d:"Ahora: todos pasan 1 carta de recurso (elegida por quien la da) al jugador de su izquierda."},
+ {n:"Embargo Comercial", d:"Elige a un jugador: nadie puede comerciar con él durante 2 rondas."},
+ {n:"Alianza de Papel", d:"Tú y el jugador a tu derecha no podéis robaros (ladrón o cartas) durante 2 rondas."},
+ {n:"Donación Involuntaria", d:"Quien tenga más cartas da 1 (a su elección) a quien tenga menos. ¿Empate? Ambos dan."},
+ {n:"Oferta Relámpago", d:"Tu próxima construcción cuesta 1 recurso menos (eliges cuál no pagar)."},
+ {n:"Comisario de Bolsa", d:"Hasta tu próximo turno, cada intercambio entre otros jugadores te da 1 recurso de la banca (a tu elección)."},
+ {n:"El Siete es Fiesta", d:"En el próximo 7, quien lo tiró mueve al ladrón y roba a DOS jugadores distintos."},
+ {n:"Paz Mundial", d:"El ladrón vuelve al desierto AHORA y nadie puede moverlo durante 1 ronda completa."},
+ {n:"Peaje Real", d:"Hasta tu próximo turno, cada carretera que construya cualquier jugador te da 1 recurso de la banca."},
+ {n:"Puerto Clandestino", d:"Hasta tu próximo turno, TÚ comercias con la banca a 2:1 con cualquier recurso."},
+ {n:"Espionaje", d:"Mira ahora la mano de 1 jugador a tu elección. Solo mirar. Sufre en silencio."},
+ {n:"Trueque Forzoso", d:"Elige a un jugador: DEBÉIS intercambiar 1 carta ahora. Cada uno elige la que entrega."},
+ {n:"Huelga de Albañiles", d:"Nadie puede construir carreteras hasta tu próximo turno."},
+ {n:"Festivo Bancario", d:"Nadie puede comprar cartas de desarrollo hasta tu próximo turno."},
+ {n:"Impuesto Urbano", d:"Cada jugador paga a la banca 1 recurso por cada CIUDAD que tenga en el tablero."},
+ {n:"Apuesta del Vidente", d:"Anuncia un número (2-12): si la próxima tirada acierta, cada jugador te paga 1 recurso. ¿Fallaste? Pagas 1 a la banca."},
+ {n:"Zona Franca", d:"Elige 1 hexágono: el ladrón no puede entrar en él durante 2 rondas."},
+ {n:"Gremio de Ladrones", d:"El próximo Caballero jugado (por quien sea) roba 2 cartas en vez de 1."},
+ {n:"Auditoría Real", d:"Todos revelan AHORA cuántas cartas de desarrollo guardan en la mano."},
+ {n:"Diezmo", d:"Todos donan 1 carta a la banca, empezando por ti. El último en donar entrega 2."},
+ {n:"Mercader Errante", d:"Coge 1 recurso de la banca a tu elección; a cambio, da 1 carta tuya al jugador con menos puntos."},
+ {n:"Toque de Queda", d:"Hasta tu próximo turno, cada jugador puede hacer como máximo 1 intercambio en su propio turno."},
+ {n:"Recluta Impaciente", d:"Hasta tu próximo turno, las cartas de desarrollo pueden jugarse el mismo turno en que se compran."},
+ {n:"Cosecha Selectiva", d:"Elige un número (excepto el 7): si sale antes de tu próximo turno, cosecha 2 recursos a tu elección."},
+ {n:"Seguro Colonial", d:"Si te roban (ladrón o carta) antes de tu próximo turno, la banca te repone 1 carta a tu elección."},
+ {n:"Obras Públicas", d:"Tu próxima carretera es gratis, cortesía de la corona. Constrúyela cuando quieras."},
+ {n:"Bolsa de Valores", d:"Declara 1 recurso: hasta tu próximo turno, cada carta de ese recurso vale por 2 en los intercambios con la banca (para todos)."},
+ {n:"Censo Imperial", d:"Hasta tu próximo turno, todos deben responder con sinceridad cuántas cartas tienen en la mano."},
+ {n:"Robin Hood", d:"Mueve al ladrón ahora a un hexágono de quien vaya primero y róbale 1 carta."},
+ {n:"Comunismo de Ovejas", d:"Todas las ovejas de la mesa van a la mano de quien tenga menos puntos de victoria."},
+ {n:"Reforma Agraria", d:"Elige a 2 jugadores (puedes incluirte): intercambian 2 cartas al azar entre ellos."},
+ {n:"Mundo del Revés", d:"El sentido del juego se invierte hasta que alguien saque un 7."},
+ {n:"Monopolio Popular", d:"Declara 1 recurso: todos los que tengan más de 3 descartan hasta quedarse con 3."},
+ {n:"Subasta Loca", d:"La banca subasta 1 carta de desarrollo ahora. Pujas en recursos; quien más ofrezca, se la lleva."},
+ {n:"Dado del Destino", d:"Tira 1 dado: par = ganas 2 recursos a tu elección; impar = descartas 2 al azar."},
+ {n:"Golpe de Estado", d:"Cambia tu mano ENTERA con el jugador que tenga menos cartas que tú. ¿Nadie tiene? No pasa nada."},
+ {n:"Ladrón de Alquiler", d:"Mueve al ladrón adonde quieras ahora y roba 1 carta: cortesía de la casa."},
+ {n:"Cosecha Doble", d:"La próxima tirada de dados (que no sea 7) produce el DOBLE de recursos para todos."},
+ {n:"Piratería", d:"Roba 1 carta al azar a CADA jugador de la mesa. ¡Arrr!"},
+ {n:"Plaga de Ratas", d:"Todos los que tengan 6+ cartas descartan la mitad de la mano (redondeando hacia abajo), como en un 7 colectivo."},
+ {n:"Terremoto", d:"Cada jugador (en orden) recoloca 1 carretera propia en otra posición válida de su territorio."},
+ {n:"Dado Trucado", d:"Elige el resultado de tu próxima tirada (2 a 12, excepto 7). Ni falta que hace tirar."},
+ {n:"Siete Fantasma", d:"El próximo 7 de la partida queda anulado: ignóralo y vuelve a tirar."},
+ {n:"Quiebra de la Banca", d:"Nadie puede comerciar con la banca durante 1 ronda completa. Solo queda la diplomacia."},
+ {n:"Edad Oscura", d:"La próxima tirada de dados no produce NADA para nadie. El número sale, todos lloran."},
+ {n:"Incendio", d:"Declara 1 recurso: TODOS (tú incluido) descartan todas sus cartas de ese recurso."},
+ {n:"Duelo de Titanes", d:"Reta a alguien a piedra-papel-tijera (al mejor de 3): el perdedor da 2 cartas al azar al ganador."},
+ {n:"Tribunal Popular", d:"Votación simultánea (dedo a la de tres): el jugador elegido «más peligroso» descarta 2 cartas al azar."},
+ {n:"Cambio de Cuerpos", d:"El próximo turno, tú juegas POR el jugador de tu izquierda y él juega por tu imperio. Suerte."},
+ {n:"Rey por un Día", d:"Juega 2 turnos seguidos ahora. La mesa tiene derecho garantizado al abucheo."},
+ {n:"Motín en el Ejército", d:"El Gran Ejército queda suspendido (vale 0 puntos) hasta que su dueño juegue otro Caballero."},
+ {n:"Carretera Fantasma", d:"La Gran Ruta Comercial queda suspendida (vale 0 puntos) hasta que su dueño construya una carretera más."},
+ {n:"Nueva Capital", d:"Mueve 1 poblado tuyo (no ciudad) a cualquier intersección libre y válida del tablero."},
+ {n:"Corredor Sin Escrúpulos", d:"Tu próximo poblado puede ignorar la regla de distancia mínima. Vecino bueno es vecino pegado."},
+ {n:"Fiebre del Oro", d:"Todos tiran 1 dado: el más alto coge 3 recursos a elección de la banca. ¿Empate? Se repite."},
+ {n:"Maldición del Siete", d:"Hasta tu próximo turno, quien saque un 7 también entrega 1 carta al azar al que vaya último."},
+ {n:"Reforma Fiscal", d:"Todos pasan su mano ENTERA al jugador de la izquierda. Sin llorar, es la ley."},
+ {n:"Éxodo Forzoso", d:"La mesa vota el hexágono más rico del tablero: el ladrón va allí y tú robas 1 carta a alguien de ese hexágono."},
+];
+
+// Deutsch — Duzen, Catan-Begriffe (Räuber, Rohstoff, Entwicklungskarte, Siedlung, Größte Rittermacht, Längste Handelsstraße)
+const RULES_DE = [
+ {n:"Schweigegelübde", d:"Bis zu deinem nächsten Zug darfst du nicht sprechen. Verhandle nur mit Pantomime. Gesprochen? 1 Karte an die Bank."},
+ {n:"Zwangsakzent", d:"Der Tisch wählt einen Akzent. So sprichst du bis zu deinem nächsten Zug. Aus der Rolle gefallen? -1 Karte."},
+ {n:"Taufe", d:"Der Tisch wählt deinen neuen Spitznamen bis zum Spielende. Wer dich beim echten Namen nennt, zahlt dir 1 Rohstoff."},
+ {n:"Sportkommentator", d:"Der Spieler links von dir kommentiert deinen ganzen nächsten Zug wie ein Fußballreporter. Tooor!"},
+ {n:"Würfellied", d:"Singe in dieser Runde vor jedem deiner Würfe ein Stück eines Liedes. Vergessen? -1 Karte."},
+ {n:"Dritte Person", d:"Sprich bis zu deinem nächsten Zug nur in der dritten Person über dich. Jeder Fehler: der Tisch darf nach Herzenslust buhen."},
+ {n:"Diplomat", d:"Mach vor jeder deiner Verhandlungen deinem Gegenüber ein ehrliches Kompliment. Ohne Kompliment kein Handel."},
+ {n:"Hand an den Kopf", d:"Bis zur nächsten 7: Fällt eine 7, gibt dir der Letzte, der die Hand an den Kopf legt, 1 Rohstoff."},
+ {n:"Reise nach Jerusalem", d:"Alle stehen auf und tauschen die Plätze (die Figuren bleiben!). Viel Glück beim Lesen des Bretts aus neuem Winkel."},
+ {n:"Siegerrede", d:"Halte jetzt eine 30-Sekunden-Siegesrede. Applaudiert der Tisch, nimm dir 1 Rohstoff deiner Wahl."},
+ {n:"Freier Markt", d:"Bis zu deinem nächsten Zug handeln ALLE mit der Bank zu 3:1."},
+ {n:"Offene Hand", d:"Spiele bis zu deinem nächsten Zug mit offenen Karten auf dem Tisch."},
+ {n:"Großer Wechsel", d:"Jetzt: Jeder gibt 1 Rohstoffkarte (vom Geber gewählt) an den linken Nachbarn weiter."},
+ {n:"Handelsembargo", d:"Wähle einen Spieler: 2 Runden lang darf niemand mit ihm handeln."},
+ {n:"Papierallianz", d:"Du und der Spieler rechts von dir dürft euch 2 Runden lang nicht berauben (Räuber oder Karten)."},
+ {n:"Zwangsspende", d:"Wer die meisten Karten hat, gibt 1 (nach Wahl) an den mit den wenigsten. Gleichstand? Beide geben."},
+ {n:"Blitzangebot", d:"Dein nächster Bau kostet 1 Rohstoff weniger (du wählst, welchen du nicht zahlst)."},
+ {n:"Börsenaufseher", d:"Bis zu deinem nächsten Zug bringt dir jeder Handel zwischen anderen Spielern 1 Rohstoff aus der Bank (deiner Wahl)."},
+ {n:"Sieben ist Party", d:"Bei der nächsten 7 versetzt der Würfelnde den Räuber und bestiehlt ZWEI verschiedene Spieler."},
+ {n:"Weltfrieden", d:"Der Räuber kehrt JETZT in die Wüste zurück und darf 1 volle Runde nicht bewegt werden."},
+ {n:"Königlicher Zoll", d:"Bis zu deinem nächsten Zug bringt dir jede Straße, die irgendein Spieler baut, 1 Rohstoff aus der Bank."},
+ {n:"Schmugglerhafen", d:"Bis zu deinem nächsten Zug handelst DU mit der Bank zu 2:1 mit jedem Rohstoff."},
+ {n:"Spionage", d:"Sieh dir jetzt die Hand eines Spielers deiner Wahl an. Nur ansehen. Leide still."},
+ {n:"Zwangstausch", d:"Wähle einen Spieler: Ihr MÜSST jetzt 1 Karte tauschen. Jeder wählt, was er hergibt."},
+ {n:"Maurerstreik", d:"Bis zu deinem nächsten Zug darf niemand Straßen bauen."},
+ {n:"Bankfeiertag", d:"Bis zu deinem nächsten Zug darf niemand Entwicklungskarten kaufen."},
+ {n:"Stadtsteuer", d:"Jeder Spieler zahlt der Bank 1 Rohstoff pro STADT auf dem Brett."},
+ {n:"Seherwette", d:"Sag eine Zahl an (2-12): Trifft der nächste Wurf, zahlt dir jeder Spieler 1 Rohstoff. Daneben? Du zahlst 1 an die Bank."},
+ {n:"Freizone", d:"Wähle 1 Feld: Der Räuber darf es 2 Runden lang nicht betreten."},
+ {n:"Diebesgilde", d:"Der nächste gespielte Ritter (egal von wem) stiehlt 2 Karten statt 1."},
+ {n:"Königliche Prüfung", d:"Alle verraten JETZT, wie viele Entwicklungskarten sie auf der Hand haben."},
+ {n:"Zehnt", d:"Alle spenden 1 Karte an die Bank, du zuerst. Der Letzte gibt 2."},
+ {n:"Fahrender Händler", d:"Nimm 1 Rohstoff deiner Wahl aus der Bank; gib dafür 1 deiner Karten an den Spieler mit den wenigsten Punkten."},
+ {n:"Sperrstunde", d:"Bis zu deinem nächsten Zug darf jeder Spieler in seinem Zug höchstens 1 Handel machen."},
+ {n:"Eiliger Rekrut", d:"Bis zu deinem nächsten Zug dürfen Entwicklungskarten im Kaufzug gespielt werden."},
+ {n:"Wahlernte", d:"Wähle eine Zahl (außer 7): Fällt sie vor deinem nächsten Zug, ernte 2 Rohstoffe deiner Wahl."},
+ {n:"Kolonialversicherung", d:"Wirst du vor deinem nächsten Zug beraubt (Räuber oder Karte), ersetzt dir die Bank 1 Karte deiner Wahl."},
+ {n:"Öffentliche Bauten", d:"Deine nächste Straße ist gratis, mit Grüßen der Krone. Bau sie, wann du willst."},
+ {n:"Börse", d:"Nenne 1 Rohstoff: Bis zu deinem nächsten Zug zählt jede Karte davon doppelt beim Handel mit der Bank (für alle)."},
+ {n:"Reichszensus", d:"Bis zu deinem nächsten Zug muss jeder wahrheitsgemäß sagen, wie viele Karten er hält."},
+ {n:"Robin Hood", d:"Versetze den Räuber jetzt auf ein Feld des Führenden und stiehl ihm 1 Karte."},
+ {n:"Schafkommunismus", d:"Alle Schafe des Tisches wandern in die Hand dessen mit den wenigsten Siegpunkten."},
+ {n:"Landreform", d:"Wähle 2 Spieler (dich selbst eingeschlossen möglich): Sie tauschen 2 zufällige Karten untereinander."},
+ {n:"Verkehrte Welt", d:"Die Spielrichtung dreht sich um, bis jemand eine 7 würfelt."},
+ {n:"Volksmonopol", d:"Nenne 1 Rohstoff: Wer mehr als 3 davon hat, wirft bis auf 3 ab."},
+ {n:"Verrückte Auktion", d:"Die Bank versteigert jetzt 1 Entwicklungskarte. Gebote in Rohstoffen; Höchstbietender gewinnt."},
+ {n:"Schicksalswürfel", d:"Wirf 1 Würfel: gerade = nimm 2 Rohstoffe deiner Wahl; ungerade = wirf 2 zufällig ab."},
+ {n:"Staatsstreich", d:"Tausche deine GESAMTE Hand mit dem Spieler, der weniger Karten hat als du. Keiner? Nichts passiert."},
+ {n:"Mieträuber", d:"Versetze den Räuber jetzt, wohin du willst, und stiehl 1 Karte — aufs Haus."},
+ {n:"Doppelte Ernte", d:"Der nächste Wurf (keine 7) bringt allen DOPPELTE Erträge."},
+ {n:"Piraterie", d:"Stiehl 1 zufällige Karte von JEDEM Spieler am Tisch. Arrr!"},
+ {n:"Rattenplage", d:"Alle mit 6+ Karten werfen die Hälfte der Hand ab (abgerundet), wie bei einer kollektiven 7."},
+ {n:"Erdbeben", d:"Jeder Spieler (der Reihe nach) versetzt 1 eigene Straße an eine andere gültige Stelle seines Gebiets."},
+ {n:"Gezinkter Würfel", d:"Bestimme das Ergebnis deines nächsten Wurfs (2 bis 12, außer 7). Würfeln ist gar nicht nötig."},
+ {n:"Geistersieben", d:"Die nächste 7 des Spiels ist ungültig: ignorieren und neu würfeln."},
+ {n:"Bankpleite", d:"1 volle Runde darf niemand mit der Bank handeln. Bleibt nur Diplomatie."},
+ {n:"Dunkles Zeitalter", d:"Der nächste Wurf bringt NIEMANDEM etwas. Die Zahl fällt, alle weinen."},
+ {n:"Flächenbrand", d:"Nenne 1 Rohstoff: ALLE (du auch) werfen sämtliche Karten davon ab."},
+ {n:"Kampf der Titanen", d:"Fordere jemanden zu Schere-Stein-Papier heraus (Best of 3): Der Verlierer gibt dem Sieger 2 zufällige Karten."},
+ {n:"Volksgericht", d:"Gleichzeitige Abstimmung (Finger bei 3): Der zum „Gefährlichsten“ Gewählte wirft 2 zufällige Karten ab."},
+ {n:"Körpertausch", d:"Nächsten Zug spielst du FÜR deinen linken Nachbarn und er für dein Reich. Viel Glück."},
+ {n:"König für einen Tag", d:"Spiele jetzt 2 Züge hintereinander. Der Tisch hat garantiertes Buh-Recht."},
+ {n:"Meuterei im Heer", d:"Die Größte Rittermacht ist ausgesetzt (0 Punkte), bis ihr Besitzer einen weiteren Ritter spielt."},
+ {n:"Geisterstraße", d:"Die Längste Handelsstraße ist ausgesetzt (0 Punkte), bis ihr Besitzer eine weitere Straße baut."},
+ {n:"Neue Hauptstadt", d:"Versetze 1 deiner Siedlungen (keine Stadt) auf eine beliebige freie, gültige Kreuzung."},
+ {n:"Skrupelloser Makler", d:"Deine nächste Siedlung darf die Abstandsregel ignorieren. Guter Nachbar ist, wer direkt nebenan wohnt."},
+ {n:"Goldrausch", d:"Alle würfeln 1 Würfel: Der Höchste nimmt 3 Rohstoffe nach Wahl der Bank. Gleichstand? Nochmal."},
+ {n:"Fluch der Sieben", d:"Bis zu deinem nächsten Zug gibt jeder, der eine 7 würfelt, zusätzlich 1 zufällige Karte an den Letzten ab."},
+ {n:"Steuerreform", d:"Alle geben ihre GESAMTE Hand an den linken Nachbarn weiter. Nicht heulen, so ist das Gesetz."},
+ {n:"Zwangsexodus", d:"Der Tisch wählt das reichste Feld des Bretts: Der Räuber zieht dorthin und du stiehlst 1 Karte von einem Anrainer."},
+];
+
+// Français — tutoiement, termes de Catane (voleur, colonie, carte développement, armée la plus puissante, route la plus longue)
+const RULES_FR = [
+ {n:"Vœu de Silence", d:"Jusqu'à ton prochain tour, interdit de parler. Négocie uniquement en mime. Tu as parlé ? Perds 1 carte pour la banque."},
+ {n:"Accent Obligatoire", d:"La table choisit un accent. Tu parles ainsi jusqu'à ton prochain tour. Sorti du personnage ? -1 carte."},
+ {n:"Baptême", d:"La table choisit ton nouveau surnom jusqu'à la fin de la partie. Qui t'appelle par ton vrai nom te paie 1 ressource."},
+ {n:"Commentateur Sportif", d:"Le joueur à ta gauche commente tout ton prochain tour comme un match de foot. Quel but !"},
+ {n:"Chanson du Dé", d:"Cette manche, chante un bout de chanson avant chacun de tes lancers. Oublié ? -1 carte."},
+ {n:"Troisième Personne", d:"Parle de toi uniquement à la troisième personne jusqu'à ton prochain tour. Chaque erreur : la table peut huer à volonté."},
+ {n:"Diplomate", d:"Avant chacune de tes négociations, complimente sincèrement ton adversaire. Pas de compliment, pas d'échange."},
+ {n:"Main sur la Tête", d:"Jusqu'au prochain 7 : quand un 7 sort, le dernier à poser la main sur sa tête te donne 1 ressource."},
+ {n:"Chaises Musicales", d:"Tout le monde se lève et change de place (les pions restent !). Bon courage pour lire le plateau sous un autre angle."},
+ {n:"Discours du Champion", d:"Fais maintenant un discours de victoire de 30 secondes. Si la table applaudit, prends 1 ressource de ton choix."},
+ {n:"Marché Libre", d:"Jusqu'à ton prochain tour, TOUT LE MONDE commerce avec la banque à 3:1."},
+ {n:"Main Ouverte", d:"Joue cartes face visible sur la table jusqu'à ton prochain tour."},
+ {n:"Grande Tournante", d:"Maintenant : chacun passe 1 carte ressource (choisie par le donneur) au joueur à sa gauche."},
+ {n:"Embargo Commercial", d:"Choisis un joueur : personne ne peut commercer avec lui pendant 2 manches."},
+ {n:"Alliance de Papier", d:"Toi et le joueur à ta droite ne pouvez pas vous voler (voleur ou cartes) pendant 2 manches."},
+ {n:"Don Involontaire", d:"Celui qui a le plus de cartes en donne 1 (à son choix) à celui qui en a le moins. Égalité ? Les deux donnent."},
+ {n:"Promo Éclair", d:"Ta prochaine construction coûte 1 ressource de moins (tu choisis laquelle ne pas payer)."},
+ {n:"Commissaire de Bourse", d:"Jusqu'à ton prochain tour, chaque échange entre les autres joueurs te rapporte 1 ressource de la banque (à ton choix)."},
+ {n:"Sept en Fête", d:"Au prochain 7, celui qui a lancé déplace le voleur et vole DEUX joueurs différents."},
+ {n:"Paix Mondiale", d:"Le voleur retourne au désert MAINTENANT et personne ne peut le déplacer pendant 1 manche complète."},
+ {n:"Péage Royal", d:"Jusqu'à ton prochain tour, chaque route construite par n'importe quel joueur te rapporte 1 ressource de la banque."},
+ {n:"Port Clandestin", d:"Jusqu'à ton prochain tour, TU commerces avec la banque à 2:1 sur toutes les ressources."},
+ {n:"Espionnage", d:"Regarde maintenant la main d'1 joueur de ton choix. Regarde seulement. Souffre en silence."},
+ {n:"Troc Forcé", d:"Choisis un joueur : vous DEVEZ échanger 1 carte maintenant. Chacun choisit celle qu'il donne."},
+ {n:"Grève des Maçons", d:"Personne ne peut construire de routes jusqu'à ton prochain tour."},
+ {n:"Jour Férié Bancaire", d:"Personne ne peut acheter de carte développement jusqu'à ton prochain tour."},
+ {n:"Taxe Urbaine", d:"Chaque joueur paie à la banque 1 ressource par VILLE qu'il possède sur le plateau."},
+ {n:"Pari du Voyant", d:"Annonce un nombre (2-12) : si le prochain lancer tombe juste, chaque joueur te paie 1 ressource. Raté ? Tu paies 1 à la banque."},
+ {n:"Zone Franche", d:"Choisis 1 hexagone : le voleur ne peut pas y entrer pendant 2 manches."},
+ {n:"Guilde des Voleurs", d:"Le prochain Chevalier joué (par n'importe qui) vole 2 cartes au lieu d'1."},
+ {n:"Audit Royal", d:"Tout le monde révèle MAINTENANT combien de cartes développement il garde en main."},
+ {n:"Dîme", d:"Chacun donne 1 carte à la banque, en commençant par toi. Le dernier à donner en remet 2."},
+ {n:"Marchand Ambulant", d:"Prends 1 ressource de ton choix à la banque ; en échange, donne 1 de tes cartes au joueur qui a le moins de points."},
+ {n:"Couvre-feu", d:"Jusqu'à ton prochain tour, chaque joueur ne peut faire qu'1 échange maximum pendant son tour."},
+ {n:"Recrue Pressée", d:"Jusqu'à ton prochain tour, les cartes développement peuvent être jouées le tour même de leur achat."},
+ {n:"Récolte Sélective", d:"Choisis un nombre (sauf 7) : s'il sort avant ton prochain tour, récolte 2 ressources de ton choix."},
+ {n:"Assurance Coloniale", d:"Si tu te fais voler (voleur ou carte) avant ton prochain tour, la banque te rembourse 1 carte de ton choix."},
+ {n:"Travaux Publics", d:"Ta prochaine route est gratuite, avec les compliments de la couronne. Construis-la quand tu veux."},
+ {n:"Bourse des Valeurs", d:"Déclare 1 ressource : jusqu'à ton prochain tour, chaque carte de celle-ci compte double dans les échanges avec la banque (pour tous)."},
+ {n:"Recensement Impérial", d:"Jusqu'à ton prochain tour, chacun doit répondre honnêtement combien de cartes il a en main."},
+ {n:"Robin des Bois", d:"Déplace le voleur maintenant sur un hexagone du premier au score et vole-lui 1 carte."},
+ {n:"Communisme du Mouton", d:"Tous les moutons de la table vont dans la main de celui qui a le moins de points de victoire."},
+ {n:"Réforme Agraire", d:"Choisis 2 joueurs (tu peux t'inclure) : ils échangent 2 cartes au hasard entre eux."},
+ {n:"Monde à l'Envers", d:"Le sens du jeu s'inverse jusqu'à ce que quelqu'un fasse un 7."},
+ {n:"Monopole du Peuple", d:"Déclare 1 ressource : tous ceux qui en ont plus de 3 défaussent jusqu'à n'en garder que 3."},
+ {n:"Enchère Folle", d:"La banque met 1 carte développement aux enchères maintenant. Mises en ressources ; le plus offrant l'emporte."},
+ {n:"Dé du Destin", d:"Lance 1 dé : pair = gagne 2 ressources de ton choix ; impair = défausse 2 au hasard."},
+ {n:"Coup d'État", d:"Échange ta main ENTIÈRE avec le joueur qui a moins de cartes que toi. Personne ? Rien ne se passe."},
+ {n:"Voleur à Gages", d:"Déplace le voleur où tu veux maintenant et vole 1 carte — offert par la maison."},
+ {n:"Double Récolte", d:"Le prochain lancer de dés (sauf 7) produit des ressources en DOUBLE pour tout le monde."},
+ {n:"Piraterie", d:"Vole 1 carte au hasard à CHAQUE joueur de la table. Arrr !"},
+ {n:"Peste des Rats", d:"Tous ceux qui ont 6+ cartes défaussent la moitié de leur main (arrondi à l'inférieur), comme un 7 collectif."},
+ {n:"Tremblement de Terre", d:"Chaque joueur (dans l'ordre) replace 1 de ses routes à un autre endroit valide de son territoire."},
+ {n:"Dé Pipé", d:"Choisis le résultat de ton prochain lancer (2 à 12, sauf 7). Pas même besoin de lancer."},
+ {n:"Sept Fantôme", d:"Le prochain 7 de la partie est annulé : ignore-le et relance."},
+ {n:"Faillite de la Banque", d:"Personne ne peut commercer avec la banque pendant 1 manche complète. Reste la diplomatie."},
+ {n:"Âge Sombre", d:"Le prochain lancer de dés ne produit RIEN pour personne. Le nombre sort, tout le monde pleure."},
+ {n:"Grand Incendie", d:"Déclare 1 ressource : TOUT LE MONDE (toi compris) défausse toutes ses cartes de celle-ci."},
+ {n:"Duel de Titans", d:"Défie quelqu'un à pierre-feuille-ciseaux (au meilleur des 3) : le perdant donne 2 cartes au hasard au gagnant."},
+ {n:"Tribunal Populaire", d:"Vote simultané (doigt à 3) : le joueur élu « plus dangereux » défausse 2 cartes au hasard."},
+ {n:"Échange de Corps", d:"Au prochain tour, tu joues POUR le joueur à ta gauche et il joue pour ton empire. Bonne chance."},
+ {n:"Roi d'un Jour", d:"Joue 2 tours d'affilée maintenant. La table a un droit de huée garanti."},
+ {n:"Mutinerie de l'Armée", d:"L'Armée la plus puissante est suspendue (vaut 0 point) jusqu'à ce que son détenteur joue un autre Chevalier."},
+ {n:"Route Fantôme", d:"La Route la plus longue est suspendue (vaut 0 point) jusqu'à ce que son détenteur construise une route de plus."},
+ {n:"Nouvelle Capitale", d:"Déplace 1 de tes colonies (pas une ville) vers n'importe quelle intersection libre et valide du plateau."},
+ {n:"Courtier Sans Scrupules", d:"Ta prochaine colonie peut ignorer la règle de distance minimale. Un bon voisin est un voisin collé."},
+ {n:"Ruée vers l'Or", d:"Tout le monde lance 1 dé : le plus haut prend 3 ressources au choix de la banque. Égalité ? On relance."},
+ {n:"Malédiction du Sept", d:"Jusqu'à ton prochain tour, qui fait un 7 donne aussi 1 carte au hasard au dernier du classement."},
+ {n:"Réforme Fiscale", d:"Tout le monde passe sa main ENTIÈRE au joueur de gauche. Pas de pleurs, c'est la loi."},
+ {n:"Exode Forcé", d:"La table vote l'hexagone le plus riche du plateau : le voleur y va et tu voles 1 carte à quelqu'un d'installé là."},
+];
+
+// Italiano — dare del tu, termini di Catan (brigante, colonia, carta sviluppo, esercito più grande, strada più lunga)
+const RULES_IT = [
+ {n:"Voto del Silenzio", d:"Fino al tuo prossimo turno non puoi parlare. Negozia solo a gesti. Hai parlato? Perdi 1 carta, che va alla banca."},
+ {n:"Accento Obbligatorio", d:"Il tavolo sceglie un accento. Parli così fino al tuo prossimo turno. Uscito dal personaggio? -1 carta."},
+ {n:"Battesimo", d:"Il tavolo sceglie il tuo nuovo soprannome fino a fine partita. Chi ti chiama col vero nome ti paga 1 risorsa."},
+ {n:"Telecronista Sportivo", d:"Il giocatore alla tua sinistra racconta tutto il tuo prossimo turno come un telecronista di calcio. Goool!"},
+ {n:"Canzone del Dado", d:"In questo giro, canta un pezzo di canzone prima di ogni tuo lancio. Dimenticato? -1 carta."},
+ {n:"Terza Persona", d:"Parla di te solo in terza persona fino al tuo prossimo turno. Ogni errore: il tavolo può fischiare a piacere."},
+ {n:"Diplomatico", d:"Prima di ogni tua trattativa, fai un complimento sincero all'avversario. Niente complimento, niente scambio."},
+ {n:"Mano sulla Testa", d:"Fino al prossimo 7: quando esce un 7, l'ultimo a mettersi la mano in testa ti dà 1 risorsa."},
+ {n:"Gioco delle Sedie", d:"Tutti si alzano e si scambiano di posto (i pezzi restano!). Buona fortuna a leggere il tabellone da un'altra angolazione."},
+ {n:"Discorso del Campione", d:"Fai ora un discorso di vittoria di 30 secondi. Se il tavolo applaude, prendi 1 risorsa a tua scelta."},
+ {n:"Mercato Libero", d:"Fino al tuo prossimo turno, TUTTI commerciano con la banca a 3:1."},
+ {n:"Mano Scoperta", d:"Gioca con le carte scoperte sul tavolo fino al tuo prossimo turno."},
+ {n:"Grande Giro", d:"Ora: tutti passano 1 carta risorsa (scelta da chi la dà) al giocatore alla propria sinistra."},
+ {n:"Embargo Commerciale", d:"Scegli un giocatore: nessuno può commerciare con lui per 2 giri."},
+ {n:"Alleanza di Carta", d:"Tu e il giocatore alla tua destra non potete derubarvi (brigante o carte) per 2 giri."},
+ {n:"Donazione Involontaria", d:"Chi ha più carte ne dà 1 (a sua scelta) a chi ne ha meno. Pareggio? Danno entrambi."},
+ {n:"Offerta Lampo", d:"La tua prossima costruzione costa 1 risorsa in meno (scegli tu quale non pagare)."},
+ {n:"Commissario di Borsa", d:"Fino al tuo prossimo turno, ogni scambio tra gli altri giocatori ti frutta 1 risorsa dalla banca (a tua scelta)."},
+ {n:"Sette in Festa", d:"Al prossimo 7, chi ha tirato sposta il brigante e ruba a DUE giocatori diversi."},
+ {n:"Pace nel Mondo", d:"Il brigante torna nel deserto ORA e nessuno può muoverlo per 1 giro completo."},
+ {n:"Pedaggio Reale", d:"Fino al tuo prossimo turno, ogni strada costruita da qualsiasi giocatore ti frutta 1 risorsa dalla banca."},
+ {n:"Porto Clandestino", d:"Fino al tuo prossimo turno, TU commerci con la banca a 2:1 su qualsiasi risorsa."},
+ {n:"Spionaggio", d:"Guarda ora la mano di 1 giocatore a tua scelta. Solo guardare. Soffri in silenzio."},
+ {n:"Scambio Forzato", d:"Scegli un giocatore: DOVETE scambiare 1 carta ora. Ognuno sceglie quella che consegna."},
+ {n:"Sciopero dei Muratori", d:"Nessuno può costruire strade fino al tuo prossimo turno."},
+ {n:"Festa della Banca", d:"Nessuno può comprare carte sviluppo fino al tuo prossimo turno."},
+ {n:"Tassa Urbana", d:"Ogni giocatore paga alla banca 1 risorsa per ogni CITTÀ che ha sul tabellone."},
+ {n:"Scommessa del Veggente", d:"Annuncia un numero (2-12): se il prossimo lancio lo azzecca, ogni giocatore ti paga 1 risorsa. Sbagliato? Paghi 1 alla banca."},
+ {n:"Zona Franca", d:"Scegli 1 esagono: il brigante non può entrarci per 2 giri."},
+ {n:"Gilda dei Ladri", d:"Il prossimo Cavaliere giocato (da chiunque) ruba 2 carte invece di 1."},
+ {n:"Ispezione Reale", d:"Tutti rivelano ORA quante carte sviluppo tengono in mano."},
+ {n:"Decima", d:"Tutti donano 1 carta alla banca, cominciando da te. L'ultimo a donare ne consegna 2."},
+ {n:"Mercante Errante", d:"Prendi 1 risorsa a tua scelta dalla banca; in cambio, dai 1 tua carta al giocatore con meno punti."},
+ {n:"Coprifuoco", d:"Fino al tuo prossimo turno, ogni giocatore può fare al massimo 1 scambio nel proprio turno."},
+ {n:"Recluta Frettolosa", d:"Fino al tuo prossimo turno, le carte sviluppo si possono giocare nello stesso turno in cui vengono comprate."},
+ {n:"Raccolto Selettivo", d:"Scegli un numero (tranne il 7): se esce prima del tuo prossimo turno, raccogli 2 risorse a tua scelta."},
+ {n:"Assicurazione Coloniale", d:"Se vieni derubato (brigante o carta) prima del tuo prossimo turno, la banca ti rimborsa 1 carta a tua scelta."},
+ {n:"Lavori Pubblici", d:"La tua prossima strada è gratis, omaggio della corona. Costruiscila quando vuoi."},
+ {n:"Borsa Valori", d:"Dichiara 1 risorsa: fino al tuo prossimo turno, ogni sua carta vale per 2 negli scambi con la banca (per tutti)."},
+ {n:"Censimento Imperiale", d:"Fino al tuo prossimo turno, tutti devono dire sinceramente quante carte hanno in mano."},
+ {n:"Robin Hood", d:"Sposta il brigante ora su un esagono di chi è in testa e rubagli 1 carta."},
+ {n:"Comunismo delle Pecore", d:"Tutte le pecore del tavolo vanno in mano a chi ha meno punti vittoria."},
+ {n:"Riforma Agraria", d:"Scegli 2 giocatori (puoi includerti): si scambiano 2 carte a caso tra loro."},
+ {n:"Mondo alla Rovescia", d:"Il senso di gioco si inverte finché qualcuno non tira un 7."},
+ {n:"Monopolio del Popolo", d:"Dichiara 1 risorsa: chi ne ha più di 3 scarta fino a restare con 3."},
+ {n:"Asta Pazza", d:"La banca mette all'asta 1 carta sviluppo adesso. Offerte in risorse; chi offre di più, vince."},
+ {n:"Dado del Destino", d:"Tira 1 dado: pari = guadagni 2 risorse a tua scelta; dispari = scarti 2 a caso."},
+ {n:"Colpo di Stato", d:"Scambia la tua mano INTERA con il giocatore che ha meno carte di te. Nessuno? Non succede nulla."},
+ {n:"Brigante a Noleggio", d:"Sposta il brigante dove vuoi ora e ruba 1 carta — offre la casa."},
+ {n:"Doppio Raccolto", d:"Il prossimo lancio di dadi (che non sia 7) produce risorse DOPPIE per tutti."},
+ {n:"Pirateria", d:"Ruba 1 carta a caso a OGNI giocatore del tavolo. Arrr!"},
+ {n:"Peste dei Ratti", d:"Chi ha 6+ carte scarta metà mano (arrotondando per difetto), come in un 7 collettivo."},
+ {n:"Terremoto", d:"Ogni giocatore (in ordine) ricolloca 1 propria strada in un'altra posizione valida del suo territorio."},
+ {n:"Dado Truccato", d:"Scegli il risultato del tuo prossimo lancio (da 2 a 12, tranne 7). Non serve nemmeno tirare."},
+ {n:"Sette Fantasma", d:"Il prossimo 7 della partita è annullato: ignoralo e tira di nuovo."},
+ {n:"Bancarotta", d:"Nessuno può commerciare con la banca per 1 giro completo. Resta solo la diplomazia."},
+ {n:"Età Oscura", d:"Il prossimo lancio di dadi non produce NIENTE per nessuno. Il numero esce, tutti piangono."},
+ {n:"Incendio", d:"Dichiara 1 risorsa: TUTTI (te compreso) scartano tutte le carte di quella risorsa."},
+ {n:"Duello di Titani", d:"Sfida qualcuno a sasso-carta-forbici (al meglio di 3): chi perde dà 2 carte a caso al vincitore."},
+ {n:"Tribunale del Popolo", d:"Votazione simultanea (dito al 3): il giocatore eletto «più pericoloso» scarta 2 carte a caso."},
+ {n:"Scambio di Corpi", d:"Il prossimo turno giochi TU per il giocatore alla tua sinistra e lui gioca per il tuo impero. In bocca al lupo."},
+ {n:"Re per un Giorno", d:"Gioca 2 turni di fila adesso. Il tavolo ha diritto garantito ai fischi."},
+ {n:"Ammutinamento", d:"L'Esercito più grande è sospeso (vale 0 punti) finché il proprietario non gioca un altro Cavaliere."},
+ {n:"Strada Fantasma", d:"La Strada più lunga è sospesa (vale 0 punti) finché il proprietario non costruisce un'altra strada."},
+ {n:"Nuova Capitale", d:"Sposta 1 tua colonia (non città) su qualsiasi incrocio libero e valido del tabellone."},
+ {n:"Mediatore Senza Scrupoli", d:"La tua prossima colonia può ignorare la regola della distanza minima. Buon vicino è vicino attaccato."},
+ {n:"Corsa all'Oro", d:"Tutti tirano 1 dado: il più alto prende 3 risorse a scelta della banca. Pareggio? Si ritira."},
+ {n:"Maledizione del Sette", d:"Fino al tuo prossimo turno, chi tira un 7 consegna anche 1 carta a caso all'ultimo in classifica."},
+ {n:"Riforma Fiscale", d:"Tutti passano la mano INTERA al giocatore a sinistra. Niente lacrime, è la legge."},
+ {n:"Esodo Forzato", d:"Il tavolo vota l'esagono più ricco del tabellone: il brigante va lì e tu rubi 1 carta a qualcuno della zona."},
+];
+
 const COLORS = {leve:["#6a994e","#588157"], media:["#dda15e","#c98a3d"], caos:["#bc4b3c","#9d3b2e"]};
 const EMOJI  = {leve:"🐑", media:"🌾", caos:"🔥"};
 
 // ---- i18n ----
-let lang = "pt";
+let lang = "pt-BR";
 const UI = {
-  pt:{
+  "pt-BR":{
     htmlLang:"pt-BR",
     title:"⚔️ Roleta do Caos ⚔️",
     sub:"Colonos de Catan · Gire e obedeça — reclamar custa 1 madeira",
@@ -583,10 +965,142 @@ const UI = {
       <p><b>Scheduled Chaos mode:</b> every full round, the player with the fewest points spins the wheel. Revenge of the underdogs!</p>
       <p><b>Golden rule:</b> the drawn rule counts as written; disputes are settled by a table vote (and the table always votes against whoever's winning).</p>
       <p><b>In effect:</b> each drawn rule is kept in the side panel (bottom strip on mobile). Tap to reread; tap the ✕ once it resolves.</p>`
+  },
+  "pt-PT":{
+    htmlLang:"pt-PT",
+    title:"⚔️ Roleta do Caos ⚔️",
+    sub:"Colonizadores de Catan · Gira e obedece — reclamar custa 1 madeira",
+    spin:"GIRAR",
+    options:"⚙ Opções",
+    norepeat:"Sem repetir", leves:"🐑 Leves", medias:"🌾 Médias", caos:"🔥 Caos", som:"🔊 Som",
+    howto:"📜 Como jogar", newgame:"↺ Nova partida",
+    inEffect:"⚜ Em vigor", clear:"limpar",
+    empty:"Nenhuma regra ativa.<br>Gira a roleta 🎲",
+    remaining:n=>`Regras restantes na roleta: ${n}`,
+    hintSave:"toca para guardar em «Em vigor»",
+    hintClose:"toca para fechar",
+    hintReread:"toca para reler",
+    ruleTag:i=>`⚜ REGRA #${i} ⚜`,
+    tag:{leve:"Leve — galhofa", media:"Média — mexe com o jogo", caos:"CAOS — vira o jogo"},
+    legend:["Leve — galhofa","Média — mexe com o jogo","Caos — vira o jogo"],
+    poolEmpty:'Acabaram as regras desta seleção. Desmarca "sem repetir" ou liberta mais categorias.',
+    confirmNew:"Nova partida? Isto limpa as regras em vigor e o histórico de sorteios.",
+    helpAria:"Como usar na partida",
+    helpBody:`<h3>📜 Como usar na partida</h3>
+      <p><b>Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra uma carta de desenvolvimento — quem causou, gira.</p>
+      <p><b>Modo Caos Programado:</b> a cada ronda completa, o jogador com menos pontos gira a roleta. Vingança dos últimos!</p>
+      <p><b>Regra de ouro:</b> a regra sorteada vale como está escrita; as dúvidas decidem-se por votação da mesa (e a mesa vota sempre contra quem está a ganhar).</p>
+      <p><b>Em vigor:</b> cada regra sorteada fica guardada no painel lateral (faixa inferior no telemóvel). Toca para reler; toca no ✕ quando ela se resolver.</p>`
+  },
+  es:{
+    htmlLang:"es",
+    title:"⚔️ Ruleta del Caos ⚔️",
+    sub:"Colonos de Catán · Gira y obedece — quejarse cuesta 1 madera",
+    spin:"GIRAR",
+    options:"⚙ Opciones",
+    norepeat:"Sin repetir", leves:"🐑 Suaves", medias:"🌾 Medias", caos:"🔥 Caos", som:"🔊 Sonido",
+    howto:"📜 Cómo jugar", newgame:"↺ Nueva partida",
+    inEffect:"⚜ En vigor", clear:"limpiar",
+    empty:"Ninguna regla activa.<br>Gira la ruleta 🎲",
+    remaining:n=>`Reglas restantes en la ruleta: ${n}`,
+    hintSave:"toca para guardarla en «En vigor»",
+    hintClose:"toca para cerrar",
+    hintReread:"toca para releer",
+    ruleTag:i=>`⚜ REGLA #${i} ⚜`,
+    tag:{leve:"Suave — cachondeo", media:"Media — mueve la partida", caos:"CAOS — da la vuelta al juego"},
+    legend:["Suave — cachondeo","Media — mueve la partida","Caos — da la vuelta al juego"],
+    poolEmpty:'Se acabaron las reglas de esta selección. Desmarca "sin repetir" o activa más categorías.',
+    confirmNew:"¿Nueva partida? Esto borra las reglas en vigor y el historial de sorteos.",
+    helpAria:"Cómo usar en la partida",
+    helpBody:`<h3>📜 Cómo usar en la partida</h3>
+      <p><b>Modo Hito:</b> la ruleta gira cada vez que alguien construye una ciudad o compra una carta de desarrollo — quien lo causó, gira.</p>
+      <p><b>Modo Caos Programado:</b> en cada ronda completa, el jugador con menos puntos gira la ruleta. ¡La venganza de los últimos!</p>
+      <p><b>Regla de oro:</b> la regla sorteada vale tal como está escrita; las dudas se deciden por votación de la mesa (y la mesa siempre vota contra el que va ganando).</p>
+      <p><b>En vigor:</b> cada regla sorteada queda guardada en el panel lateral (franja inferior en el móvil). Toca para releer; toca la ✕ cuando se resuelva.</p>`
+  },
+  de:{
+    htmlLang:"de",
+    title:"⚔️ Rad des Chaos ⚔️",
+    sub:"Die Siedler von Catan · Dreh und gehorche — Meckern kostet 1 Holz",
+    spin:"DREHEN",
+    options:"⚙ Optionen",
+    norepeat:"Ohne Wiederholung", leves:"🐑 Leicht", medias:"🌾 Mittel", caos:"🔥 Chaos", som:"🔊 Ton",
+    howto:"📜 Spielanleitung", newgame:"↺ Neue Partie",
+    inEffect:"⚜ In Kraft", clear:"leeren",
+    empty:"Keine aktive Regel.<br>Dreh am Rad 🎲",
+    remaining:n=>`Verbleibende Regeln im Rad: ${n}`,
+    hintSave:"tippen, um sie unter „In Kraft“ zu speichern",
+    hintClose:"tippen zum Schließen",
+    hintReread:"tippen zum Nachlesen",
+    ruleTag:i=>`⚜ REGEL #${i} ⚜`,
+    tag:{leve:"Leicht — Spaß", media:"Mittel — greift ins Spiel ein", caos:"CHAOS — stellt das Spiel auf den Kopf"},
+    legend:["Leicht — Spaß","Mittel — greift ins Spiel ein","Chaos — stellt das Spiel auf den Kopf"],
+    poolEmpty:"Keine Regeln mehr in dieser Auswahl. „Ohne Wiederholung“ abwählen oder mehr Kategorien freigeben.",
+    confirmNew:"Neue Partie? Das löscht die geltenden Regeln und den Verlauf der Ziehungen.",
+    helpAria:"Spielanleitung",
+    helpBody:`<h3>📜 Spielanleitung</h3>
+      <p><b>Meilenstein-Modus:</b> Das Rad dreht sich, wann immer jemand eine Stadt baut oder eine Entwicklungskarte kauft — wer es ausgelöst hat, dreht.</p>
+      <p><b>Geplantes Chaos:</b> Nach jeder vollen Runde dreht der Spieler mit den wenigsten Punkten. Rache der Letzten!</p>
+      <p><b>Goldene Regel:</b> Die gezogene Regel gilt wie geschrieben; Streitfälle entscheidet der Tisch per Abstimmung (und der Tisch stimmt immer gegen den, der führt).</p>
+      <p><b>In Kraft:</b> Jede gezogene Regel bleibt im Seitenpanel (unten am Handy). Tippen zum Nachlesen; auf ✕ tippen, wenn sie erledigt ist.</p>`
+  },
+  fr:{
+    htmlLang:"fr",
+    title:"⚔️ Roue du Chaos ⚔️",
+    sub:"Les Colons de Catane · Tourne et obéis — râler coûte 1 bois",
+    spin:"TOURNER",
+    options:"⚙ Options",
+    norepeat:"Sans répétition", leves:"🐑 Légères", medias:"🌾 Moyennes", caos:"🔥 Chaos", som:"🔊 Son",
+    howto:"📜 Comment jouer", newgame:"↺ Nouvelle partie",
+    inEffect:"⚜ En vigueur", clear:"vider",
+    empty:"Aucune règle active.<br>Tourne la roue 🎲",
+    remaining:n=>`Règles restantes sur la roue : ${n}`,
+    hintSave:"touche pour la garder dans « En vigueur »",
+    hintClose:"touche pour fermer",
+    hintReread:"touche pour relire",
+    ruleTag:i=>`⚜ RÈGLE #${i} ⚜`,
+    tag:{leve:"Légère — pour rire", media:"Moyenne — change la partie", caos:"CHAOS — renverse le jeu"},
+    legend:["Légère — pour rire","Moyenne — change la partie","Chaos — renverse le jeu"],
+    poolEmpty:"Plus de règles dans cette sélection. Décoche « sans répétition » ou active plus de catégories.",
+    confirmNew:"Nouvelle partie ? Cela efface les règles en vigueur et l'historique des tirages.",
+    helpAria:"Comment jouer",
+    helpBody:`<h3>📜 Comment jouer</h3>
+      <p><b>Mode Jalon :</b> la roue tourne chaque fois que quelqu'un construit une ville ou achète une carte développement — celui qui l'a déclenché tourne.</p>
+      <p><b>Mode Chaos Programmé :</b> à chaque manche complète, le joueur avec le moins de points fait tourner la roue. La revanche des derniers !</p>
+      <p><b>Règle d'or :</b> la règle tirée s'applique telle quelle ; les litiges se règlent par vote de la table (et la table vote toujours contre celui qui gagne).</p>
+      <p><b>En vigueur :</b> chaque règle tirée reste dans le panneau latéral (bandeau en bas sur mobile). Touche pour relire ; touche la ✕ quand elle est réglée.</p>`
+  },
+  it:{
+    htmlLang:"it",
+    title:"⚔️ Ruota del Caos ⚔️",
+    sub:"Coloni di Catan · Gira e obbedisci — lamentarsi costa 1 legno",
+    spin:"GIRA",
+    options:"⚙ Opzioni",
+    norepeat:"Senza ripetere", leves:"🐑 Leggere", medias:"🌾 Medie", caos:"🔥 Caos", som:"🔊 Suono",
+    howto:"📜 Come si gioca", newgame:"↺ Nuova partita",
+    inEffect:"⚜ In vigore", clear:"svuota",
+    empty:"Nessuna regola attiva.<br>Gira la ruota 🎲",
+    remaining:n=>`Regole rimaste nella ruota: ${n}`,
+    hintSave:"tocca per salvarla in «In vigore»",
+    hintClose:"tocca per chiudere",
+    hintReread:"tocca per rileggere",
+    ruleTag:i=>`⚜ REGOLA #${i} ⚜`,
+    tag:{leve:"Leggera — goliardia", media:"Media — tocca la partita", caos:"CAOS — ribalta il gioco"},
+    legend:["Leggera — goliardia","Media — tocca la partita","Caos — ribalta il gioco"],
+    poolEmpty:'Finite le regole di questa selezione. Togli "senza ripetere" o attiva altre categorie.',
+    confirmNew:"Nuova partita? Cancella le regole in vigore e la cronologia delle estrazioni.",
+    helpAria:"Come si gioca",
+    helpBody:`<h3>📜 Come si gioca</h3>
+      <p><b>Modalità Traguardo:</b> la ruota gira ogni volta che qualcuno costruisce una città o compra una carta sviluppo — chi l'ha causato, gira.</p>
+      <p><b>Modalità Caos Programmato:</b> a ogni giro completo, il giocatore con meno punti gira la ruota. La rivincita degli ultimi!</p>
+      <p><b>Regola d'oro:</b> la regola estratta vale come scritta; i dubbi si decidono con un voto del tavolo (e il tavolo vota sempre contro chi sta vincendo).</p>
+      <p><b>In vigore:</b> ogni regola estratta resta nel pannello laterale (striscia in basso sul telefono). Tocca per rileggere; tocca la ✕ quando si risolve.</p>`
   }
 };
-const ruleName = i => (lang==="en" ? RULES_EN[i].n : RULES[i].n);
-const ruleDesc = i => (lang==="en" ? RULES_EN[i].d : RULES[i].d);
+// per-language rule texts; pt-BR is the canonical RULES array
+const RULES_L10N = {"pt-PT":RULES_PTPT, en:RULES_EN, es:RULES_ES, de:RULES_DE, fr:RULES_FR, it:RULES_IT};
+const ruleName = i => (lang==="pt-BR" ? RULES[i].n : RULES_L10N[lang][i].n);
+const ruleDesc = i => (lang==="pt-BR" ? RULES[i].d : RULES_L10N[lang][i].d);
 const N = RULES.length, SEG = 360/N;
 const wheel = document.getElementById("wheel");
 let drawn = new Set(), rotation = 0, spinning = false;
@@ -702,7 +1216,8 @@ function load(){
     drawn  = new Set(s.drawn || []);
     active = Array.isArray(s.active) ? s.active : [];
     uidSeq = s.uidSeq || (active.length + 1);
-    if(s.lang==="en"||s.lang==="pt") lang = s.lang;
+    if(UI[s.lang]) lang = s.lang;
+    else if(s.lang==="pt") lang = "pt-BR";   // migração do toggle antigo PT/EN
     if(s.f){
       fLeve.checked=s.f.leve; fMedia.checked=s.f.media; fCaos.checked=s.f.caos;
       norepeat.checked=s.f.norepeat; sound.checked=s.f.sound;
@@ -747,8 +1262,8 @@ function setMenu(open){
 optionsToggle.addEventListener("click", ()=>setMenu(!sideLeft.classList.contains("open")));
 menuBackdrop.addEventListener("click", ()=>setMenu(false));
 
-// ---- language toggle ----
-const langToggle = document.getElementById("langToggle");
+// ---- language dropdown ----
+const langSelect = document.getElementById("langSelect");
 function applyLang(){
   const u = UI[lang];
   document.documentElement.lang = u.htmlLang;
@@ -772,13 +1287,12 @@ function applyLang(){
   document.querySelector(".legend .lg-caos").textContent  = u.legend[2];
   document.getElementById("help-body").innerHTML = u.helpBody;
   helpEl.setAttribute("aria-label", u.helpAria);
-  langToggle.querySelector('[data-l="pt"]').classList.toggle("on", lang==="pt");
-  langToggle.querySelector('[data-l="en"]').classList.toggle("on", lang==="en");
+  langSelect.value = lang;
   updateRemaining();
   renderActive();
 }
-function setLang(l){ lang = l; save(); applyLang(); }
-langToggle.addEventListener("click", ()=> setLang(lang==="pt" ? "en" : "pt"));
+function setLang(l){ if(!UI[l]) return; lang = l; save(); applyLang(); }
+langSelect.addEventListener("change", ()=> setLang(langSelect.value));
 
 // ---- "Como usar" help modal ----
 const helpEl = document.getElementById("help");
