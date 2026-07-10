@@ -74,12 +74,13 @@
   .hub{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:5;
     width:96px; height:96px; display:flex; align-items:center; justify-content:center;
+    border:none; padding:0; font:inherit;
     cursor:pointer; user-select:none;
     clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
     background:linear-gradient(160deg, var(--gold), var(--gold2));
   }
   .hub-inner{
-    width:86px; height:86px; display:flex; align-items:center; justify-content:center;
+    width:86px; height:86px; display:flex; align-items:center; justify-content:center; pointer-events:none;
     clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
     background:linear-gradient(160deg, #6b4527, var(--wood-dark));
     font-size:2rem; transition:transform .15s;
@@ -148,7 +149,12 @@
     color:var(--parch-text); border-radius:6px; padding:26px 30px 24px; text-align:center;
     box-shadow:0 10px 24px rgba(0,0,0,.5), inset 0 0 60px rgba(120,80,30,.18);
   }
-  #result .tap-hint{margin-top:14px; font-size:.78rem; color:#8a6b45; font-style:italic; letter-spacing:.4px;}
+  #result .tap-hint{margin-top:10px; font-size:.8rem; color:#6d5334; font-style:italic; letter-spacing:.4px;}
+  #inst-badge{margin-top:10px; font-size:.82rem; color:#6d5334; letter-spacing:.4px; font-weight:bold;}
+  #dismiss-bar{
+    position:absolute; left:0; bottom:0; height:4px; width:100%; display:none;
+    background:linear-gradient(90deg, var(--gold), var(--gold2)); border-radius:0 0 6px 6px;
+  }
   #result::before, #result::after{
     content:""; position:absolute; left:0; right:0; height:10px;
     background:radial-gradient(circle at 8px 5px, transparent 5px, var(--parch) 5px);
@@ -165,7 +171,7 @@
     60%{transform:translate(calc(-50% - 4px),-50%)}
     80%{transform:translate(calc(-50% + 3px),-50%)}
   }
-  #result .num{font-size:.85rem; letter-spacing:3px; color:#8a6b45; font-weight:bold;}
+  #result .num{font-size:.85rem; letter-spacing:3px; color:#6d5334; font-weight:bold;}
   #result h2{font-family:'MedievalSharp',Georgia,cursive; font-size:1.6rem; margin:8px 0 10px; color:#5a3a1a;}
   #result p{font-size:1.15rem; line-height:1.55;}
   .seal{
@@ -207,7 +213,7 @@
   }
 
   /* rules hub: title-only accordion + discreet disable toggle */
-  #hub-hint{font-size:.82rem; color:#8a6b45; font-style:italic; text-align:center; margin-bottom:12px;}
+  #hub-hint{font-size:.82rem; color:#6d5334; font-style:italic; text-align:center; margin-bottom:12px;}
   #hub-list{display:flex; flex-direction:column; gap:5px; max-height:58vh; overflow-y:auto; padding-right:4px;}
   .hub-sec{
     font-family:'MedievalSharp',Georgia,cursive; color:#5a3a1a; font-size:1.05rem;
@@ -313,7 +319,7 @@
   }
   .entry:hover{transform:translateX(-3px); box-shadow:0 4px 12px rgba(0,0,0,.45);}
   .entry:active{transform:scale(.97);}
-  @media (max-width:820px){ .entry:hover{transform:none;} }
+  @media (max-width:820px), (max-height:500px){ .entry:hover{transform:none;} }
   .entry.leve, .entry.house{border-left-color:var(--leve1);}
   .entry.media{border-left-color:var(--media1);}
   .entry.caos{border-left-color:var(--caos1);}
@@ -326,7 +332,7 @@
     display:flex; align-items:center; justify-content:center;
   }
   .entry .e-x:hover{background:var(--caos1); color:#fff;}
-  .entry .e-hint{font-size:.68rem; color:#8a6b45; font-style:italic; margin-top:3px; opacity:.75;}
+  .entry .e-hint{font-size:.78rem; color:#6d5334; font-style:italic; margin-top:3px;}
   .entry:not(:first-child) .e-hint{display:none;}   /* one hint is enough; the rest is noise */
   @keyframes slideIn{from{transform:translateX(20px); opacity:0;} to{transform:translateX(0); opacity:1;}}
 
@@ -397,7 +403,7 @@
   @keyframes winpulse{0%,100%{opacity:.5;} 50%{opacity:1;}}
 
   /* desktop: three columns, config rail | wheel stage | active panel */
-  @media (min-width:821px){
+  @media (min-width:821px) and (min-height:501px){
     body{align-items:stretch; padding:0;}
     #side-left{
       display:flex; flex-direction:column; gap:16px;
@@ -416,14 +422,15 @@
     #hist-list{flex:1 1 0; min-height:0;}
   }
   /* short desktop windows: centered stage would clip both ends with no scroll */
-  @media (min-width:821px) and (max-height:640px){
+  @media (min-width:821px) and (min-height:501px) and (max-height:640px){
     .stage{justify-content:flex-start; overflow-y:auto; height:100vh; scrollbar-width:thin; scrollbar-color:#ffffff26 transparent;}
     .stage::-webkit-scrollbar{width:6px;}
     .stage::-webkit-scrollbar-thumb{background:#ffffff22; border-radius:3px;}
+    #side-left{overflow-y:auto;}   /* rail action buttons must stay reachable */
   }
 
-  /* mobile / short screens: panel becomes a bottom strip, chrome trims down */
-  @media (max-width:820px){
+  /* mobile / short screens (incl. landscape phones): panel becomes a bottom strip, chrome trims down */
+  @media (max-width:820px), (max-height:500px){
     body{padding-bottom:104px;}
     body.panel-empty{padding-bottom:52px;}
     .sub{margin-bottom:8px; font-size:.95rem;}
@@ -480,6 +487,11 @@
     .cr-import-row input{font-size:1rem;}      /* under 16px iOS zooms the page on focus */
     .cr-share-btns{flex-wrap:nowrap;}
     .cr-share-btns button{flex:1;}
+  }
+  /* tiny phones / display zoom: allow page scroll instead of clipping the ⚙ button */
+  @media (max-width:820px) and (max-height:620px), (max-height:500px){
+    html, body{overflow-y:auto;}
+    body{height:auto; min-height:100vh;}
   }
 </style>
 </head>
@@ -538,7 +550,7 @@
   <div class="wheel-wrap">
     <div class="pointer"></div>
     <svg class="wheel" id="wheel" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"></svg>
-    <div class="hub" onclick="spin()"><div class="hub-inner"><span id="hub-count">100</span></div></div>
+    <button class="hub" id="hubSpin" type="button" aria-label="GIRAR"><span class="hub-inner"><span id="hub-count">100</span></span></button>
   </div>
 
   <button class="spin" id="btn" onclick="spin()">GIRAR</button>
@@ -551,7 +563,9 @@
   <h2></h2>
   <p></p>
   <span class="seal"></span>
+  <div id="inst-badge"></div>
   <div class="tap-hint">toque para guardar em “Em vigor”</div>
+  <div id="dismiss-bar"></div>
 </div>
 
 <aside id="active-panel" aria-label="Regras em vigor">
@@ -563,7 +577,7 @@
   <div id="active-empty">Nenhuma regra ativa.<br>Gire a roleta 🎲</div>
 </aside>
 
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 
 <div id="help-backdrop"></div>
 <div id="help" role="dialog" aria-modal="true" aria-label="Como usar na partida">
@@ -575,6 +589,7 @@
     <p><b>Regra de ouro:</b> a regra sorteada vale como escrita; dúvidas são decididas por votação da mesa (e a mesa sempre vota contra quem está ganhando).</p>
     <p><b>Em vigor:</b> cada regra sorteada fica guardada no painel lateral (rodapé no celular). Toque para reler; toque no ✕ quando ela se resolver.</p>
   </div>
+  <button id="helpGo" class="cr-add" type="button" style="width:100%; margin-top:14px;">🎲 Bora girar!</button>
   <p id="help-disclaimer">Projeto de fã, gratuito. Não afiliado à Catan GmbH nem à Catan Studio.</p>
 </div>
 
@@ -1369,14 +1384,15 @@ const UI = {
     confirmNew:"Nova partida? Isso limpa as regras em vigor e o histórico de sorteios.",
     helpAria:"Como usar na partida",
     helpBody:`<h3>📜 Como usar na partida</h3>
-      <p><b>Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra carta de desenvolvimento, quem causou, gira.</p>
+      <p><b>Gire. Leia a regra em voz alta. Ela fica em “Em vigor” até se resolver.</b></p>
+      <p><b>Quando girar? Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra carta de desenvolvimento: quem causou, gira.</p>
       <p><b>Modo Caos Programado:</b> a cada rodada completa, o jogador com menos pontos gira a roleta. Vingança dos lanternas!</p>
       <p><b>Regra de ouro:</b> a regra sorteada vale como escrita; dúvidas são decididas por votação da mesa (e a mesa sempre vota contra quem está ganhando).</p>
       <p><b>Em vigor:</b> cada regra sorteada fica guardada no painel lateral (rodapé no celular). Toque para reler; toque no ✕ quando ela se resolver.</p>`
   },
   en:{
     htmlLang:"en",
-    title:"⚔️ Wheel of Chaos ⚔️",
+    title:"⚔️ Chaos Wheel ⚔️",
     sub:"Settlers of Catan · Spin and obey, complaining costs 1 wood",
     spin:"SPIN",
     options:"⚙ Options",
@@ -1395,7 +1411,8 @@ const UI = {
     confirmNew:"New game? This clears the rules in effect and the draw history.",
     helpAria:"How to play",
     helpBody:`<h3>📜 How to play</h3>
-      <p><b>Milestone mode:</b> the wheel spins whenever someone builds a city or buys a development card, whoever triggered it, spins.</p>
+      <p><b>Spin the wheel. Read the rule aloud. It stays in “In effect” until it resolves.</b></p>
+      <p><b>When to spin? Milestone mode:</b> the wheel spins whenever someone builds a city or buys a development card: whoever triggered it spins.</p>
       <p><b>Scheduled Chaos mode:</b> every full round, the player with the fewest points spins the wheel. Revenge of the underdogs!</p>
       <p><b>Golden rule:</b> the drawn rule counts as written; disputes are settled by a table vote (and the table always votes against whoever's winning).</p>
       <p><b>In effect:</b> each drawn rule is kept in the side panel (bottom strip on mobile). Tap to reread; tap the ✕ once it resolves.</p>`
@@ -1421,7 +1438,8 @@ const UI = {
     confirmNew:"Nova partida? Isto limpa as regras em vigor e o histórico de sorteios.",
     helpAria:"Como usar na partida",
     helpBody:`<h3>📜 Como usar na partida</h3>
-      <p><b>Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra uma carta de desenvolvimento, quem causou, gira.</p>
+      <p><b>Gira. Lê a regra em voz alta. Fica em «Em vigor» até se resolver.</b></p>
+      <p><b>Quando girar? Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra uma carta de desenvolvimento: quem causou, gira.</p>
       <p><b>Modo Caos Programado:</b> a cada ronda completa, o jogador com menos pontos gira a roleta. Vingança dos últimos!</p>
       <p><b>Regra de ouro:</b> a regra sorteada vale como está escrita; as dúvidas decidem-se por votação da mesa (e a mesa vota sempre contra quem está a ganhar).</p>
       <p><b>Em vigor:</b> cada regra sorteada fica guardada no painel lateral (faixa inferior no telemóvel). Toca para reler; toca no ✕ quando ela se resolver.</p>`
@@ -1447,7 +1465,8 @@ const UI = {
     confirmNew:"¿Nueva partida? Esto borra las reglas en vigor y el historial de sorteos.",
     helpAria:"Cómo usar en la partida",
     helpBody:`<h3>📜 Cómo usar en la partida</h3>
-      <p><b>Modo Hito:</b> la ruleta gira cada vez que alguien construye una ciudad o compra una carta de desarrollo, quien lo causó, gira.</p>
+      <p><b>Gira. Lee la regla en voz alta. Queda en «En vigor» hasta resolverse.</b></p>
+      <p><b>¿Cuándo girar? Modo Hito:</b> la ruleta gira cada vez que alguien construye una ciudad o compra una carta de desarrollo: quien lo causó, gira.</p>
       <p><b>Modo Caos Programado:</b> en cada ronda completa, el jugador con menos puntos gira la ruleta. ¡La venganza de los últimos!</p>
       <p><b>Regla de oro:</b> la regla sorteada vale tal como está escrita; las dudas se deciden por votación de la mesa (y la mesa siempre vota contra el que va ganando).</p>
       <p><b>En vigor:</b> cada regla sorteada queda guardada en el panel lateral (franja inferior en el móvil). Toca para releer; toca la ✕ cuando se resuelva.</p>`
@@ -1473,7 +1492,8 @@ const UI = {
     confirmNew:"Neue Partie? Das löscht die geltenden Regeln und den Verlauf der Ziehungen.",
     helpAria:"Spielanleitung",
     helpBody:`<h3>📜 Spielanleitung</h3>
-      <p><b>Meilenstein-Modus:</b> Das Rad dreht sich, wann immer jemand eine Stadt baut oder eine Entwicklungskarte kauft, wer es ausgelöst hat, dreht.</p>
+      <p><b>Dreh am Rad. Lies die Regel laut vor. Sie bleibt unter „In Kraft“, bis sie erledigt ist.</b></p>
+      <p><b>Wann drehen? Meilenstein-Modus:</b> Das Rad dreht sich, wann immer jemand eine Stadt baut oder eine Entwicklungskarte kauft: Wer es ausgelöst hat, dreht.</p>
       <p><b>Geplantes Chaos:</b> Nach jeder vollen Runde dreht der Spieler mit den wenigsten Punkten. Rache der Letzten!</p>
       <p><b>Goldene Regel:</b> Die gezogene Regel gilt wie geschrieben; Streitfälle entscheidet der Tisch per Abstimmung (und der Tisch stimmt immer gegen den, der führt).</p>
       <p><b>In Kraft:</b> Jede gezogene Regel bleibt im Seitenpanel (unten am Handy). Tippen zum Nachlesen; auf ✕ tippen, wenn sie erledigt ist.</p>`
@@ -1499,7 +1519,8 @@ const UI = {
     confirmNew:"Nouvelle partie ? Cela efface les règles en vigueur et l'historique des tirages.",
     helpAria:"Comment jouer",
     helpBody:`<h3>📜 Comment jouer</h3>
-      <p><b>Mode Jalon :</b> la roue tourne chaque fois que quelqu'un construit une ville ou achète une carte développement, celui qui l'a déclenché tourne.</p>
+      <p><b>Tourne la roue. Lis la règle à voix haute. Elle reste dans « En vigueur » jusqu'à sa résolution.</b></p>
+      <p><b>Quand tourner ? Mode Jalon :</b> la roue tourne chaque fois que quelqu'un construit une ville ou achète une carte développement : celui qui l'a déclenché tourne.</p>
       <p><b>Mode Chaos Programmé :</b> à chaque manche complète, le joueur avec le moins de points fait tourner la roue. La revanche des derniers !</p>
       <p><b>Règle d'or :</b> la règle tirée s'applique telle quelle ; les litiges se règlent par vote de la table (et la table vote toujours contre celui qui gagne).</p>
       <p><b>En vigueur :</b> chaque règle tirée reste dans le panneau latéral (bandeau en bas sur mobile). Touche pour relire ; touche la ✕ quand elle est réglée.</p>`
@@ -1525,7 +1546,8 @@ const UI = {
     confirmNew:"Nuova partita? Cancella le regole in vigore e la cronologia delle estrazioni.",
     helpAria:"Come si gioca",
     helpBody:`<h3>📜 Come si gioca</h3>
-      <p><b>Modalità Traguardo:</b> la ruota gira ogni volta che qualcuno costruisce una città o compra una carta sviluppo, chi l'ha causato, gira.</p>
+      <p><b>Gira la ruota. Leggi la regola ad alta voce. Resta in «In vigore» finché non si risolve.</b></p>
+      <p><b>Quando girare? Modalità Traguardo:</b> la ruota gira ogni volta che qualcuno costruisce una città o compra una carta sviluppo: chi l'ha causato, gira.</p>
       <p><b>Modalità Caos Programmato:</b> a ogni giro completo, il giocatore con meno punti gira la ruota. La rivincita degli ultimi!</p>
       <p><b>Regola d'oro:</b> la regola estratta vale come scritta; i dubbi si decidono con un voto del tavolo (e il tavolo vota sempre contro chi sta vincendo).</p>
       <p><b>In vigore:</b> ogni regola estratta resta nel pannello laterale (striscia in basso sul telefono). Tocca per rileggere; tocca la ✕ quando si risolve.</p>`
@@ -1545,7 +1567,8 @@ const INSTANT = new Set([
   // Tribunal, Rei por um Dia, Nova Capital, Corrida do Ouro, Reforma Tributária, Êxodo Forçado,
   // Tempestade, Festival da Sorte, Rebelião Camponesa, Sorte Grande, Excesso de Estoque,
   // Terra de Ninguém, Inveja dos Deuses
-  50,51,52,54,55,56,57,58,60,61,62,67,68,69,71,74,76,78,79,86,87,88,91,92,94,99
+  // (89 Espelho Maldito: consumido exatamente no sorteio seguinte)
+  50,51,52,54,55,56,57,58,60,61,62,67,68,69,71,74,76,78,79,86,87,88,89,91,92,94,99
 ]);
 
 // user-created rules live after the 100 built-ins (#101+); same text in every language
@@ -1612,6 +1635,15 @@ Object.assign(UI["es"],    {docTitle:"Ruleta del Caos · Catán", removeTip:"Res
 Object.assign(UI["de"],    {docTitle:"Rad des Chaos · Catan", removeTip:"Erledigt / entfernen"});
 Object.assign(UI["fr"],    {docTitle:"Roue du Chaos · Catane", removeTip:"Réglée / retirer"});
 Object.assign(UI["it"],    {docTitle:"Ruota del Caos · Catan", removeTip:"Risolta / rimuovere"});
+
+// launch-audit strings: mid-spin guard, help CTA, instant/lasting badges, honest tap-hint, close label
+Object.assign(UI["pt-BR"], {waitSpin:"Espere o giro terminar.", letsSpin:"🎲 Bora girar!", instNow:"⚡ resolve na hora", instStay:"⏳ fica em vigor", hintSave:"guardada em “Em vigor”, toque para continuar", closeLbl:"Fechar"});
+Object.assign(UI["pt-PT"], {waitSpin:"Espera o giro terminar.", letsSpin:"🎲 Vamos girar!", instNow:"⚡ resolve-se na hora", instStay:"⏳ fica em vigor", hintSave:"guardada em «Em vigor», toca para continuar", closeLbl:"Fechar"});
+Object.assign(UI["en"],    {waitSpin:"Wait for the spin to finish.", letsSpin:"🎲 Let's spin!", instNow:"⚡ resolves now", instStay:"⏳ stays in effect", hintSave:"saved to “In effect”, tap to continue", closeLbl:"Close"});
+Object.assign(UI["es"],    {waitSpin:"Espera a que termine el giro.", letsSpin:"🎲 ¡A girar!", instNow:"⚡ se resuelve al momento", instStay:"⏳ queda en vigor", hintSave:"guardada en «En vigor», toca para continuar", closeLbl:"Cerrar"});
+Object.assign(UI["de"],    {waitSpin:"Warte, bis der Dreh vorbei ist.", letsSpin:"🎲 Los geht's!", instNow:"⚡ sofort erledigt", instStay:"⏳ bleibt in Kraft", hintSave:"unter „In Kraft“ gespeichert, tippen zum Weiterspielen", closeLbl:"Schließen"});
+Object.assign(UI["fr"],    {waitSpin:"Attends la fin du tour de roue.", letsSpin:"🎲 C'est parti !", instNow:"⚡ se résout tout de suite", instStay:"⏳ reste en vigueur", hintSave:"gardée dans « En vigueur », touche pour continuer", closeLbl:"Fermer"});
+Object.assign(UI["it"],    {waitSpin:"Aspetta la fine del giro.", letsSpin:"🎲 Si gira!", instNow:"⚡ si risolve subito", instStay:"⏳ resta in vigore", hintSave:"salvata in «In vigore», tocca per continuare", closeLbl:"Chiudi"});
 
 // donation page: set this to your PayPal.me / Ko-fi URL and the button appears
 const SUPPORT_URL = "";
@@ -1735,6 +1767,7 @@ let actx = null;
 function tick(freq=2200, gain=.06){
   if(!sound.checked) return;
   if(!actx) actx = new (window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==="suspended") actx.resume();   // autoplay policy can start it muted
   const o=actx.createOscillator(), g=actx.createGain();
   o.type="square"; o.frequency.value=freq;
   g.gain.setValueAtTime(gain, actx.currentTime);
@@ -1835,9 +1868,13 @@ function renderProgress(){
   histEmpty.style.display = has ? "none" : "";
   histList.style.display  = has ? "" : "none";
 }
+function stashPending(){
+  // if a freshly drawn rule is still on screen, tuck it into the panel before doing anything else
+  if(pendingIdx !== null){ const i = pendingIdx; pendingIdx = null; addActive(i); }
+}
 function reviewByIdx(idx){
   clearTimeout(dismissTimer);
-  pendingIdx = null;          // reread doesn't re-add to the panel
+  stashPending();             // reread must not discard the pending draw
   fillResult(idx, true);
 }
 histList.addEventListener("click", e=>{
@@ -1854,10 +1891,13 @@ function setMenu(open){
   menuBackdrop.classList.toggle("show", open);
   optionsToggle.setAttribute("aria-expanded", open);
 }
+// the whole wheel is a spin target (players tap the rim instinctively); hub button click bubbles here too
+document.querySelector(".wheel-wrap").addEventListener("click", spin);
+
 optionsToggle.addEventListener("click", ()=>setMenu(!sideLeft.classList.contains("open")));
 menuBackdrop.addEventListener("click", ()=>setMenu(false));
 // crossing to desktop with the menu open would leave the dark overlay stuck
-window.addEventListener("resize", ()=>{ if(innerWidth>820 && sideLeft.classList.contains("open")) setMenu(false); });
+window.addEventListener("resize", ()=>{ if(innerWidth>820 && innerHeight>500 && sideLeft.classList.contains("open")) setMenu(false); });
 
 // ---- language dropdown ----
 const langSelect = document.getElementById("langSelect");
@@ -1868,6 +1908,7 @@ function applyLang(){
   document.getElementById("title").textContent = u.title;
   document.getElementById("sub").textContent = u.sub;
   document.getElementById("btn").textContent = u.spin;
+  document.getElementById("hubSpin").setAttribute("aria-label", u.spin);
   optionsToggle.textContent = u.options;
   document.getElementById("side-title").textContent = u.options;
   document.getElementById("t-norepeat").textContent = u.norepeat;
@@ -1897,10 +1938,14 @@ function applyLang(){
   document.querySelector(".legend .lg-caos").textContent  = u.tag.caos;
   document.getElementById("help-body").innerHTML = u.helpBody;
   document.getElementById("help-disclaimer").textContent = u.disclaimer;
+  document.getElementById("helpGo").textContent = u.letsSpin;
   document.getElementById("supportBtn").textContent = u.support;
   helpEl.setAttribute("aria-label", u.helpAria);
   hubEl.setAttribute("aria-label", u.hubBtn.replace(/^\S+\s/, ""));
   customEl.setAttribute("aria-label", u.myRules.replace(/^\S+\s/, ""));
+  sideLeft.setAttribute("aria-label", u.options.replace(/^\S+\s/, ""));
+  document.getElementById("active-panel").setAttribute("aria-label", u.inEffect.replace(/^\S+\s/, ""));
+  ["helpClose","customClose","hubClose"].forEach(id=>document.getElementById(id).setAttribute("aria-label", u.closeLbl));
   langSelect.value = lang;
   updateRemaining();
   renderActive();
@@ -1932,6 +1977,7 @@ function closeHelp(){
 }
 document.getElementById("helpMenuItem").addEventListener("click", openHelp);
 document.getElementById("helpClose").addEventListener("click", closeHelp);
+document.getElementById("helpGo").addEventListener("click", closeHelp);
 helpBackdrop.addEventListener("click", closeHelp);
 
 // ---- custom rules modal (saved per browser via localStorage, no login) ----
@@ -1951,7 +1997,14 @@ function renderCustom(){
 }
 // the House Rules filter only exists once the table has created rules
 function updateHouseVisibility(){
-  document.getElementById("houseLabel").hidden = CUSTOM.length === 0;
+  const label = document.getElementById("houseLabel");
+  const wasHidden = label.hidden;
+  label.hidden = CUSTOM.length === 0;
+  // filter reappearing (0 → 1 rules): force it on, or a stale unchecked state silently swallows imports
+  if(wasHidden && !label.hidden && !fHouse.checked){
+    fHouse.checked = true;
+    save(); requestWheelRebuild(); updateRemaining();   // wheel was built before the re-enable
+  }
 }
 function openCustom(){
   setMenu(false); closeHelp();
@@ -1984,6 +2037,7 @@ document.getElementById("cr-add").addEventListener("click", ()=>{
 });
 document.getElementById("custom-list").addEventListener("click", e=>{
   const b = e.target.closest(".cr-x"); if(!b) return;
+  if(spinning){ toast(UI[lang].waitSpin); return; }   // deleting mid-spin would orphan the in-flight winner index
   const k = +b.dataset.k, idx = RULES.length + k;
   CUSTOM.splice(k,1);
   // fix references: drop the removed rule, shift indices above it down by 1
@@ -2113,7 +2167,11 @@ document.getElementById("hub-list").addEventListener("click", e=>{
   if(item) item.classList.toggle("open");
 });
 
-document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ closeHelp(); closeCustom(); closeHub(); setMenu(false); } });
+document.addEventListener("keydown", e=>{
+  if(e.key!=="Escape") return;
+  closeHelp(); closeCustom(); closeHub(); setMenu(false);
+  if(resultEl.classList.contains("show")) dismissResult();   // keyboard path to dismiss the parchment
+});
 // keep Tab inside whichever modal is open (focus trap)
 document.addEventListener("keydown", e=>{
   if(e.key!=="Tab") return;
@@ -2157,13 +2215,44 @@ document.getElementById("clearActive").addEventListener("click", ()=>{
 });
 document.getElementById("newGame").addEventListener("click", ()=>{
   if(!confirm(UI[lang].confirmNew)) return;
-  drawn.clear(); drawnOrder = []; active = []; uidSeq = 1;
+  drawn.clear(); drawnOrder = []; active = []; uidSeq = 1; pendingIdx = null;
   save(); renderActive(); renderProgress(); updateRemaining(); hideResult(); clearWinner(); setMenu(false);
 });
 
 // ---- popup show / dismiss (dismiss = tuck into panel) ----
+// countdown with a draining bar; hovering the parchment pauses it (read aloud in peace)
+let dismissRemaining = 0, dismissTick = 0;
+function startDismiss(ms){
+  clearTimeout(dismissTimer);
+  dismissRemaining = ms; dismissTick = Date.now();
+  dismissTimer = setTimeout(dismissResult, ms);
+  const b = document.getElementById("dismiss-bar");
+  b.style.display = "block";
+  b.style.transition = "none"; b.style.width = "100%";
+  void b.offsetWidth;
+  b.style.transition = `width ${ms}ms linear`; b.style.width = "0%";
+}
+function pauseDismiss(){
+  if(pendingIdx === null || !dismissTimer) return;
+  clearTimeout(dismissTimer); dismissTimer = null;
+  dismissRemaining -= (Date.now() - dismissTick);
+  const b = document.getElementById("dismiss-bar");
+  const w = getComputedStyle(b).width;
+  b.style.transition = "none"; b.style.width = w;
+}
+function resumeDismiss(){
+  if(pendingIdx === null || dismissTimer || dismissRemaining <= 0) return;
+  dismissTick = Date.now();
+  dismissTimer = setTimeout(dismissResult, dismissRemaining);
+  const b = document.getElementById("dismiss-bar");
+  void b.offsetWidth;
+  b.style.transition = `width ${dismissRemaining}ms linear`; b.style.width = "0%";
+}
 function hideResult(){
   clearTimeout(dismissTimer);
+  dismissTimer = null;
+  const b = document.getElementById("dismiss-bar");
+  b.style.transition = "none"; b.style.display = "none";
   resultEl.classList.remove("show","caos-hit");
   resultEl.style.display = "none";
   backdrop.classList.remove("show");
@@ -2184,6 +2273,9 @@ function fillResult(idx, review){
   seal.textContent = `${EMOJI[r.t]} ${u.tag[r.t]}`;
   seal.className = "seal "+r.t;
   resultEl.querySelector(".tap-hint").textContent = review ? u.hintClose : u.hintSave;
+  // instant rules resolve on the spot; lasting ones stay in the panel (custom = lasting)
+  document.getElementById("inst-badge").textContent =
+    (idx < RULES.length && INSTANT.has(idx)) ? u.instNow : u.instStay;
   resultEl.classList.remove("show","caos-hit");
   resultEl.style.display = "block";
   void resultEl.offsetWidth;             // reinicia a animação
@@ -2197,11 +2289,13 @@ function showReview(uid){
   const a = active.find(x=>x.uid===uid);
   if(!a) return;
   clearTimeout(dismissTimer);
-  pendingIdx = null;                     // releitura não re-adiciona ao painel
+  stashPending();                        // releitura não descarta o sorteio pendente
   fillResult(a.idx, true);               // sem auto-fechar: leia com calma
 }
 backdrop.addEventListener("click", dismissResult);
 resultEl.addEventListener("click", dismissResult);
+resultEl.addEventListener("mouseenter", pauseDismiss);
+resultEl.addEventListener("mouseleave", resumeDismiss);
 
 // ---- toast (replaces alert) ----
 const toastEl = document.getElementById("toast");
@@ -2233,22 +2327,25 @@ function spin(){
   const spinMs = REDUCED_MOTION ? 1300 : 5200;
   tickSchedule(REDUCED_MOTION ? 1100 : 4800);
   setTimeout(()=>{
-    fillResult(idx, false);
-    tick(600,.12); setTimeout(()=>tick(900,.1),120);
-    drawn.add(idx);
-    if(!drawnOrder.includes(idx)) drawnOrder.push(idx);
-    pendingIdx = idx; save();
-    updateRemaining(); renderProgress();
-    spinning = false; btn.disabled = false;
-    if(rebuildQueued){                       // filters/rules changed mid-spin
-      rebuildQueued = false;
-      buildWheel();
-      const p2 = segList.indexOf(idx);
-      if(p2 >= 0) highlightWinner(p2);
-    } else {
-      highlightWinner(pos);
+    try{
+      fillResult(idx, false);
+      tick(600,.12); setTimeout(()=>tick(900,.1),120);
+      drawn.add(idx);
+      if(!drawnOrder.includes(idx)) drawnOrder.push(idx);
+      pendingIdx = idx; save();
+      updateRemaining(); renderProgress();
+      if(rebuildQueued){                       // filters/rules changed mid-spin
+        rebuildQueued = false;
+        buildWheel();
+        const p2 = segList.indexOf(idx);
+        if(p2 >= 0) highlightWinner(p2);
+      } else {
+        highlightWinner(pos);
+      }
+      startDismiss(10000);
+    } finally {
+      spinning = false; btn.disabled = false;  // never leave the wheel bricked
     }
-    dismissTimer = setTimeout(dismissResult, 10000);
   }, spinMs);
 }
 
