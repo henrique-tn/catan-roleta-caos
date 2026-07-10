@@ -2215,7 +2215,7 @@ function spin(){
     pendingIdx = idx; save();
     updateRemaining(); renderProgress();
     spinning = false; btn.disabled = false;
-    dismissTimer = setTimeout(dismissResult, 6000);
+    dismissTimer = setTimeout(dismissResult, 10000);
   }, spinMs);
 }
 
