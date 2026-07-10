@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Roleta do Caos · Catan</title>
+<meta name="description" content="Spin the wheel, obey the rule. 100 chaos house rules for Catan in 7 languages. Create your own rules and share them. Free, no login, works on any phone.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Chaos Wheel for Catan · 100 house rules to shake up your game">
+<meta property="og:description" content="Spin the wheel, obey the rule. 100 chaos house rules in 7 languages. Create your own and share them with your table. Free, no login.">
+<meta property="og:url" content="https://henrique-tn.github.io/catan-roleta-caos/">
+<meta property="og:image" content="https://henrique-tn.github.io/catan-roleta-caos/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎲%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
@@ -93,6 +103,12 @@
   .controls input{accent-color:var(--gold); width:19px; height:19px; flex:0 0 auto;}
   .side-actions{display:flex; flex-direction:column; gap:10px; margin-top:auto;}
   .side-actions .ghost-btn{text-align:center;}
+  .support-btn{color:var(--gold); border-color:#e2b75544; text-decoration:none; display:block;}
+  .support-btn:hover{border-color:var(--gold); background:#e2b75514;}
+  #help-disclaimer{
+    margin-top:16px; padding-top:10px; border-top:1px dashed #b89b6a;
+    font-size:.8rem; color:#8a6b45; font-style:italic; text-align:center;
+  }
   #remaining{color:#c9b18c; font-size:1rem; font-style:italic; font-family:'Alegreya',Georgia,serif;}
   /* language dropdown */
   #langSelect{
@@ -432,6 +448,7 @@
     <button id="customBtn" class="ghost-btn" type="button">✍ Minhas regras</button>
     <button id="helpMenuItem" class="ghost-btn" type="button">📜 Como jogar</button>
     <button id="newGame" class="ghost-btn" type="button">↺ Nova partida</button>
+    <a id="supportBtn" class="ghost-btn support-btn" target="_blank" rel="noopener" hidden>☕ Apoie o projeto</a>
   </div>
 </aside>
 
@@ -480,6 +497,7 @@
     <p><b>Regra de ouro:</b> a regra sorteada vale como escrita; dúvidas são decididas por votação da mesa (e a mesa sempre vota contra quem está ganhando).</p>
     <p><b>Em vigor:</b> cada regra sorteada fica guardada no painel lateral (rodapé no celular). Toque para reler; toque no ✕ quando ela se resolver.</p>
   </div>
+  <p id="help-disclaimer">Projeto de fã, gratuito. Não afiliado à Catan GmbH nem à Catan Studio.</p>
 </div>
 
 <div id="custom-backdrop"></div>
@@ -1479,6 +1497,18 @@ Object.assign(UI["es"],    {shareTitle:"⇄ Llevar a otro dispositivo", copyCode
 Object.assign(UI["de"],    {shareTitle:"⇄ Auf ein anderes Gerät mitnehmen", copyCode:"Code kopieren", copyLink:"Link kopieren", importPh:"Code oder Link hier einfügen", importBtn:"Importieren", copied:"Kopiert!", importBad:"Ungültiger Code.", importedN:n=>`${n} Regel(n) importiert!`, importNone:"Nichts Neues zu importieren.", importConfirm:n=>`${n} Regel(n) aus diesem Link importieren?`});
 Object.assign(UI["fr"],    {shareTitle:"⇄ Emporter sur un autre appareil", copyCode:"Copier le code", copyLink:"Copier le lien", importPh:"Colle ici un code ou un lien", importBtn:"Importer", copied:"Copié !", importBad:"Code invalide.", importedN:n=>`${n} règle(s) importée(s) !`, importNone:"Rien de nouveau à importer.", importConfirm:n=>`Importer ${n} règle(s) depuis ce lien ?`});
 Object.assign(UI["it"],    {shareTitle:"⇄ Portare su un altro dispositivo", copyCode:"Copia codice", copyLink:"Copia link", importPh:"Incolla qui un codice o un link", importBtn:"Importa", copied:"Copiato!", importBad:"Codice non valido.", importedN:n=>`${n} regola/e importata/e!`, importNone:"Niente di nuovo da importare.", importConfirm:n=>`Importare ${n} regola/e da questo link?`});
+
+// support button + fan disclaimer
+Object.assign(UI["pt-BR"], {support:"☕ Apoie o projeto", disclaimer:"Projeto de fã, gratuito. Não afiliado à Catan GmbH nem à Catan Studio."});
+Object.assign(UI["pt-PT"], {support:"☕ Apoia o projeto", disclaimer:"Projeto de fã, gratuito. Não afiliado à Catan GmbH nem à Catan Studio."});
+Object.assign(UI["en"],    {support:"☕ Support the project", disclaimer:"Free fan project. Not affiliated with Catan GmbH or Catan Studio."});
+Object.assign(UI["es"],    {support:"☕ Apoya el proyecto", disclaimer:"Proyecto de fans, gratuito. No afiliado a Catan GmbH ni a Catan Studio."});
+Object.assign(UI["de"],    {support:"☕ Unterstütze das Projekt", disclaimer:"Kostenloses Fanprojekt. Nicht mit Catan GmbH oder Catan Studio verbunden."});
+Object.assign(UI["fr"],    {support:"☕ Soutiens le projet", disclaimer:"Projet de fans, gratuit. Non affilié à Catan GmbH ni à Catan Studio."});
+Object.assign(UI["it"],    {support:"☕ Sostieni il progetto", disclaimer:"Progetto amatoriale gratuito. Non affiliato a Catan GmbH né a Catan Studio."});
+
+// donation page: set this to your PayPal.me / Ko-fi URL and the button appears
+const SUPPORT_URL = "";
 const wheel = document.getElementById("wheel");
 let drawn = new Set(), drawnOrder = [], rotation = 0, spinning = false;
 
@@ -1739,6 +1769,8 @@ function applyLang(){
   document.querySelector(".legend .lg-media").textContent = u.tag.media;
   document.querySelector(".legend .lg-caos").textContent  = u.tag.caos;
   document.getElementById("help-body").innerHTML = u.helpBody;
+  document.getElementById("help-disclaimer").textContent = u.disclaimer;
+  document.getElementById("supportBtn").textContent = u.support;
   helpEl.setAttribute("aria-label", u.helpAria);
   langSelect.value = lang;
   updateRemaining();
@@ -1993,7 +2025,25 @@ function spin(){
 }
 
 // ---- init ----
+function detectLang(){
+  const cands = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"])
+    .map(s=>String(s).toLowerCase());
+  for(const c of cands){
+    if(c.startsWith("pt")) return c==="pt-pt" ? "pt-PT" : "pt-BR";
+    if(c.startsWith("es")) return "es";
+    if(c.startsWith("de")) return "de";
+    if(c.startsWith("fr")) return "fr";
+    if(c.startsWith("it")) return "it";
+    if(c.startsWith("en")) return "en";
+  }
+  return "en";   // international default for everyone else
+}
 load();
+try{ if(!localStorage.getItem(LS)) lang = detectLang(); }catch(e){}   // first visit: follow the browser language
+if(SUPPORT_URL){
+  const sb = document.getElementById("supportBtn");
+  sb.href = SUPPORT_URL; sb.hidden = false;
+}
 buildWheel();  // wheel reflects the saved category filters
 applyLang();   // sets all UI text for the saved language + renders active list + remaining
 // rules arriving via share link (#r=...): confirm, merge, clean the URL
