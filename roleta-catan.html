@@ -412,6 +412,12 @@
     #history{flex:1; min-height:0;}
     #hist-list{flex:1 1 0; min-height:0;}
   }
+  /* short desktop windows: centered stage would clip both ends with no scroll */
+  @media (min-width:821px) and (max-height:640px){
+    .stage{justify-content:flex-start; overflow-y:auto; height:100vh; scrollbar-width:thin; scrollbar-color:#ffffff26 transparent;}
+    .stage::-webkit-scrollbar{width:6px;}
+    .stage::-webkit-scrollbar-thumb{background:#ffffff22; border-radius:3px;}
+  }
 
   /* mobile / short screens: panel becomes a bottom strip, chrome trims down */
   @media (max-width:820px){
@@ -1698,6 +1704,12 @@ function clearWinner(){
   const w=document.getElementById("win-seg");
   if(w){ w.style.display="none"; w.classList.remove("pulse"); }
 }
+// rebuilding mid-spin would desync the landing position; queue it for after the reveal
+let rebuildQueued = false;
+function requestWheelRebuild(){
+  if(spinning){ rebuildQueued = true; return; }
+  buildWheel();
+}
 
 // ---- pool / remaining ----
 function pool(){
@@ -1713,7 +1725,7 @@ function updateRemaining(){
   remaining.textContent = norepeat.checked ? UI[lang].remaining(pool().length) : "";
 }
 ["norepeat","fMedia","fCaos","sound"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
-  if(id==="fMedia"||id==="fCaos") buildWheel();   // category toggled → rebuild the wheel
+  if(id==="fMedia"||id==="fCaos") requestWheelRebuild();   // category toggled → rebuild the wheel
   updateRemaining(); save();
 }));
 
@@ -1802,12 +1814,13 @@ const histEmpty = document.getElementById("hist-empty");
 function renderProgress(){
   const u = UI[lang], TOTAL = Math.max(1, totalRules() - disabledSet.size);
   const c = {media:0, caos:0};
-  drawn.forEach(i=>{ const r=getRule(i); if(r) c[r.t]++; });
+  let livedCount = 0;
+  drawn.forEach(i=>{ const r=getRule(i); if(r && !disabledSet.has(i)){ c[r.t]++; livedCount++; } });
   document.getElementById("stat-bar").innerHTML =
     ["media","caos"].map(t=>`<i style="width:${(c[t]/TOTAL*100).toFixed(2)}%; background:${COLORS[t][0]}"></i>`).join("");
   document.getElementById("stat-cats").innerHTML =
     `<span>${EMOJI.media} ${c.media}</span><span>${EMOJI.caos} ${c.caos}</span>`;
-  document.getElementById("stat-lived").textContent = u.lived(drawn.size, TOTAL);
+  document.getElementById("stat-lived").textContent = u.lived(livedCount, TOTAL);
   document.getElementById("hist-title").textContent = u.histTitle;
   document.getElementById("hist-count").textContent = drawnOrder.length ? drawnOrder.length : "";
   histEmpty.textContent = u.histEmpty;
@@ -1882,10 +1895,14 @@ function applyLang(){
   document.getElementById("help-disclaimer").textContent = u.disclaimer;
   document.getElementById("supportBtn").textContent = u.support;
   helpEl.setAttribute("aria-label", u.helpAria);
+  hubEl.setAttribute("aria-label", u.hubBtn.replace(/^\S+\s/, ""));
+  customEl.setAttribute("aria-label", u.myRules.replace(/^\S+\s/, ""));
   langSelect.value = lang;
   updateRemaining();
   renderActive();
   renderProgress();
+  if(hubEl.classList.contains("show")) renderHub();          // keep open modals in the new language
+  if(customEl.classList.contains("show")) renderCustom();
 }
 function setLang(l){ if(!UI[l]) return; lang = l; save(); applyLang(); }
 langSelect.addEventListener("change", ()=> setLang(langSelect.value));
@@ -1954,7 +1971,7 @@ document.getElementById("cr-add").addEventListener("click", ()=>{
   CUSTOM.push({n:name, d:desc, t:cat});
   document.getElementById("cr-name").value = "";
   document.getElementById("cr-desc").value = "";
-  save(); buildWheel(); updateRemaining(); renderProgress(); renderCustom();
+  save(); requestWheelRebuild(); updateRemaining(); renderProgress(); renderCustom();
   toast(UI[lang].crAdded);
 });
 document.getElementById("custom-list").addEventListener("click", e=>{
@@ -1968,7 +1985,7 @@ document.getElementById("custom-list").addEventListener("click", e=>{
   disabledSet = new Set([...disabledSet].filter(i=>i!==idx).map(adj));
   active = active.filter(a=>a.idx!==idx); active.forEach(a=>{ a.idx = adj(a.idx); });
   if(pendingIdx===idx) pendingIdx = null; else if(pendingIdx!==null) pendingIdx = adj(pendingIdx);
-  save(); buildWheel(); updateRemaining(); renderProgress(); renderActive(); renderCustom();
+  save(); requestWheelRebuild(); updateRemaining(); renderProgress(); renderActive(); renderCustom();
 });
 
 // ---- share / transfer custom rules between devices (no server: the code carries the rules) ----
@@ -1979,7 +1996,7 @@ function encodeShare(){
 }
 function decodeShare(str){
   try{
-    let s = String(str).trim();
+    let s = String(str).replace(/\s+/g, "");           // WhatsApp/email wrap long codes with newlines
     const m = s.match(/#r=([A-Za-z0-9_-]+)/);          // full link pasted
     if(m) s = "CATAN1-" + m[1];
     if(!s.startsWith("CATAN1-")) return null;
@@ -2011,7 +2028,7 @@ function mergeRules(arr){
   const have = new Set(CUSTOM.map(key));
   let added = 0;
   arr.forEach(r=>{ if(!have.has(key(r))){ CUSTOM.push(r); have.add(key(r)); added++; } });
-  if(added){ save(); buildWheel(); updateRemaining(); renderProgress(); renderCustom(); }
+  if(added){ save(); requestWheelRebuild(); updateRemaining(); renderProgress(); renderCustom(); }
   return added;
 }
 document.getElementById("cr-copy-code").addEventListener("click", ()=>{
@@ -2039,7 +2056,7 @@ function hubItemHTML(i){
   return `<div class="hub-item ${getRule(i).t}${off?" off":""}" data-i="${i}">
     <div class="hub-row"><b>#${i+1}</b><span>${esc(ruleName(i))}</span></div>
     <div class="hub-desc">${esc(ruleDesc(i))}</div>
-    <button class="hub-x" data-i="${i}" aria-label="on/off">${off?"↩":"✕"}</button>
+    <button class="hub-x" data-i="${i}" title="${UI[lang].removeTip}" aria-label="${UI[lang].removeTip}">${off?"↩":"✕"}</button>
   </div>`;
 }
 function renderHub(){
@@ -2075,7 +2092,7 @@ document.getElementById("hub-list").addEventListener("click", e=>{
   if(x){
     const i = +x.dataset.i;
     if(disabledSet.has(i)) disabledSet.delete(i); else disabledSet.add(i);
-    save(); buildWheel(); updateRemaining(); renderProgress();
+    save(); requestWheelRebuild(); updateRemaining(); renderProgress();
     // update in place (keeps scroll position)
     const item = x.closest(".hub-item");
     item.classList.toggle("off", disabledSet.has(i));
@@ -2208,13 +2225,20 @@ function spin(){
   tickSchedule(REDUCED_MOTION ? 1100 : 4800);
   setTimeout(()=>{
     fillResult(idx, false);
-    highlightWinner(pos);
     tick(600,.12); setTimeout(()=>tick(900,.1),120);
     drawn.add(idx);
     if(!drawnOrder.includes(idx)) drawnOrder.push(idx);
     pendingIdx = idx; save();
     updateRemaining(); renderProgress();
     spinning = false; btn.disabled = false;
+    if(rebuildQueued){                       // filters/rules changed mid-spin
+      rebuildQueued = false;
+      buildWheel();
+      const p2 = segList.indexOf(idx);
+      if(p2 >= 0) highlightWinner(p2);
+    } else {
+      highlightWinner(pos);
+    }
     dismissTimer = setTimeout(dismissResult, 10000);
   }, spinMs);
 }
