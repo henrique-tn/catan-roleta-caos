@@ -1406,6 +1406,21 @@ const UI = {
 };
 // per-language rule texts; pt-BR is the canonical RULES array
 const RULES_L10N = {"pt-PT":RULES_PTPT, en:RULES_EN, es:RULES_ES, de:RULES_DE, fr:RULES_FR, it:RULES_IT};
+// rules that resolve on the spot (no lasting duration): leave "Em vigor" on the next spin.
+// 0-based indices into RULES; everything else lasts turns/rounds/until a 7 and stays until removed by hand.
+const INSTANT = new Set([
+  // classic: Grande Rodízio, Doação Involuntária, Espionagem, Troca Casada, Imposto Urbano,
+  // Auditoria Real, Dízimo, Mercador Errante, Bolsa de Estudos, Imposto Progressivo, Auxílio Colonial,
+  // Número da Sorte, Cartógrafo, Prêmio de Infraestrutura, Liquidação, Reciclagem, Peça Rara
+  2,5,12,13,16,20,21,22,30,33,34,39,41,42,44,47,48,
+  // chaos: Robin Hood, Comunismo, Reforma Agrária, Monopólio do Povo, Leilão, Dado do Destino,
+  // Golpe de Estado, Ladrão de Aluguel, Pirataria, Praga dos Ratos, Terremoto, Queimada, Duelo,
+  // Tribunal, Rei por um Dia, Nova Capital, Corrida do Ouro, Reforma Tributária, Êxodo Forçado,
+  // Tempestade, Festival da Sorte, Rebelião Camponesa, Sorte Grande, Excesso de Estoque,
+  // Terra de Ninguém, Inveja dos Deuses
+  50,51,52,54,55,56,57,58,60,61,62,67,68,69,71,74,76,78,79,86,87,88,91,92,94,99
+]);
+
 // user-created rules live after the 100 built-ins (#101+); same text in every language
 let CUSTOM = [];   // {n, d, t}
 const getRule = i => (i < RULES.length ? RULES[i] : CUSTOM[i - RULES.length]);
@@ -1850,6 +1865,10 @@ function spin(){
   if(!p.length){ toast(UI[lang].poolEmpty); return; }
   spinning = true; btn.disabled = true;
   if(pendingIdx !== null) dismissResult(); else hideResult();   // stash any open popup first
+  // instant rules (no duration) are consumed once the wheel spins again; custom rules stay
+  const beforeCull = active.length;
+  active = active.filter(a => a.idx >= RULES.length || !INSTANT.has(a.idx));
+  if(active.length !== beforeCull){ save(); renderActive(); }
   clearWinner();
   const idx = p[Math.floor(Math.random()*p.length)];
   const pos = segList.indexOf(idx);                 // where that rule sits on the current wheel
