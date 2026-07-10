@@ -79,11 +79,24 @@
   button.spin:active{transform:translateY(3px); box-shadow:0 1px 0 #8a6a24, 0 4px 8px rgba(0,0,0,.45);}
   button.spin:disabled{opacity:.55; cursor:default;}
 
-  .controls{margin-top:16px; display:flex; gap:18px; flex-wrap:wrap; justify-content:center; color:var(--muted); font-size:1rem;}
-  .controls label{cursor:pointer; display:flex; align-items:center; gap:6px;}
-  .controls input{accent-color:var(--gold);}
-  #remaining{margin-top:8px; color:var(--muted); font-size:.9rem; font-style:italic;}
-  #optionsToggle{display:none; margin-top:12px;}
+  /* left config rail (desktop) / options popup (mobile) */
+  #side-left{display:none;}
+  .side-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    font-family:'Cinzel',Georgia,serif; color:var(--gold); letter-spacing:1px; font-size:1rem;
+    padding-bottom:8px; border-bottom:1px solid #ffffff14;
+  }
+  .controls{display:flex; flex-direction:column; gap:13px; color:var(--muted); font-size:1rem;}
+  .controls label{cursor:pointer; display:flex; align-items:center; gap:9px;}
+  .controls input{accent-color:var(--gold); width:16px; height:16px;}
+  .side-actions{display:flex; flex-direction:column; gap:10px; margin-top:auto;}
+  .side-actions .ghost-btn{text-align:center;}
+  #remaining{color:var(--muted); font-size:.86rem; font-style:italic;}
+  /* language toggle pill */
+  #langToggle{display:flex; padding:0; overflow:hidden; border-radius:8px; font-size:.72rem;}
+  #langToggle span{padding:5px 9px; color:var(--muted); font-family:'Cinzel',Georgia,serif; letter-spacing:1px;}
+  #langToggle span.on{background:var(--gold); color:#3a2b12; font-weight:700;}
+  #optionsToggle{display:none;}
   #menu-backdrop{display:none;}
 
   /* dark backdrop behind the popup */
@@ -141,13 +154,7 @@
   }
   .ghost-btn:hover{color:#fff; border-color:var(--gold);}
 
-  /* help: "?" corner button (desktop) + parchment modal */
-  .help-fab{
-    position:fixed; top:16px; left:16px; z-index:35;
-    width:40px; height:40px; border-radius:50%; padding:0;
-    font-size:1.2rem; display:flex; align-items:center; justify-content:center;
-  }
-  #helpMenuItem{display:none;}   /* desktop uses the corner button instead */
+  /* help parchment modal */
   #help-backdrop{
     position:fixed; inset:0; z-index:54; background:rgba(15,8,3,.6);
     opacity:0; pointer-events:none; transition:opacity .3s ease;
@@ -225,40 +232,51 @@
   }
   #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 
-  .legend{margin-top:20px; display:flex; gap:18px; flex-wrap:wrap; justify-content:center; color:var(--muted); font-size:.95rem;}
-  .legend .dot{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; transform:rotate(45deg);}
+  .legend{display:flex; flex-direction:column; gap:8px; color:var(--muted); font-size:.9rem;}
+  .legend .dot{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:8px; transform:rotate(45deg); vertical-align:middle;}
 
-  details{margin-top:18px; width:min(580px,94vw); color:var(--muted); background:rgba(0,0,0,.22); border:1px solid #ffffff14; border-radius:10px; padding:14px 20px;}
-  details summary{cursor:pointer; color:var(--gold); font-family:'Cinzel',Georgia,serif; font-size:1rem; letter-spacing:1px;}
-  details p{margin:10px 0; line-height:1.55; font-size:1.02rem;}
-  details b{color:#e8d5ae;}
+  /* winning-segment highlight (drawn inside the SVG so it rotates with the wheel) */
+  #win-seg{display:none; fill:none; stroke:#fff3c4; stroke-width:4; stroke-linejoin:round; pointer-events:none;
+    filter:drop-shadow(0 0 5px #ffe27a);}
+  #win-seg.pulse{animation:winpulse 1.2s ease-in-out infinite;}
+  @keyframes winpulse{0%,100%{opacity:.5;} 50%{opacity:1;}}
 
-  /* desktop: reserve room so the panel never covers the wheel */
-  @media (min-width:821px){ body{padding-right:300px;} }
+  /* desktop: three columns — config rail | wheel stage | active panel */
+  @media (min-width:821px){
+    body{align-items:stretch; padding:0;}
+    #side-left{
+      display:flex; flex-direction:column; gap:16px;
+      position:fixed; left:0; top:0; width:300px; height:100vh; z-index:30;
+      padding:18px 16px; overflow-y:auto;
+      background:linear-gradient(180deg, rgba(0,0,0,.36), rgba(0,0,0,.20));
+      border-right:1px solid #ffffff14; box-shadow:6px 0 18px rgba(0,0,0,.35);
+    }
+    .stage{
+      min-height:100vh; margin:0 300px; padding:16px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    }
+    .wheel-wrap{width:min(72vh, calc(100vw - 700px), 660px);}
+  }
 
   /* mobile / short screens: panel becomes a bottom strip, chrome trims down */
   @media (max-width:820px){
     body{padding-bottom:104px;}
     body.panel-empty{padding-bottom:52px;}
-    .legend, details{display:none !important;}
     .sub{margin-bottom:8px; font-size:.95rem;}
+    .stage{display:flex; flex-direction:column; align-items:center; width:100%;}
     /* wheel yields space so nothing slides under the strip */
     .wheel-wrap{width:min(440px, 92vw, max(240px, calc(100vh - 350px)));}
     button.spin{margin-top:12px;}
-    #remaining{margin-top:6px;}
 
-    /* options hidden behind a menu */
-    #optionsToggle{display:inline-block;}
-    .controls{display:none;}
-    .controls.open{
-      display:flex; position:fixed; left:50%; top:50%; transform:translate(-50%,-50%);
-      z-index:46; flex-direction:column; align-items:flex-start; gap:16px; margin-top:0;
-      background:#2a1a0c; border:1px solid var(--gold); border-radius:12px; padding:22px 26px;
+    /* options behind a menu: the config rail becomes a centered popup */
+    #optionsToggle{display:inline-block; margin-top:12px;}
+    #side-left.open{
+      display:flex; flex-direction:column; gap:16px; position:fixed; left:50%; top:50%;
+      transform:translate(-50%,-50%); z-index:46; width:min(340px,92vw); max-height:86vh; overflow:auto;
+      background:#2a1a0c; border:1px solid var(--gold); border-radius:12px; padding:20px 22px;
       box-shadow:0 12px 32px rgba(0,0,0,.6); font-size:1.05rem;
     }
     #menu-backdrop.show{display:block; position:fixed; inset:0; z-index:45; background:rgba(15,8,3,.55);}
-    .help-fab{display:none;}                 /* corner button off; lives in the menu now */
-    #helpMenuItem{display:block; width:100%;}
 
     #active-panel{
       top:auto; left:0; right:0; bottom:0; width:100%; height:96px; padding:6px 10px;
@@ -281,31 +299,46 @@
 </style>
 </head>
 <body>
-<button id="helpBtn" class="ghost-btn help-fab" type="button" aria-label="Como usar na partida" title="Como usar na partida">?</button>
-<h1>⚔️ Roleta do Caos ⚔️</h1>
-<div class="rule-line"></div>
-<div class="sub">Colonos de Catan · Gire e obedeça — reclamar custa 1 madeira</div>
-
-<div class="wheel-wrap">
-  <div class="pointer"></div>
-  <svg class="wheel" id="wheel" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"></svg>
-  <div class="hub" onclick="spin()"><div class="hub-inner">🎲</div></div>
-</div>
-
-<button class="spin" id="btn" onclick="spin()">GIRAR</button>
-
-<button id="optionsToggle" class="ghost-btn" type="button" aria-haspopup="true" aria-expanded="false">⚙ Opções</button>
 <div id="menu-backdrop"></div>
-<div class="controls">
-  <label><input type="checkbox" id="norepeat" checked> Sem repetir</label>
-  <label><input type="checkbox" id="fLeve" checked> <span style="color:var(--leve1)">🐑 Leves</span></label>
-  <label><input type="checkbox" id="fMedia" checked> <span style="color:var(--media1)">🌾 Médias</span></label>
-  <label><input type="checkbox" id="fCaos" checked> <span style="color:var(--caos1)">🔥 Caos</span></label>
-  <label><input type="checkbox" id="sound" checked> 🔊 Som</label>
-  <button id="helpMenuItem" class="ghost-btn" type="button">📜 Como jogar</button>
-  <button id="newGame" class="ghost-btn" type="button">↺ Nova partida</button>
-</div>
-<div id="remaining"></div>
+
+<aside id="side-left" aria-label="Opções">
+  <div class="side-head">
+    <span id="side-title">⚙ Opções</span>
+    <button id="langToggle" type="button" aria-label="Idioma / Language"><span data-l="pt">PT</span><span data-l="en">EN</span></button>
+  </div>
+  <div class="controls">
+    <label><input type="checkbox" id="norepeat" checked> <span id="t-norepeat">Sem repetir</span></label>
+    <label><input type="checkbox" id="fLeve" checked> <span id="t-leve" style="color:var(--leve1)">🐑 Leves</span></label>
+    <label><input type="checkbox" id="fMedia" checked> <span id="t-media" style="color:var(--media1)">🌾 Médias</span></label>
+    <label><input type="checkbox" id="fCaos" checked> <span id="t-caos" style="color:var(--caos1)">🔥 Caos</span></label>
+    <label><input type="checkbox" id="sound" checked> <span id="t-som">🔊 Som</span></label>
+  </div>
+  <div id="remaining"></div>
+  <div class="legend">
+    <span><span class="dot" style="background:var(--leve1)"></span><span class="lg-leve">Leve — zoeira</span></span>
+    <span><span class="dot" style="background:var(--media1)"></span><span class="lg-media">Média — mexe no jogo</span></span>
+    <span><span class="dot" style="background:var(--caos1)"></span><span class="lg-caos">Caos — vira o jogo</span></span>
+  </div>
+  <div class="side-actions">
+    <button id="helpMenuItem" class="ghost-btn" type="button">📜 Como jogar</button>
+    <button id="newGame" class="ghost-btn" type="button">↺ Nova partida</button>
+  </div>
+</aside>
+
+<main class="stage">
+  <h1 id="title">⚔️ Roleta do Caos ⚔️</h1>
+  <div class="rule-line"></div>
+  <div class="sub" id="sub">Colonos de Catan · Gire e obedeça — reclamar custa 1 madeira</div>
+
+  <div class="wheel-wrap">
+    <div class="pointer"></div>
+    <svg class="wheel" id="wheel" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="hub" onclick="spin()"><div class="hub-inner">🎲</div></div>
+  </div>
+
+  <button class="spin" id="btn" onclick="spin()">GIRAR</button>
+  <button id="optionsToggle" class="ghost-btn" type="button" aria-haspopup="true" aria-expanded="false">⚙ Opções</button>
+</main>
 
 <div id="backdrop"></div>
 <div id="result" role="status" aria-live="polite">
@@ -318,7 +351,7 @@
 
 <aside id="active-panel" aria-label="Regras em vigor">
   <div class="panel-head">
-    <span>⚜ Em vigor</span>
+    <span id="panel-title">⚜ Em vigor</span>
     <button id="clearActive" class="ghost-btn" type="button">limpar</button>
   </div>
   <ul id="active-list"></ul>
@@ -327,20 +360,16 @@
 
 <div id="toast"></div>
 
-<div class="legend">
-  <span><span class="dot" style="background:var(--leve1)"></span>Leve — zoeira</span>
-  <span><span class="dot" style="background:var(--media1)"></span>Média — mexe no jogo</span>
-  <span><span class="dot" style="background:var(--caos1)"></span>Caos — vira o jogo</span>
-</div>
-
 <div id="help-backdrop"></div>
 <div id="help" role="dialog" aria-modal="true" aria-label="Como usar na partida">
   <button id="helpClose" class="help-close" type="button" aria-label="Fechar">✕</button>
-  <h3>📜 Como usar na partida</h3>
-  <p><b>Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra carta de desenvolvimento — quem causou, gira.</p>
-  <p><b>Modo Caos Programado:</b> a cada rodada completa, o jogador com menos pontos gira a roleta. Vingança dos lanternas!</p>
-  <p><b>Regra de ouro:</b> a regra sorteada vale como escrita; dúvidas são decididas por votação da mesa (e a mesa sempre vota contra quem está ganhando).</p>
-  <p><b>Em vigor:</b> cada regra sorteada fica guardada no painel lateral (rodapé no celular). Toque para reler; toque no ✕ quando ela se resolver.</p>
+  <div id="help-body">
+    <h3>📜 Como usar na partida</h3>
+    <p><b>Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra carta de desenvolvimento — quem causou, gira.</p>
+    <p><b>Modo Caos Programado:</b> a cada rodada completa, o jogador com menos pontos gira a roleta. Vingança dos lanternas!</p>
+    <p><b>Regra de ouro:</b> a regra sorteada vale como escrita; dúvidas são decididas por votação da mesa (e a mesa sempre vota contra quem está ganhando).</p>
+    <p><b>Em vigor:</b> cada regra sorteada fica guardada no painel lateral (rodapé no celular). Toque para reler; toque no ✕ quando ela se resolver.</p>
+  </div>
 </div>
 
 <script>
@@ -420,17 +449,161 @@ const RULES = [
  {n:"Êxodo Forçado", d:"A mesa vota no hexágono mais rico do tabuleiro: o ladrão vai pra lá e você rouba 1 carta de alguém dali.", t:"caos"},
 ];
 
+// English translations, same order/index as RULES
+const RULES_EN = [
+ // ---- LIGHT ----
+ {n:"Vow of Silence", d:"Until your next turn you can't speak. Negotiate only through mime. Spoke? Lose 1 card to the bank."},
+ {n:"Forced Accent", d:"The table picks an accent. You talk like that until your next turn. Broke character? -1 card."},
+ {n:"Baptism", d:"The table picks your new nickname until the game ends. Anyone who calls you by your real name pays you 1 resource."},
+ {n:"Sports Commentator", d:"The player to your left narrates your entire next turn like a football announcer. Goooal!"},
+ {n:"Dice Song", d:"This round, sing a snippet of a song before each of your rolls. Forgot? -1 card."},
+ {n:"Third Person", d:"Refer to yourself only in the third person until your next turn. Each slip: the table may boo freely."},
+ {n:"Diplomat", d:"Before any of your negotiations, sincerely compliment your opponent. No compliment, no trade."},
+ {n:"Hands on Head", d:"Until the next 7: when a 7 is rolled, the last to put a hand on their head gives you 1 resource."},
+ {n:"Musical Chairs", d:"Everyone stands and swaps seats at the table (pieces stay!). Good luck reading the board from a new angle."},
+ {n:"Champion's Speech", d:"Give a 30-second victory speech right now. If the table applauds, take 1 resource of your choice."},
+ // ---- MEDIUM ----
+ {n:"Free Market", d:"Until your next turn, EVERYONE trades with the bank at 3:1."},
+ {n:"Open Hand", d:"Play with your cards face up on the table until your next turn."},
+ {n:"Grand Rotation", d:"Now: everyone passes 1 resource card (chosen by the giver) to the player on their left."},
+ {n:"Trade Embargo", d:"Choose a player: no one may trade with them for 2 rounds."},
+ {n:"Paper Alliance", d:"You and the player to your right can't rob each other (robber or cards) for 2 rounds."},
+ {n:"Involuntary Donation", d:"Whoever holds the most cards gives 1 (their choice) to whoever holds the fewest. Tie? Both give."},
+ {n:"Flash Sale", d:"Your next build costs 1 resource less (you choose which one not to pay)."},
+ {n:"Market Commissioner", d:"Until your next turn, each trade between other players earns you 1 resource from the bank (your choice)."},
+ {n:"Seven Party", d:"On the next 7, whoever rolled moves the robber and steals from TWO different players."},
+ {n:"World Peace", d:"The robber returns to the desert NOW and no one may move it for 1 full round."},
+ {n:"Royal Toll", d:"Until your next turn, each road any player builds earns you 1 resource from the bank."},
+ {n:"Smuggler's Port", d:"Until your next turn, YOU trade with the bank at 2:1 on any resource."},
+ {n:"Espionage", d:"Look now at 1 player's hand of your choice. Just look. Suffer in silence."},
+ {n:"Forced Trade", d:"Choose a player: you MUST trade 1 card now. Each picks what to hand over."},
+ {n:"Masons' Strike", d:"No one may build roads until your next turn."},
+ {n:"Bank Holiday", d:"No one may buy a development card until your next turn."},
+ {n:"Urban Tax", d:"Each player pays the bank 1 resource per CITY they have on the board."},
+ {n:"Seer's Bet", d:"Announce a number (2-12): if the next roll hits it, each player pays you 1 resource. Missed? You pay 1 to the bank."},
+ {n:"Free Zone", d:"Choose 1 hex: the robber can't enter it for 2 rounds."},
+ {n:"Thieves' Guild", d:"The next Knight played (by anyone) steals 2 cards instead of 1."},
+ {n:"Royal Audit", d:"Everyone reveals NOW how many development cards they're holding."},
+ {n:"Tithe", d:"Everyone donates 1 card to the bank, starting with you. The last to donate gives 2."},
+ {n:"Wandering Merchant", d:"Take 1 resource from the bank of your choice; in return, give 1 of your cards to the player with the fewest points."},
+ {n:"Curfew", d:"Until your next turn, each player may make at most 1 trade on their own turn."},
+ {n:"Hasty Recruit", d:"Until your next turn, development cards may be played the same turn they're bought."},
+ {n:"Selective Harvest", d:"Choose a number (except 7): if it comes up before your next turn, harvest 2 resources of your choice."},
+ {n:"Colonial Insurance", d:"If you're robbed (robber or card) before your next turn, the bank replaces 1 card of your choice."},
+ {n:"Public Works", d:"Your next road is free, courtesy of the crown. Build it whenever you like."},
+ {n:"Stock Exchange", d:"Declare 1 resource: until your next turn, each of it counts as 2 in trades with the bank (for everyone)."},
+ {n:"Imperial Census", d:"Until your next turn, everyone must truthfully answer how many cards they hold."},
+ // ---- CHAOS ----
+ {n:"Robin Hood", d:"Move the robber now to a hex of whoever's in 1st place and steal 1 card from them."},
+ {n:"Sheep Communism", d:"All sheep on the table go to the hand of whoever has the fewest victory points."},
+ {n:"Land Reform", d:"Choose 2 players (you may include yourself): they swap 2 random cards between them."},
+ {n:"Upside Down", d:"The direction of play reverses until someone rolls a 7."},
+ {n:"People's Monopoly", d:"Declare 1 resource: everyone with more than 3 of it discards down to 3."},
+ {n:"Mad Auction", d:"The bank auctions 1 development card now. Bids in resources; highest bidder wins."},
+ {n:"Dice of Fate", d:"Roll 1 die: even = gain 2 resources of your choice; odd = discard 2 at random."},
+ {n:"Coup", d:"Swap your ENTIRE hand with the player who has fewer cards than you. No one does? Nothing happens."},
+ {n:"Robber for Hire", d:"Move the robber wherever you want now and steal 1 card — on the house."},
+ {n:"Double Harvest", d:"The next dice roll (other than 7) produces DOUBLE resources for everyone."},
+ {n:"Piracy", d:"Steal 1 random card from EACH player at the table. Arrr!"},
+ {n:"Rat Plague", d:"Everyone with 6+ cards discards half their hand (round down), like a collective 7."},
+ {n:"Earthquake", d:"Each player (in order) relocates 1 of their own roads to another valid spot in their territory."},
+ {n:"Loaded Dice", d:"Choose the result of your next roll (2 to 12, except 7). You don't even have to roll."},
+ {n:"Ghost Seven", d:"The next 7 of the game is voided: ignore it and roll again."},
+ {n:"Bank Bankruptcy", d:"No one may trade with the bank for 1 full round. Only diplomacy remains."},
+ {n:"Dark Age", d:"The next dice roll produces NOTHING for anyone. The number comes up, everyone cries."},
+ {n:"Wildfire", d:"Declare 1 resource: EVERYONE (you included) discards all cards of it."},
+ {n:"Clash of Titans", d:"Challenge someone to rock-paper-scissors (best of 3): the loser gives 2 random cards to the winner."},
+ {n:"People's Court", d:"Simultaneous vote (finger on 3): the player voted 'most dangerous' discards 2 random cards."},
+ {n:"Body Swap", d:"Next turn, you play FOR the player to your left and they play for your empire. Good luck."},
+ {n:"King for a Day", d:"Play 2 turns in a row now. The table has a guaranteed right to boo."},
+ {n:"Army Mutiny", d:"Largest Army is suspended (worth 0 points) until its owner plays another Knight."},
+ {n:"Ghost Road", d:"Longest Road is suspended (worth 0 points) until its owner builds one more road."},
+ {n:"New Capital", d:"Move 1 of your settlements (not a city) to any free, valid intersection on the board."},
+ {n:"Shady Broker", d:"Your next settlement may ignore the minimum-distance rule. A good neighbor is one right next door."},
+ {n:"Gold Rush", d:"Everyone rolls 1 die: the highest takes 3 resources of the bank's choice. Tie? Roll again."},
+ {n:"Curse of the Seven", d:"Until your next turn, whoever rolls a 7 also hands 1 random card to whoever's in last place."},
+ {n:"Tax Reform", d:"Everyone passes their ENTIRE hand to the player on the left. No crying, it's the law."},
+ {n:"Forced Exodus", d:"The table votes on the richest hex on the board: the robber goes there and you steal 1 card from someone on it."},
+];
+
 const COLORS = {leve:["#6a994e","#588157"], media:["#dda15e","#c98a3d"], caos:["#bc4b3c","#9d3b2e"]};
 const EMOJI  = {leve:"🐑", media:"🌾", caos:"🔥"};
-const TAGNAME = {leve:"Leve — zoeira", media:"Média — mexe no jogo", caos:"CAOS — vira o jogo"};
+
+// ---- i18n ----
+let lang = "pt";
+const UI = {
+  pt:{
+    htmlLang:"pt-BR",
+    title:"⚔️ Roleta do Caos ⚔️",
+    sub:"Colonos de Catan · Gire e obedeça — reclamar custa 1 madeira",
+    spin:"GIRAR",
+    options:"⚙ Opções",
+    norepeat:"Sem repetir", leves:"🐑 Leves", medias:"🌾 Médias", caos:"🔥 Caos", som:"🔊 Som",
+    howto:"📜 Como jogar", newgame:"↺ Nova partida",
+    inEffect:"⚜ Em vigor", clear:"limpar",
+    empty:"Nenhuma regra ativa.<br>Gire a roleta 🎲",
+    remaining:n=>`Regras restantes na roleta: ${n}`,
+    hintSave:"toque para guardar em “Em vigor”",
+    hintClose:"toque para fechar",
+    hintReread:"toque para reler",
+    ruleTag:i=>`⚜ REGRA #${i} ⚜`,
+    tag:{leve:"Leve — zoeira", media:"Média — mexe no jogo", caos:"CAOS — vira o jogo"},
+    legend:["Leve — zoeira","Média — mexe no jogo","Caos — vira o jogo"],
+    poolEmpty:'Acabaram as regras dessa seleção. Desmarque "sem repetir" ou libere mais categorias.',
+    confirmNew:"Nova partida? Isso limpa as regras em vigor e o histórico de sorteios.",
+    helpAria:"Como usar na partida",
+    helpBody:`<h3>📜 Como usar na partida</h3>
+      <p><b>Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra carta de desenvolvimento — quem causou, gira.</p>
+      <p><b>Modo Caos Programado:</b> a cada rodada completa, o jogador com menos pontos gira a roleta. Vingança dos lanternas!</p>
+      <p><b>Regra de ouro:</b> a regra sorteada vale como escrita; dúvidas são decididas por votação da mesa (e a mesa sempre vota contra quem está ganhando).</p>
+      <p><b>Em vigor:</b> cada regra sorteada fica guardada no painel lateral (rodapé no celular). Toque para reler; toque no ✕ quando ela se resolver.</p>`
+  },
+  en:{
+    htmlLang:"en",
+    title:"⚔️ Wheel of Chaos ⚔️",
+    sub:"Settlers of Catan · Spin and obey — complaining costs 1 wood",
+    spin:"SPIN",
+    options:"⚙ Options",
+    norepeat:"No repeats", leves:"🐑 Light", medias:"🌾 Medium", caos:"🔥 Chaos", som:"🔊 Sound",
+    howto:"📜 How to play", newgame:"↺ New game",
+    inEffect:"⚜ In effect", clear:"clear",
+    empty:"No active rules.<br>Spin the wheel 🎲",
+    remaining:n=>`Rules left on the wheel: ${n}`,
+    hintSave:"tap to keep it in “In effect”",
+    hintClose:"tap to close",
+    hintReread:"tap to reread",
+    ruleTag:i=>`⚜ RULE #${i} ⚜`,
+    tag:{leve:"Light — banter", media:"Medium — shifts the game", caos:"CHAOS — flips the game"},
+    legend:["Light — banter","Medium — shifts the game","Chaos — flips the game"],
+    poolEmpty:'No rules left in this selection. Uncheck "no repeats" or enable more categories.',
+    confirmNew:"New game? This clears the rules in effect and the draw history.",
+    helpAria:"How to play",
+    helpBody:`<h3>📜 How to play</h3>
+      <p><b>Milestone mode:</b> the wheel spins whenever someone builds a city or buys a development card — whoever triggered it, spins.</p>
+      <p><b>Scheduled Chaos mode:</b> every full round, the player with the fewest points spins the wheel. Revenge of the underdogs!</p>
+      <p><b>Golden rule:</b> the drawn rule counts as written; disputes are settled by a table vote (and the table always votes against whoever's winning).</p>
+      <p><b>In effect:</b> each drawn rule is kept in the side panel (bottom strip on mobile). Tap to reread; tap the ✕ once it resolves.</p>`
+  }
+};
+const ruleName = i => (lang==="en" ? RULES_EN[i].n : RULES[i].n);
+const ruleDesc = i => (lang==="en" ? RULES_EN[i].d : RULES[i].d);
 const N = RULES.length, SEG = 360/N;
 const wheel = document.getElementById("wheel");
 let drawn = new Set(), rotation = 0, spinning = false;
 
+// wheel geometry (shared by builder and winner highlight)
+const GEO = {cx:200, cy:200, rRing:178};
+const rad = a=>(a-90)*Math.PI/180;
+function wedgePath(i){
+  const {cx,cy,rRing}=GEO, a0=i*SEG, a1=(i+1)*SEG;
+  const x0=cx+rRing*Math.cos(rad(a0)), y0=cy+rRing*Math.sin(rad(a0));
+  const x1=cx+rRing*Math.cos(rad(a1)), y1=cy+rRing*Math.sin(rad(a1));
+  return `M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${rRing},${rRing} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z`;
+}
+
 // ---- build wheel ----
 (function(){
-  const cx=200, cy=200, rOut=198, rRing=178, rTxt=158, rEmo=112;
-  const rad = a=>(a-90)*Math.PI/180;
+  const cx=200, cy=200, rOut=198, rRing=178, rTxt=162, rEmo=110;
   let s = `<defs>
     <radialGradient id="woodring" cx="35%" cy="30%" r="90%">
       <stop offset="0%" stop-color="#7a5230"/><stop offset="55%" stop-color="#5c3d24"/><stop offset="100%" stop-color="#3e2a17"/>
@@ -443,23 +616,23 @@ let drawn = new Set(), rotation = 0, spinning = false;
   s += `<circle cx="${cx}" cy="${cy}" r="${rOut}" fill="url(#woodring)" stroke="#2a1a0c" stroke-width="2"/>`;
   // segments
   for(let i=0;i<N;i++){
-    const a0=i*SEG, a1=(i+1)*SEG;
-    const x0=cx+rRing*Math.cos(rad(a0)), y0=cy+rRing*Math.sin(rad(a0));
-    const x1=cx+rRing*Math.cos(rad(a1)), y1=cy+rRing*Math.sin(rad(a1));
+    const a0=i*SEG, a1=(i+1)*SEG, am=(a0+a1)/2;
     const fill = COLORS[RULES[i].t][i%2];
-    s+=`<path d="M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${rRing},${rRing} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z" fill="${fill}" stroke="#2a1a0c" stroke-width="${N>40?0.9:1.6}"/>`;
-    const am=(a0+a1)/2;
-    const tx=cx+rTxt*Math.cos(rad(am)), ty=cy+rTxt*Math.sin(rad(am));
-    const numFS = N>40 ? 8 : 14, emoFS = N>40 ? 11 : 17;
-    s+=`<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" fill="#fff" font-size="${numFS}" font-weight="bold" font-family="Georgia,serif" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${tx.toFixed(1)},${ty.toFixed(1)})" style="text-shadow:0 1px 2px #0008">${i+1}</text>`;
-    // category emoji sprinkled along each block
+    s+=`<path d="${wedgePath(i)}" fill="${fill}" stroke="#2a1a0c" stroke-width="${N>40?0.9:1.6}"/>`;
+    // number only every 5th segment (milestones) — avoids illegible clutter at 70 slices
+    if((i+1)%5===0){
+      const tx=cx+rTxt*Math.cos(rad(am)), ty=cy+rTxt*Math.sin(rad(am));
+      s+=`<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" fill="#fff" font-size="12" font-weight="bold" font-family="Georgia,serif" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${tx.toFixed(1)},${ty.toFixed(1)})" style="text-shadow:0 1px 2px #0008">${i+1}</text>`;
+    }
+    // category emoji once per block of 10
     if(i%10===5){
       const ex=cx+rEmo*Math.cos(rad(am)), ey=cy+rEmo*Math.sin(rad(am));
-      s+=`<text x="${ex.toFixed(1)}" y="${ey.toFixed(1)}" font-size="${emoFS}" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${ex.toFixed(1)},${ey.toFixed(1)})">${EMOJI[RULES[i].t]}</text>`;
+      s+=`<text x="${ex.toFixed(1)}" y="${ey.toFixed(1)}" font-size="13" text-anchor="middle" dominant-baseline="middle" transform="rotate(${am},${ex.toFixed(1)},${ey.toFixed(1)})">${EMOJI[RULES[i].t]}</text>`;
     }
   }
   // inner depth shading + gold trims + studs on wooden ring
   s += `<circle cx="${cx}" cy="${cy}" r="${rRing}" fill="url(#depth)"/>`;
+  s += `<path id="win-seg" d=""/>`;   // winner highlight overlay (updated on each spin)
   s += `<circle cx="${cx}" cy="${cy}" r="${rRing}" fill="none" stroke="#e2b755" stroke-width="2.5"/>`;
   s += `<circle cx="${cx}" cy="${cy}" r="${rOut-3}" fill="none" stroke="#e2b75533" stroke-width="1.5"/>`;
   for(let k=0;k<12;k++){
@@ -468,6 +641,16 @@ let drawn = new Set(), rotation = 0, spinning = false;
   }
   wheel.innerHTML = s;
 })();
+function highlightWinner(idx){
+  const w=document.getElementById("win-seg");
+  w.setAttribute("d", wedgePath(idx));
+  w.style.display="block";
+  w.classList.remove("pulse"); void w.getBBox(); w.classList.add("pulse");
+}
+function clearWinner(){
+  const w=document.getElementById("win-seg");
+  if(w){ w.style.display="none"; w.classList.remove("pulse"); }
+}
 
 // ---- pool / remaining ----
 function pool(){
@@ -475,7 +658,7 @@ function pool(){
   return RULES.map((r,i)=>i).filter(i=>f[RULES[i].t] && !(norepeat.checked && drawn.has(i)));
 }
 function updateRemaining(){
-  remaining.textContent = norepeat.checked ? `Regras restantes na roleta: ${pool().length}` : "";
+  remaining.textContent = norepeat.checked ? UI[lang].remaining(pool().length) : "";
 }
 ["norepeat","fLeve","fMedia","fCaos","sound"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{updateRemaining(); save();}));
 
@@ -507,7 +690,7 @@ const LS = "catan-roleta-v2"; // v2: lista de regras expandida (índices antigos
 function save(){
   try{
     localStorage.setItem(LS, JSON.stringify({
-      drawn:[...drawn], active, uidSeq,
+      drawn:[...drawn], active, uidSeq, lang,
       f:{leve:fLeve.checked, media:fMedia.checked, caos:fCaos.checked, norepeat:norepeat.checked, sound:sound.checked}
     }));
   }catch(e){}
@@ -519,6 +702,7 @@ function load(){
     drawn  = new Set(s.drawn || []);
     active = Array.isArray(s.active) ? s.active : [];
     uidSeq = s.uidSeq || (active.length + 1);
+    if(s.lang==="en"||s.lang==="pt") lang = s.lang;
     if(s.f){
       fLeve.checked=s.f.leve; fMedia.checked=s.f.media; fCaos.checked=s.f.caos;
       norepeat.checked=s.f.norepeat; sound.checked=s.f.sound;
@@ -540,9 +724,9 @@ const esc = s => s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"'
 function renderActive(newUid){
   listEl.innerHTML = active.map(a=>`
     <li class="entry ${a.t}${a.uid===newUid?' new':''}" data-uid="${a.uid}">
-      <div class="e-title"><b>#${a.idx+1}</b>${esc(a.n)}</div>
+      <div class="e-title"><b>#${a.idx+1}</b>${esc(ruleName(a.idx))}</div>
       <button class="e-x" data-uid="${a.uid}" title="Resolver / remover" aria-label="Remover regra">✕</button>
-      <div class="e-hint">toque para reler</div>
+      <div class="e-hint">${UI[lang].hintReread}</div>
     </li>`).join("");
   const has = active.length > 0;
   emptyEl.style.display = has ? "none" : "";
@@ -551,17 +735,50 @@ function renderActive(newUid){
   document.body.classList.toggle("panel-empty", !has);
 }
 
-// ---- mobile options menu ----
-const controlsEl   = document.querySelector(".controls");
+// ---- mobile options menu (the whole config rail becomes a popup) ----
+const sideLeft     = document.getElementById("side-left");
 const menuBackdrop = document.getElementById("menu-backdrop");
 const optionsToggle = document.getElementById("optionsToggle");
 function setMenu(open){
-  controlsEl.classList.toggle("open", open);
+  sideLeft.classList.toggle("open", open);
   menuBackdrop.classList.toggle("show", open);
   optionsToggle.setAttribute("aria-expanded", open);
 }
-optionsToggle.addEventListener("click", ()=>setMenu(!controlsEl.classList.contains("open")));
+optionsToggle.addEventListener("click", ()=>setMenu(!sideLeft.classList.contains("open")));
 menuBackdrop.addEventListener("click", ()=>setMenu(false));
+
+// ---- language toggle ----
+const langToggle = document.getElementById("langToggle");
+function applyLang(){
+  const u = UI[lang];
+  document.documentElement.lang = u.htmlLang;
+  document.getElementById("title").textContent = u.title;
+  document.getElementById("sub").textContent = u.sub;
+  document.getElementById("btn").textContent = u.spin;
+  optionsToggle.textContent = u.options;
+  document.getElementById("side-title").textContent = u.options;
+  document.getElementById("t-norepeat").textContent = u.norepeat;
+  document.getElementById("t-leve").textContent = u.leves;
+  document.getElementById("t-media").textContent = u.medias;
+  document.getElementById("t-caos").textContent = u.caos;
+  document.getElementById("t-som").textContent = u.som;
+  document.getElementById("helpMenuItem").textContent = u.howto;
+  document.getElementById("newGame").textContent = u.newgame;
+  document.getElementById("panel-title").textContent = u.inEffect;
+  document.getElementById("clearActive").textContent = u.clear;
+  emptyEl.innerHTML = u.empty;
+  document.querySelector(".legend .lg-leve").textContent  = u.legend[0];
+  document.querySelector(".legend .lg-media").textContent = u.legend[1];
+  document.querySelector(".legend .lg-caos").textContent  = u.legend[2];
+  document.getElementById("help-body").innerHTML = u.helpBody;
+  helpEl.setAttribute("aria-label", u.helpAria);
+  langToggle.querySelector('[data-l="pt"]').classList.toggle("on", lang==="pt");
+  langToggle.querySelector('[data-l="en"]').classList.toggle("on", lang==="en");
+  updateRemaining();
+  renderActive();
+}
+function setLang(l){ lang = l; save(); applyLang(); }
+langToggle.addEventListener("click", ()=> setLang(lang==="pt" ? "en" : "pt"));
 
 // ---- "Como usar" help modal ----
 const helpEl = document.getElementById("help");
@@ -579,7 +796,6 @@ function closeHelp(){
   helpEl.style.display = "none";
   helpBackdrop.classList.remove("show");
 }
-document.getElementById("helpBtn").addEventListener("click", openHelp);
 document.getElementById("helpMenuItem").addEventListener("click", openHelp);
 document.getElementById("helpClose").addEventListener("click", closeHelp);
 helpBackdrop.addEventListener("click", closeHelp);
@@ -604,9 +820,9 @@ document.getElementById("clearActive").addEventListener("click", ()=>{
   if(active.length){ active = []; save(); renderActive(); }
 });
 document.getElementById("newGame").addEventListener("click", ()=>{
-  if(!confirm("Nova partida? Isso limpa as regras em vigor e o histórico de sorteios.")) return;
+  if(!confirm(UI[lang].confirmNew)) return;
   drawn.clear(); active = []; uidSeq = 1;
-  save(); renderActive(); updateRemaining(); hideResult(); setMenu(false);
+  save(); renderActive(); updateRemaining(); hideResult(); clearWinner(); setMenu(false);
 });
 
 // ---- popup show / dismiss (dismiss = tuck into panel) ----
@@ -624,14 +840,14 @@ function dismissResult(){
 
 // ---- fill parchment (used by spin AND review) ----
 function fillResult(idx, review){
-  const r = RULES[idx];
-  resultEl.querySelector(".num").textContent = `⚜ REGRA #${idx+1} ⚜`;
-  resultEl.querySelector("h2").textContent = r.n;
-  resultEl.querySelector("p").textContent = r.d;
+  const r = RULES[idx], u = UI[lang];
+  resultEl.querySelector(".num").textContent = u.ruleTag(idx+1);
+  resultEl.querySelector("h2").textContent = ruleName(idx);
+  resultEl.querySelector("p").textContent = ruleDesc(idx);
   const seal = resultEl.querySelector(".seal");
-  seal.textContent = `${EMOJI[r.t]} ${TAGNAME[r.t]}`;
+  seal.textContent = `${EMOJI[r.t]} ${u.tag[r.t]}`;
   seal.className = "seal "+r.t;
-  resultEl.querySelector(".tap-hint").textContent = review ? "toque para fechar" : "toque para guardar em “Em vigor”";
+  resultEl.querySelector(".tap-hint").textContent = review ? u.hintClose : u.hintSave;
   resultEl.classList.remove("show","caos-hit");
   resultEl.style.display = "block";
   void resultEl.offsetWidth;             // reinicia a animação
@@ -663,9 +879,10 @@ function toast(msg){
 function spin(){
   if(spinning) return;
   const p = pool();
-  if(!p.length){ toast('Acabaram as regras dessa seleção. Desmarque "sem repetir" ou libere mais categorias.'); return; }
+  if(!p.length){ toast(UI[lang].poolEmpty); return; }
   spinning = true; btn.disabled = true;
   if(pendingIdx !== null) dismissResult(); else hideResult();   // stash any open popup first
+  clearWinner();
   const idx = p[Math.floor(Math.random()*p.length)];
   const segCenter = idx*SEG + SEG/2;
   const jitter = (Math.random()-0.5)*SEG*0.7;
@@ -675,6 +892,7 @@ function spin(){
   tickSchedule(4800);
   setTimeout(()=>{
     fillResult(idx, false);
+    highlightWinner(idx);
     tick(600,.12); setTimeout(()=>tick(900,.1),120);
     drawn.add(idx); pendingIdx = idx; save();
     updateRemaining();
@@ -685,8 +903,7 @@ function spin(){
 
 // ---- init ----
 load();
-renderActive();
-updateRemaining();
+applyLang();   // sets all UI text for the saved language + renders active list + remaining
 // first visit: show the how-to once
 try{
   if(!localStorage.getItem("catan-seen-help")){
