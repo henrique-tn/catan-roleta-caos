@@ -6,6 +6,8 @@
 <title>Roleta do Caos · Catan</title>
 <meta name="description" content="Spin the wheel, obey the rule. 100 chaos house rules for Catan in 7 languages. Create your own rules and share them. Free, no login, works on any phone.">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Chaos Wheel for Catan">
+<meta property="og:locale" content="en_US">
 <meta property="og:title" content="Chaos Wheel for Catan · 100 house rules to shake up your game">
 <meta property="og:description" content="Spin the wheel, obey the rule. 100 chaos house rules in 7 languages. Create your own and share them with your table. Free, no login.">
 <meta property="og:url" content="https://henrique-tn.github.io/catan-roleta-caos/">
@@ -19,7 +21,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" crossorigin="anonymous">
 <style>
   :root{
     --leve1:#6a994e; --leve2:#588157;
@@ -394,6 +396,8 @@
   }
   #turn-timer .tt-num{font-family:'MedievalSharp',Georgia,cursive; font-size:2.6rem; color:var(--gold); line-height:1;}
   #turn-timer.urgent .tt-num{color:var(--caos1);}
+  @keyframes ttflash{0%,100%{background:#2a1a0c;} 50%{background:var(--caos2);}}
+  #turn-timer.tt-flash{animation:ttflash .45s ease 2;}   /* silent-mode visual alarm on rollover */
   #turn-timer .tt-hint{font-size:.7rem; color:var(--muted); font-style:italic; margin-top:2px;}
   #turn-timer .tt-x{
     position:absolute; top:-10px; right:-10px; width:24px; height:24px; border-radius:50%;
@@ -678,7 +682,7 @@
 </div>
 
 <div id="ask-backdrop"></div>
-<div id="ask" role="dialog" aria-modal="true">
+<div id="ask" role="dialog" aria-modal="true" aria-labelledby="ask-text">
   <p id="ask-text"></p>
   <div class="ask-btns">
     <button id="ask-yes" class="cr-add" type="button">Confirmar</button>
@@ -687,7 +691,7 @@
 </div>
 
 <div id="picker-backdrop"></div>
-<div id="picker" role="dialog" aria-modal="true">
+<div id="picker" role="dialog" aria-modal="true" aria-labelledby="picker-title">
   <button id="pickerClose" class="help-close" type="button" aria-label="Fechar">✕</button>
   <h3 id="picker-title">🎯 Sortear jogador</h3>
   <p id="picker-q">Quantos jogadores?</p>
@@ -1742,6 +1746,15 @@ Object.assign(UI["de"],    {wake:"🔆 Bildschirm anlassen", wakeFail:"Der Brows
 Object.assign(UI["fr"],    {wake:"🔆 Écran toujours allumé", wakeFail:"Le navigateur n'a pas permis de garder l'écran allumé.", crRemoved:"Règle supprimée.", undo:"Annuler", yesLbl:"Confirmer", noLbl:"Non", timerBtn:"⏱ Chronométrer les tours (30s)", pickPlayer:"🎯 Tirer un joueur", howMany:"Combien de joueurs ?", playerN:n=>`Joueur ${n} !`, again:"Encore"});
 Object.assign(UI["it"],    {wake:"🔆 Schermo sempre acceso", wakeFail:"Il browser non ha permesso di tenere lo schermo acceso.", crRemoved:"Regola rimossa.", undo:"Annulla", yesLbl:"Conferma", noLbl:"Annulla", timerBtn:"⏱ Cronometra i turni (30s)", pickPlayer:"🎯 Sorteggia giocatore", howMany:"Quanti giocatori?", playerN:n=>`Giocatore ${n}!`, again:"Ancora"});
 
+// turn-timer hint
+Object.assign(UI["pt-BR"], {ttHint:"toque ↺"});
+Object.assign(UI["pt-PT"], {ttHint:"toca ↺"});
+Object.assign(UI["en"],    {ttHint:"tap ↺"});
+Object.assign(UI["es"],    {ttHint:"toca ↺"});
+Object.assign(UI["de"],    {ttHint:"tippen ↺"});
+Object.assign(UI["fr"],    {ttHint:"touche ↺"});
+Object.assign(UI["it"],    {ttHint:"tocca ↺"});
+
 // donation page: set this to your PayPal.me / Ko-fi URL and the button appears
 const SUPPORT_URL = "";
 
@@ -1865,9 +1878,16 @@ async function applyWake(){
   if(!("wakeLock" in navigator)) return;
   if(fWake.checked){
     try{
-      wakeLock = await navigator.wakeLock.request("screen");
+      const lock = await navigator.wakeLock.request("screen");
+      if(!fWake.checked){ lock.release(); return; }   // unchecked while the request was in flight
+      wakeLock = lock;
       wakeLock.addEventListener("release", ()=>{ wakeLock = null; });
-    }catch(e){ fWake.checked = false; save(); toast(UI[lang].wakeFail); }
+    }catch(e){
+      // hidden tabs always reject; keep the preference and let visibilitychange retry
+      if(document.visibilityState === "visible"){
+        fWake.checked = false; save(); toast(UI[lang].wakeFail);
+      }
+    }
   } else if(wakeLock){ wakeLock.release(); wakeLock = null; }
 }
 // the OS drops the lock when the tab loses visibility; re-acquire on return
@@ -2041,6 +2061,7 @@ function applyLang(){
   document.getElementById("ask-yes").textContent = u.yesLbl;
   document.getElementById("ask-no").textContent = u.noLbl;
   document.getElementById("timer-launch").textContent = u.timerBtn;
+  document.querySelector("#turn-timer .tt-hint").textContent = u.ttHint;
   document.getElementById("helpMenuItem").textContent = u.howto;
   document.getElementById("newGame").textContent = u.newgame;
   document.getElementById("customBtn").textContent = u.myRules;
@@ -2178,6 +2199,7 @@ document.getElementById("custom-list").addEventListener("click", e=>{
   toastAction(UI[lang].crRemoved, UI[lang].undo, ()=>{   // one wrong 27px tap shouldn't be forever
     CUSTOM.push(removed);
     save(); requestWheelRebuild(); updateRemaining(); renderProgress(); renderCustom();
+    if(hubEl.classList.contains("show")) renderHub();    // hub may be open over the toast
   });
 });
 
@@ -2378,6 +2400,7 @@ function startTurnTimer(secs){
     ttLeft--;
     if(ttLeft <= 0){
       tick(500,.15); setTimeout(()=>tick(400,.15),160); setTimeout(()=>tick(300,.18),320);
+      ttEl.classList.remove("tt-flash"); void ttEl.offsetWidth; ttEl.classList.add("tt-flash");
       ttLeft = ttSecs;                       // rounds keep coming; timer restarts itself
     } else if(ttLeft <= 5){ tick(1500,.08); }
     renderTT();
@@ -2402,7 +2425,8 @@ document.addEventListener("keydown", e=>{
   if(e.key!=="Tab") return;
   const modal = [askEl, pickerEl, helpEl, customEl, hubEl].find(m=>m.classList.contains("show"));
   if(!modal) return;
-  const foci = modal.querySelectorAll('button, [href], input, select, textarea');
+  const foci = [...modal.querySelectorAll('button, [href], input, select, textarea')]
+    .filter(el => el.offsetWidth > 0 || el.offsetHeight > 0);   // skip display:none controls
   if(!foci.length) return;
   const first = foci[0], last = foci[foci.length-1];
   if(e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
@@ -2415,6 +2439,7 @@ document.addEventListener("keydown", e=>{
   const t = e.target;
   if(t && (t.tagName==="INPUT" || t.tagName==="TEXTAREA" || t.tagName==="SELECT" || t.tagName==="BUTTON")) return;
   if(helpEl.classList.contains("show") || customEl.classList.contains("show") || hubEl.classList.contains("show")) return;
+  if(askEl.classList.contains("show") || pickerEl.classList.contains("show")) return;
   if(sideLeft.classList.contains("open")) return;
   e.preventDefault();
   spin();
@@ -2442,6 +2467,7 @@ document.getElementById("newGame").addEventListener("click", ()=>{
   setMenu(false);
   ask(UI[lang].confirmNew, ()=>{
     drawn.clear(); drawnOrder = []; active = []; uidSeq = 1; pendingIdx = null;
+    stopTurnTimer();   // the rule that spawned it was just wiped
     save(); renderActive(); renderProgress(); updateRemaining(); hideResult(); clearWinner();
   });
 });
@@ -2630,7 +2656,7 @@ if(!("wakeLock" in navigator)) document.getElementById("wakeLabel").hidden = tru
 else if(fWake.checked) applyWake();
 // PWA: offline cache + installability
 if("serviceWorker" in navigator){
-  try{ navigator.serviceWorker.register("sw.js"); }catch(e){}
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
 }
 buildWheel();  // wheel reflects the saved category filters
 applyLang();   // sets all UI text for the saved language + renders active list + remaining
@@ -2647,9 +2673,10 @@ try{
     }
   }
 }catch(e){}
-// first visit: show the how-to once
+// first visit: show the how-to once; never on top of a share-link import prompt
+// (stacked modals put the focus behind the ask backdrop and Enter cancels the import)
 try{
-  if(!localStorage.getItem("catan-seen-help")){
+  if(!localStorage.getItem("catan-seen-help") && !askEl.classList.contains("show")){
     openHelp();
     localStorage.setItem("catan-seen-help","1");
   }
