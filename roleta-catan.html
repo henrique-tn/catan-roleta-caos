@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roleta do Caos — Catan</title>
+<title>Roleta do Caos · Catan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
@@ -112,7 +112,7 @@
   }
   #backdrop.show{opacity:1; pointer-events:auto;}
 
-  /* parchment result card — centered reveal popup */
+  /* parchment result card, centered reveal popup */
   #result{
     position:fixed; z-index:50; display:none; cursor:pointer;
     left:50%; top:50%; transform:translate(-50%,-50%);
@@ -241,14 +241,14 @@
   .legend{display:flex; flex-direction:column; gap:10px; color:#dcc9a2; font-family:'MedievalSharp',Georgia,cursive; font-size:1.05rem; letter-spacing:.3px;}
   .legend .dot{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:8px; transform:rotate(45deg); vertical-align:middle;}
 
-  /* table stats — progress bar + category tally */
+  /* table stats, progress bar + category tally */
   #stats{display:flex; flex-direction:column; gap:6px; color:var(--muted); font-size:.82rem;}
   .stat-bar{height:9px; border-radius:5px; background:#ffffff14; overflow:hidden; display:flex;}
   .stat-bar i{display:block; height:100%;}
   .stat-cats{display:flex; gap:14px; font-size:.9rem;}
   .stat-lived{font-style:italic; opacity:.85;}
 
-  /* history of drawn rules — fills the rail, grows during the game */
+  /* history of drawn rules, fills the rail, grows during the game */
   #history{flex:1; min-height:0; display:flex; flex-direction:column; gap:6px;}
   .hist-head{
     font-family:'MedievalSharp',Georgia,cursive; color:var(--gold); letter-spacing:1px; font-size:.95rem;
@@ -274,7 +274,7 @@
   #win-seg.pulse{animation:winpulse 1.2s ease-in-out infinite;}
   @keyframes winpulse{0%,100%{opacity:.5;} 50%{opacity:1;}}
 
-  /* desktop: three columns — config rail | wheel stage | active panel */
+  /* desktop: three columns, config rail | wheel stage | active panel */
   @media (min-width:821px){
     body{align-items:stretch; padding:0;}
     #side-left{
@@ -355,8 +355,8 @@
   </div>
   <div id="remaining"></div>
   <div class="legend">
-    <span><span class="dot" style="background:var(--media1)"></span><span class="lg-media">Clássica — mexe no jogo</span></span>
-    <span><span class="dot" style="background:var(--caos1)"></span><span class="lg-caos">Caos — vira o jogo</span></span>
+    <span><span class="dot" style="background:var(--media1)"></span><span class="lg-media">Clássica, mexe no jogo</span></span>
+    <span><span class="dot" style="background:var(--caos1)"></span><span class="lg-caos">Caos, vira o jogo</span></span>
   </div>
   <div id="stats">
     <div class="stat-bar" id="stat-bar"></div>
@@ -366,7 +366,7 @@
   <div id="history">
     <div class="hist-head"><span id="hist-title">Já sorteadas</span><small id="hist-count"></small></div>
     <ul id="hist-list"></ul>
-    <div id="hist-empty">Nada ainda — gire! 🎲</div>
+    <div id="hist-empty">Nada ainda, gire! 🎲</div>
   </div>
   <div class="side-actions">
     <button id="helpMenuItem" class="ghost-btn" type="button">📜 Como jogar</button>
@@ -377,7 +377,7 @@
 <main class="stage">
   <h1 id="title">⚔️ Roleta do Caos ⚔️</h1>
   <div class="rule-line"></div>
-  <div class="sub" id="sub">Colonos de Catan · Gire e obedeça — reclamar custa 1 madeira</div>
+  <div class="sub" id="sub">Colonos de Catan · Gire e obedeça, reclamar custa 1 madeira</div>
 
   <div class="wheel-wrap">
     <div class="pointer"></div>
@@ -414,7 +414,7 @@
   <button id="helpClose" class="help-close" type="button" aria-label="Fechar">✕</button>
   <div id="help-body">
     <h3>📜 Como usar na partida</h3>
-    <p><b>Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra carta de desenvolvimento — quem causou, gira.</p>
+    <p><b>Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra carta de desenvolvimento, quem causou, gira.</p>
     <p><b>Modo Caos Programado:</b> a cada rodada completa, o jogador com menos pontos gira a roleta. Vingança dos lanternas!</p>
     <p><b>Regra de ouro:</b> a regra sorteada vale como escrita; dúvidas são decididas por votação da mesa (e a mesa sempre vota contra quem está ganhando).</p>
     <p><b>Em vigor:</b> cada regra sorteada fica guardada no painel lateral (rodapé no celular). Toque para reler; toque no ✕ quando ela se resolver.</p>
@@ -483,7 +483,7 @@ const RULES = [
  {n:"Leilão Maluco", d:"O banco leiloa 1 carta de desenvolvimento agora. Lances em recursos; quem der mais, leva.", t:"caos"},
  {n:"Dado do Destino", d:"Role 1 dado: par = ganhe 2 recursos à sua escolha; ímpar = descarte 2 aleatórios.", t:"caos"},
  {n:"Golpe de Estado", d:"Troque sua mão INTEIRA com a do jogador que tem menos cartas que você. Ninguém tem? Nada acontece.", t:"caos"},
- {n:"Ladrão de Aluguel", d:"Mova o ladrão para onde quiser agora e roube 1 carta — cortesia da casa.", t:"caos"},
+ {n:"Ladrão de Aluguel", d:"Mova o ladrão para onde quiser agora e roube 1 carta, cortesia da casa.", t:"caos"},
  {n:"Colheita Dupla", d:"A próxima rolagem de dados (que não seja 7) produz recursos em DOBRO para todos.", t:"caos"},
  {n:"Pirataria", d:"Roube 1 carta aleatória de CADA jogador da mesa. Arrr!", t:"caos"},
  {n:"Praga dos Ratos", d:"Todos com 6+ cartas descartam metade da mão (arredonda pra baixo), como num 7 coletivo.", t:"caos"},
@@ -589,7 +589,7 @@ const RULES_EN = [
  {n:"Mad Auction", d:"The bank auctions 1 development card now. Bids in resources; highest bidder wins."},
  {n:"Dice of Fate", d:"Roll 1 die: even = gain 2 resources of your choice; odd = discard 2 at random."},
  {n:"Coup", d:"Swap your ENTIRE hand with the player who has fewer cards than you. No one does? Nothing happens."},
- {n:"Robber for Hire", d:"Move the robber wherever you want now and steal 1 card — on the house."},
+ {n:"Robber for Hire", d:"Move the robber wherever you want now and steal 1 card, on the house."},
  {n:"Double Harvest", d:"The next dice roll (other than 7) produces DOUBLE resources for everyone."},
  {n:"Piracy", d:"Steal 1 random card from EACH player at the table. Arrr!"},
  {n:"Rat Plague", d:"Everyone with 6+ cards discards half their hand (round down), like a collective 7."},
@@ -633,7 +633,7 @@ const RULES_EN = [
  {n:"Envy of the Gods", d:"Everyone with more victory points than you discards 1 random card."},
 ];
 
-// Português europeu — tratamento por "tu", vocabulário PT-PT (alcunha, banca, telemóvel, lançar dados)
+// Português europeu, tratamento por "tu", vocabulário PT-PT (alcunha, banca, telemóvel, lançar dados)
 const RULES_PTPT = [
  {n:"Mercado Livre", d:"Até ao teu próximo turno, TODOS trocam com a banca a 3:1."},
  {n:"Mão Aberta", d:"Joga com as cartas viradas para cima na mesa até ao teu próximo turno."},
@@ -693,7 +693,7 @@ const RULES_PTPT = [
  {n:"Leilão Maluco", d:"A banca leiloa 1 carta de desenvolvimento agora. Licitações em recursos; quem der mais, leva."},
  {n:"Dado do Destino", d:"Lança 1 dado: par = ganhas 2 recursos à tua escolha; ímpar = descartas 2 ao acaso."},
  {n:"Golpe de Estado", d:"Troca a tua mão INTEIRA com o jogador que tem menos cartas do que tu. Ninguém tem? Não acontece nada."},
- {n:"Ladrão de Aluguer", d:"Move o ladrão para onde quiseres agora e rouba 1 carta — cortesia da casa."},
+ {n:"Ladrão de Aluguer", d:"Move o ladrão para onde quiseres agora e rouba 1 carta, cortesia da casa."},
  {n:"Colheita Dupla", d:"O próximo lançamento de dados (que não seja 7) produz recursos a DOBRAR para todos."},
  {n:"Pirataria", d:"Rouba 1 carta ao acaso a CADA jogador da mesa. Arrr!"},
  {n:"Praga de Ratos", d:"Todos com 6+ cartas descartam metade da mão (arredonda para baixo), como num 7 coletivo."},
@@ -737,7 +737,7 @@ const RULES_PTPT = [
  {n:"Inveja dos Deuses", d:"Todos com mais pontos de vitória do que tu descartam 1 carta ao acaso."},
 ];
 
-// Español — tuteo, términos de Catán (ladrón, poblado, carta de desarrollo, Gran Ejército, Gran Ruta Comercial)
+// Español, tuteo, términos de Catán (ladrón, poblado, carta de desarrollo, Gran Ejército, Gran Ruta Comercial)
 const RULES_ES = [
  {n:"Mercado Libre", d:"Hasta tu próximo turno, TODOS comercian con la banca a 3:1."},
  {n:"Mano Abierta", d:"Juega con tus cartas boca arriba sobre la mesa hasta tu próximo turno."},
@@ -841,7 +841,7 @@ const RULES_ES = [
  {n:"Envidia de los Dioses", d:"Todos los que tengan más puntos de victoria que tú descartan 1 carta al azar."},
 ];
 
-// Deutsch — Duzen, Catan-Begriffe (Räuber, Rohstoff, Entwicklungskarte, Siedlung, Größte Rittermacht, Längste Handelsstraße)
+// Deutsch, Duzen, Catan-Begriffe (Räuber, Rohstoff, Entwicklungskarte, Siedlung, Größte Rittermacht, Längste Handelsstraße)
 const RULES_DE = [
  {n:"Freier Markt", d:"Bis zu deinem nächsten Zug handeln ALLE mit der Bank zu 3:1."},
  {n:"Offene Hand", d:"Spiele bis zu deinem nächsten Zug mit offenen Karten auf dem Tisch."},
@@ -901,7 +901,7 @@ const RULES_DE = [
  {n:"Verrückte Auktion", d:"Die Bank versteigert jetzt 1 Entwicklungskarte. Gebote in Rohstoffen; Höchstbietender gewinnt."},
  {n:"Schicksalswürfel", d:"Wirf 1 Würfel: gerade = nimm 2 Rohstoffe deiner Wahl; ungerade = wirf 2 zufällig ab."},
  {n:"Staatsstreich", d:"Tausche deine GESAMTE Hand mit dem Spieler, der weniger Karten hat als du. Keiner? Nichts passiert."},
- {n:"Mieträuber", d:"Versetze den Räuber jetzt, wohin du willst, und stiehl 1 Karte — aufs Haus."},
+ {n:"Mieträuber", d:"Versetze den Räuber jetzt, wohin du willst, und stiehl 1 Karte, aufs Haus."},
  {n:"Doppelte Ernte", d:"Der nächste Wurf (keine 7) bringt allen DOPPELTE Erträge."},
  {n:"Piraterie", d:"Stiehl 1 zufällige Karte von JEDEM Spieler am Tisch. Arrr!"},
  {n:"Rattenplage", d:"Alle mit 6+ Karten werfen die Hälfte der Hand ab (abgerundet), wie bei einer kollektiven 7."},
@@ -945,7 +945,7 @@ const RULES_DE = [
  {n:"Neid der Götter", d:"Alle mit mehr Siegpunkten als du werfen 1 zufällige Karte ab."},
 ];
 
-// Français — tutoiement, termes de Catane (voleur, colonie, carte développement, armée la plus puissante, route la plus longue)
+// Français, tutoiement, termes de Catane (voleur, colonie, carte développement, armée la plus puissante, route la plus longue)
 const RULES_FR = [
  {n:"Marché Libre", d:"Jusqu'à ton prochain tour, TOUT LE MONDE commerce avec la banque à 3:1."},
  {n:"Main Ouverte", d:"Joue cartes face visible sur la table jusqu'à ton prochain tour."},
@@ -1005,7 +1005,7 @@ const RULES_FR = [
  {n:"Enchère Folle", d:"La banque met 1 carte développement aux enchères maintenant. Mises en ressources ; le plus offrant l'emporte."},
  {n:"Dé du Destin", d:"Lance 1 dé : pair = gagne 2 ressources de ton choix ; impair = défausse 2 au hasard."},
  {n:"Coup d'État", d:"Échange ta main ENTIÈRE avec le joueur qui a moins de cartes que toi. Personne ? Rien ne se passe."},
- {n:"Voleur à Gages", d:"Déplace le voleur où tu veux maintenant et vole 1 carte — offert par la maison."},
+ {n:"Voleur à Gages", d:"Déplace le voleur où tu veux maintenant et vole 1 carte, offert par la maison."},
  {n:"Double Récolte", d:"Le prochain lancer de dés (sauf 7) produit des ressources en DOUBLE pour tout le monde."},
  {n:"Piraterie", d:"Vole 1 carte au hasard à CHAQUE joueur de la table. Arrr !"},
  {n:"Peste des Rats", d:"Tous ceux qui ont 6+ cartes défaussent la moitié de leur main (arrondi à l'inférieur), comme un 7 collectif."},
@@ -1049,7 +1049,7 @@ const RULES_FR = [
  {n:"Jalousie des Dieux", d:"Tous ceux qui ont plus de points de victoire que toi défaussent 1 carte au hasard."},
 ];
 
-// Italiano — dare del tu, termini di Catan (brigante, colonia, carta sviluppo, esercito più grande, strada più lunga)
+// Italiano, dare del tu, termini di Catan (brigante, colonia, carta sviluppo, esercito più grande, strada più lunga)
 const RULES_IT = [
  {n:"Mercato Libero", d:"Fino al tuo prossimo turno, TUTTI commerciano con la banca a 3:1."},
  {n:"Mano Scoperta", d:"Gioca con le carte scoperte sul tavolo fino al tuo prossimo turno."},
@@ -1109,7 +1109,7 @@ const RULES_IT = [
  {n:"Asta Pazza", d:"La banca mette all'asta 1 carta sviluppo adesso. Offerte in risorse; chi offre di più, vince."},
  {n:"Dado del Destino", d:"Tira 1 dado: pari = guadagni 2 risorse a tua scelta; dispari = scarti 2 a caso."},
  {n:"Colpo di Stato", d:"Scambia la tua mano INTERA con il giocatore che ha meno carte di te. Nessuno? Non succede nulla."},
- {n:"Brigante a Noleggio", d:"Sposta il brigante dove vuoi ora e ruba 1 carta — offre la casa."},
+ {n:"Brigante a Noleggio", d:"Sposta il brigante dove vuoi ora e ruba 1 carta, offre la casa."},
  {n:"Doppio Raccolto", d:"Il prossimo lancio di dadi (che non sia 7) produce risorse DOPPIE per tutti."},
  {n:"Pirateria", d:"Ruba 1 carta a caso a OGNI giocatore del tavolo. Arrr!"},
  {n:"Peste dei Ratti", d:"Chi ha 6+ carte scarta metà mano (arrotondando per difetto), come in un 7 collettivo."},
@@ -1162,7 +1162,7 @@ const UI = {
   "pt-BR":{
     htmlLang:"pt-BR",
     title:"⚔️ Roleta do Caos ⚔️",
-    sub:"Colonos de Catan · Gire e obedeça — reclamar custa 1 madeira",
+    sub:"Colonos de Catan · Gire e obedeça, reclamar custa 1 madeira",
     spin:"GIRAR",
     options:"⚙ Opções",
     norepeat:"Sem repetir", leves:"🐑 Leves", medias:"🌾 Clássicas", caos:"🔥 Caos", som:"🔊 Som",
@@ -1174,13 +1174,13 @@ const UI = {
     hintClose:"toque para fechar",
     hintReread:"toque para reler",
     ruleTag:i=>`⚜ REGRA #${i} ⚜`,
-    tag:{leve:"Leve — zoeira", media:"Clássica — mexe no jogo", caos:"CAOS — vira o jogo"},
-    legend:["Leve — zoeira","Média — mexe no jogo","Caos — vira o jogo"],
+    tag:{leve:"Leve, zoeira", media:"Clássica, mexe no jogo", caos:"CAOS, vira o jogo"},
+    legend:["Leve, zoeira","Média, mexe no jogo","Caos, vira o jogo"],
     poolEmpty:'Acabaram as regras dessa seleção. Desmarque "sem repetir" ou libere mais categorias.',
     confirmNew:"Nova partida? Isso limpa as regras em vigor e o histórico de sorteios.",
     helpAria:"Como usar na partida",
     helpBody:`<h3>📜 Como usar na partida</h3>
-      <p><b>Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra carta de desenvolvimento — quem causou, gira.</p>
+      <p><b>Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra carta de desenvolvimento, quem causou, gira.</p>
       <p><b>Modo Caos Programado:</b> a cada rodada completa, o jogador com menos pontos gira a roleta. Vingança dos lanternas!</p>
       <p><b>Regra de ouro:</b> a regra sorteada vale como escrita; dúvidas são decididas por votação da mesa (e a mesa sempre vota contra quem está ganhando).</p>
       <p><b>Em vigor:</b> cada regra sorteada fica guardada no painel lateral (rodapé no celular). Toque para reler; toque no ✕ quando ela se resolver.</p>`
@@ -1188,7 +1188,7 @@ const UI = {
   en:{
     htmlLang:"en",
     title:"⚔️ Wheel of Chaos ⚔️",
-    sub:"Settlers of Catan · Spin and obey — complaining costs 1 wood",
+    sub:"Settlers of Catan · Spin and obey, complaining costs 1 wood",
     spin:"SPIN",
     options:"⚙ Options",
     norepeat:"No repeats", leves:"🐑 Light", medias:"🌾 Classic", caos:"🔥 Chaos", som:"🔊 Sound",
@@ -1200,13 +1200,13 @@ const UI = {
     hintClose:"tap to close",
     hintReread:"tap to reread",
     ruleTag:i=>`⚜ RULE #${i} ⚜`,
-    tag:{leve:"Light — banter", media:"Classic — shifts the game", caos:"CHAOS — flips the game"},
-    legend:["Light — banter","Medium — shifts the game","Chaos — flips the game"],
+    tag:{leve:"Light, banter", media:"Classic, shifts the game", caos:"CHAOS, flips the game"},
+    legend:["Light, banter","Medium, shifts the game","Chaos, flips the game"],
     poolEmpty:'No rules left in this selection. Uncheck "no repeats" or enable more categories.',
     confirmNew:"New game? This clears the rules in effect and the draw history.",
     helpAria:"How to play",
     helpBody:`<h3>📜 How to play</h3>
-      <p><b>Milestone mode:</b> the wheel spins whenever someone builds a city or buys a development card — whoever triggered it, spins.</p>
+      <p><b>Milestone mode:</b> the wheel spins whenever someone builds a city or buys a development card, whoever triggered it, spins.</p>
       <p><b>Scheduled Chaos mode:</b> every full round, the player with the fewest points spins the wheel. Revenge of the underdogs!</p>
       <p><b>Golden rule:</b> the drawn rule counts as written; disputes are settled by a table vote (and the table always votes against whoever's winning).</p>
       <p><b>In effect:</b> each drawn rule is kept in the side panel (bottom strip on mobile). Tap to reread; tap the ✕ once it resolves.</p>`
@@ -1214,7 +1214,7 @@ const UI = {
   "pt-PT":{
     htmlLang:"pt-PT",
     title:"⚔️ Roleta do Caos ⚔️",
-    sub:"Colonizadores de Catan · Gira e obedece — reclamar custa 1 madeira",
+    sub:"Colonizadores de Catan · Gira e obedece, reclamar custa 1 madeira",
     spin:"GIRAR",
     options:"⚙ Opções",
     norepeat:"Sem repetir", leves:"🐑 Leves", medias:"🌾 Clássicas", caos:"🔥 Caos", som:"🔊 Som",
@@ -1226,13 +1226,13 @@ const UI = {
     hintClose:"toca para fechar",
     hintReread:"toca para reler",
     ruleTag:i=>`⚜ REGRA #${i} ⚜`,
-    tag:{leve:"Leve — galhofa", media:"Clássica — mexe com o jogo", caos:"CAOS — vira o jogo"},
-    legend:["Leve — galhofa","Média — mexe com o jogo","Caos — vira o jogo"],
+    tag:{leve:"Leve, galhofa", media:"Clássica, mexe com o jogo", caos:"CAOS, vira o jogo"},
+    legend:["Leve, galhofa","Média, mexe com o jogo","Caos, vira o jogo"],
     poolEmpty:'Acabaram as regras desta seleção. Desmarca "sem repetir" ou liberta mais categorias.',
     confirmNew:"Nova partida? Isto limpa as regras em vigor e o histórico de sorteios.",
     helpAria:"Como usar na partida",
     helpBody:`<h3>📜 Como usar na partida</h3>
-      <p><b>Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra uma carta de desenvolvimento — quem causou, gira.</p>
+      <p><b>Modo Marco:</b> a roleta gira sempre que alguém constrói uma cidade ou compra uma carta de desenvolvimento, quem causou, gira.</p>
       <p><b>Modo Caos Programado:</b> a cada ronda completa, o jogador com menos pontos gira a roleta. Vingança dos últimos!</p>
       <p><b>Regra de ouro:</b> a regra sorteada vale como está escrita; as dúvidas decidem-se por votação da mesa (e a mesa vota sempre contra quem está a ganhar).</p>
       <p><b>Em vigor:</b> cada regra sorteada fica guardada no painel lateral (faixa inferior no telemóvel). Toca para reler; toca no ✕ quando ela se resolver.</p>`
@@ -1240,7 +1240,7 @@ const UI = {
   es:{
     htmlLang:"es",
     title:"⚔️ Ruleta del Caos ⚔️",
-    sub:"Colonos de Catán · Gira y obedece — quejarse cuesta 1 madera",
+    sub:"Colonos de Catán · Gira y obedece, quejarse cuesta 1 madera",
     spin:"GIRAR",
     options:"⚙ Opciones",
     norepeat:"Sin repetir", leves:"🐑 Suaves", medias:"🌾 Clásicas", caos:"🔥 Caos", som:"🔊 Sonido",
@@ -1252,13 +1252,13 @@ const UI = {
     hintClose:"toca para cerrar",
     hintReread:"toca para releer",
     ruleTag:i=>`⚜ REGLA #${i} ⚜`,
-    tag:{leve:"Suave — cachondeo", media:"Clásica — mueve la partida", caos:"CAOS — da la vuelta al juego"},
-    legend:["Suave — cachondeo","Media — mueve la partida","Caos — da la vuelta al juego"],
+    tag:{leve:"Suave, cachondeo", media:"Clásica, mueve la partida", caos:"CAOS, da la vuelta al juego"},
+    legend:["Suave, cachondeo","Media, mueve la partida","Caos, da la vuelta al juego"],
     poolEmpty:'Se acabaron las reglas de esta selección. Desmarca "sin repetir" o activa más categorías.',
     confirmNew:"¿Nueva partida? Esto borra las reglas en vigor y el historial de sorteos.",
     helpAria:"Cómo usar en la partida",
     helpBody:`<h3>📜 Cómo usar en la partida</h3>
-      <p><b>Modo Hito:</b> la ruleta gira cada vez que alguien construye una ciudad o compra una carta de desarrollo — quien lo causó, gira.</p>
+      <p><b>Modo Hito:</b> la ruleta gira cada vez que alguien construye una ciudad o compra una carta de desarrollo, quien lo causó, gira.</p>
       <p><b>Modo Caos Programado:</b> en cada ronda completa, el jugador con menos puntos gira la ruleta. ¡La venganza de los últimos!</p>
       <p><b>Regla de oro:</b> la regla sorteada vale tal como está escrita; las dudas se deciden por votación de la mesa (y la mesa siempre vota contra el que va ganando).</p>
       <p><b>En vigor:</b> cada regla sorteada queda guardada en el panel lateral (franja inferior en el móvil). Toca para releer; toca la ✕ cuando se resuelva.</p>`
@@ -1266,7 +1266,7 @@ const UI = {
   de:{
     htmlLang:"de",
     title:"⚔️ Rad des Chaos ⚔️",
-    sub:"Die Siedler von Catan · Dreh und gehorche — Meckern kostet 1 Holz",
+    sub:"Die Siedler von Catan · Dreh und gehorche, Meckern kostet 1 Holz",
     spin:"DREHEN",
     options:"⚙ Optionen",
     norepeat:"Ohne Wiederholung", leves:"🐑 Leicht", medias:"🌾 Klassisch", caos:"🔥 Chaos", som:"🔊 Ton",
@@ -1278,13 +1278,13 @@ const UI = {
     hintClose:"tippen zum Schließen",
     hintReread:"tippen zum Nachlesen",
     ruleTag:i=>`⚜ REGEL #${i} ⚜`,
-    tag:{leve:"Leicht — Spaß", media:"Klassisch — greift ins Spiel ein", caos:"CHAOS — stellt das Spiel auf den Kopf"},
-    legend:["Leicht — Spaß","Mittel — greift ins Spiel ein","Chaos — stellt das Spiel auf den Kopf"],
+    tag:{leve:"Leicht, Spaß", media:"Klassisch, greift ins Spiel ein", caos:"CHAOS, stellt das Spiel auf den Kopf"},
+    legend:["Leicht, Spaß","Mittel, greift ins Spiel ein","Chaos, stellt das Spiel auf den Kopf"],
     poolEmpty:"Keine Regeln mehr in dieser Auswahl. „Ohne Wiederholung“ abwählen oder mehr Kategorien freigeben.",
     confirmNew:"Neue Partie? Das löscht die geltenden Regeln und den Verlauf der Ziehungen.",
     helpAria:"Spielanleitung",
     helpBody:`<h3>📜 Spielanleitung</h3>
-      <p><b>Meilenstein-Modus:</b> Das Rad dreht sich, wann immer jemand eine Stadt baut oder eine Entwicklungskarte kauft — wer es ausgelöst hat, dreht.</p>
+      <p><b>Meilenstein-Modus:</b> Das Rad dreht sich, wann immer jemand eine Stadt baut oder eine Entwicklungskarte kauft, wer es ausgelöst hat, dreht.</p>
       <p><b>Geplantes Chaos:</b> Nach jeder vollen Runde dreht der Spieler mit den wenigsten Punkten. Rache der Letzten!</p>
       <p><b>Goldene Regel:</b> Die gezogene Regel gilt wie geschrieben; Streitfälle entscheidet der Tisch per Abstimmung (und der Tisch stimmt immer gegen den, der führt).</p>
       <p><b>In Kraft:</b> Jede gezogene Regel bleibt im Seitenpanel (unten am Handy). Tippen zum Nachlesen; auf ✕ tippen, wenn sie erledigt ist.</p>`
@@ -1292,7 +1292,7 @@ const UI = {
   fr:{
     htmlLang:"fr",
     title:"⚔️ Roue du Chaos ⚔️",
-    sub:"Les Colons de Catane · Tourne et obéis — râler coûte 1 bois",
+    sub:"Les Colons de Catane · Tourne et obéis, râler coûte 1 bois",
     spin:"TOURNER",
     options:"⚙ Options",
     norepeat:"Sans répétition", leves:"🐑 Légères", medias:"🌾 Classiques", caos:"🔥 Chaos", som:"🔊 Son",
@@ -1304,13 +1304,13 @@ const UI = {
     hintClose:"touche pour fermer",
     hintReread:"touche pour relire",
     ruleTag:i=>`⚜ RÈGLE #${i} ⚜`,
-    tag:{leve:"Légère — pour rire", media:"Classique — change la partie", caos:"CHAOS — renverse le jeu"},
-    legend:["Légère — pour rire","Moyenne — change la partie","Chaos — renverse le jeu"],
+    tag:{leve:"Légère, pour rire", media:"Classique, change la partie", caos:"CHAOS, renverse le jeu"},
+    legend:["Légère, pour rire","Moyenne, change la partie","Chaos, renverse le jeu"],
     poolEmpty:"Plus de règles dans cette sélection. Décoche « sans répétition » ou active plus de catégories.",
     confirmNew:"Nouvelle partie ? Cela efface les règles en vigueur et l'historique des tirages.",
     helpAria:"Comment jouer",
     helpBody:`<h3>📜 Comment jouer</h3>
-      <p><b>Mode Jalon :</b> la roue tourne chaque fois que quelqu'un construit une ville ou achète une carte développement — celui qui l'a déclenché tourne.</p>
+      <p><b>Mode Jalon :</b> la roue tourne chaque fois que quelqu'un construit une ville ou achète une carte développement, celui qui l'a déclenché tourne.</p>
       <p><b>Mode Chaos Programmé :</b> à chaque manche complète, le joueur avec le moins de points fait tourner la roue. La revanche des derniers !</p>
       <p><b>Règle d'or :</b> la règle tirée s'applique telle quelle ; les litiges se règlent par vote de la table (et la table vote toujours contre celui qui gagne).</p>
       <p><b>En vigueur :</b> chaque règle tirée reste dans le panneau latéral (bandeau en bas sur mobile). Touche pour relire ; touche la ✕ quand elle est réglée.</p>`
@@ -1318,7 +1318,7 @@ const UI = {
   it:{
     htmlLang:"it",
     title:"⚔️ Ruota del Caos ⚔️",
-    sub:"Coloni di Catan · Gira e obbedisci — lamentarsi costa 1 legno",
+    sub:"Coloni di Catan · Gira e obbedisci, lamentarsi costa 1 legno",
     spin:"GIRA",
     options:"⚙ Opzioni",
     norepeat:"Senza ripetere", leves:"🐑 Leggere", medias:"🌾 Classiche", caos:"🔥 Caos", som:"🔊 Suono",
@@ -1330,13 +1330,13 @@ const UI = {
     hintClose:"tocca per chiudere",
     hintReread:"tocca per rileggere",
     ruleTag:i=>`⚜ REGOLA #${i} ⚜`,
-    tag:{leve:"Leggera — goliardia", media:"Classica — tocca la partita", caos:"CAOS — ribalta il gioco"},
-    legend:["Leggera — goliardia","Media — tocca la partita","Caos — ribalta il gioco"],
+    tag:{leve:"Leggera, goliardia", media:"Classica, tocca la partita", caos:"CAOS, ribalta il gioco"},
+    legend:["Leggera, goliardia","Media, tocca la partita","Caos, ribalta il gioco"],
     poolEmpty:'Finite le regole di questa selezione. Togli "senza ripetere" o attiva altre categorie.',
     confirmNew:"Nuova partita? Cancella le regole in vigore e la cronologia delle estrazioni.",
     helpAria:"Come si gioca",
     helpBody:`<h3>📜 Come si gioca</h3>
-      <p><b>Modalità Traguardo:</b> la ruota gira ogni volta che qualcuno costruisce una città o compra una carta sviluppo — chi l'ha causato, gira.</p>
+      <p><b>Modalità Traguardo:</b> la ruota gira ogni volta che qualcuno costruisce una città o compra una carta sviluppo, chi l'ha causato, gira.</p>
       <p><b>Modalità Caos Programmato:</b> a ogni giro completo, il giocatore con meno punti gira la ruota. La rivincita degli ultimi!</p>
       <p><b>Regola d'oro:</b> la regola estratta vale come scritta; i dubbi si decidono con un voto del tavolo (e il tavolo vota sempre contro chi sta vincendo).</p>
       <p><b>In vigore:</b> ogni regola estratta resta nel pannello laterale (striscia in basso sul telefono). Tocca per rileggere; tocca la ✕ quando si risolve.</p>`
@@ -1348,13 +1348,13 @@ const ruleName = i => (lang==="pt-BR" ? RULES[i].n : RULES_L10N[lang][i].n);
 const ruleDesc = i => (lang==="pt-BR" ? RULES[i].d : RULES_L10N[lang][i].d);
 
 // stats / history labels per language
-Object.assign(UI["pt-BR"], {histTitle:"Já sorteadas", histEmpty:"Nada ainda — gire! 🎲", lived:(k,n)=>`${k}/${n} regras vividas`});
-Object.assign(UI["pt-PT"], {histTitle:"Já saíram",     histEmpty:"Nada ainda — gira! 🎲", lived:(k,n)=>`${k}/${n} regras vividas`});
-Object.assign(UI["en"],    {histTitle:"Drawn",         histEmpty:"Nothing yet — spin! 🎲", lived:(k,n)=>`${k}/${n} rules lived`});
-Object.assign(UI["es"],    {histTitle:"Ya salidas",    histEmpty:"Nada aún — ¡gira! 🎲",   lived:(k,n)=>`${k}/${n} reglas vividas`});
-Object.assign(UI["de"],    {histTitle:"Gezogen",       histEmpty:"Noch nichts — dreh! 🎲", lived:(k,n)=>`${k}/${n} Regeln erlebt`});
-Object.assign(UI["fr"],    {histTitle:"Déjà tirées",   histEmpty:"Rien encore — tourne ! 🎲", lived:(k,n)=>`${k}/${n} règles vécues`});
-Object.assign(UI["it"],    {histTitle:"Già uscite",    histEmpty:"Ancora niente — gira! 🎲", lived:(k,n)=>`${k}/${n} regole vissute`});
+Object.assign(UI["pt-BR"], {histTitle:"Já sorteadas", histEmpty:"Nada ainda, gire! 🎲", lived:(k,n)=>`${k}/${n} regras vividas`});
+Object.assign(UI["pt-PT"], {histTitle:"Já saíram",     histEmpty:"Nada ainda, gira! 🎲", lived:(k,n)=>`${k}/${n} regras vividas`});
+Object.assign(UI["en"],    {histTitle:"Drawn",         histEmpty:"Nothing yet, spin! 🎲", lived:(k,n)=>`${k}/${n} rules lived`});
+Object.assign(UI["es"],    {histTitle:"Ya salidas",    histEmpty:"Nada aún, ¡gira! 🎲",   lived:(k,n)=>`${k}/${n} reglas vividas`});
+Object.assign(UI["de"],    {histTitle:"Gezogen",       histEmpty:"Noch nichts, dreh! 🎲", lived:(k,n)=>`${k}/${n} Regeln erlebt`});
+Object.assign(UI["fr"],    {histTitle:"Déjà tirées",   histEmpty:"Rien encore, tourne ! 🎲", lived:(k,n)=>`${k}/${n} règles vécues`});
+Object.assign(UI["it"],    {histTitle:"Già uscite",    histEmpty:"Ancora niente, gira! 🎲", lived:(k,n)=>`${k}/${n} regole vissute`});
 const wheel = document.getElementById("wheel");
 let drawn = new Set(), drawnOrder = [], rotation = 0, spinning = false;
 
@@ -1423,7 +1423,7 @@ function buildWheel(){
     s += `<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="4" fill="#e2b755" stroke="#8a6a24" stroke-width="1"/>`;
   }
   if(M===0){
-    s += `<text x="${cx}" y="${cy}" fill="#e2b75588" font-size="16" text-anchor="middle" dominant-baseline="middle" font-family="Georgia,serif">—</text>`;
+    s += `<text x="${cx}" y="${cy}" fill="#e2b75588" font-size="16" text-anchor="middle" dominant-baseline="middle" font-family="Georgia,serif">·</text>`;
   }
   wheel.innerHTML = s;
 }
