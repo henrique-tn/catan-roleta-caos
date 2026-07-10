@@ -379,6 +379,14 @@
   .hist-item.caos{border-left-color:var(--caos1);}
   #hist-empty{color:var(--muted); font-style:italic; font-size:.82rem; opacity:.7;}
 
+  /* honor the OS "reduce motion" setting: quick spin, no shakes/pulses */
+  @media (prefers-reduced-motion: reduce){
+    svg.wheel{transition-duration:1.2s;}
+    #result.show, #result.caos-hit, #help.show, #custom.show, #hub.show{animation:none;}
+    .entry{animation:none;}
+    #win-seg.pulse{animation:none; opacity:.9;}
+  }
+
   /* winning-segment highlight (drawn inside the SVG so it rotates with the wheel) */
   #win-seg{display:none; fill:none; stroke:#fff3c4; stroke-width:4; stroke-linejoin:round; pointer-events:none;
     filter:drop-shadow(0 0 5px #ffe27a);}
@@ -1584,10 +1592,25 @@ Object.assign(UI["de"],    {hubBtn:"📚 Alle Regeln", hubHint:n=>`Tippe auf ein
 Object.assign(UI["fr"],    {hubBtn:"📚 Toutes les règles", hubHint:n=>`Touche un titre pour la lire. ✕ la retire de ta roue, ↩ la remet.${n?` · ${n} désactivée(s)`:""}`});
 Object.assign(UI["it"],    {hubBtn:"📚 Tutte le regole", hubHint:n=>`Tocca un titolo per leggerla. ✕ la toglie dalla tua ruota, ↩ la rimette.${n?` · ${n} disattivate`:""}`});
 
+// tab title + remove tooltip per language
+Object.assign(UI["pt-BR"], {docTitle:"Roleta do Caos · Catan", removeTip:"Resolvida / remover"});
+Object.assign(UI["pt-PT"], {docTitle:"Roleta do Caos · Catan", removeTip:"Resolvida / remover"});
+Object.assign(UI["en"],    {docTitle:"Chaos Wheel · Catan", removeTip:"Resolved / remove"});
+Object.assign(UI["es"],    {docTitle:"Ruleta del Caos · Catán", removeTip:"Resuelta / quitar"});
+Object.assign(UI["de"],    {docTitle:"Rad des Chaos · Catan", removeTip:"Erledigt / entfernen"});
+Object.assign(UI["fr"],    {docTitle:"Roue du Chaos · Catane", removeTip:"Réglée / retirer"});
+Object.assign(UI["it"],    {docTitle:"Ruota del Caos · Catan", removeTip:"Risolta / rimuovere"});
+
 // donation page: set this to your PayPal.me / Ko-fi URL and the button appears
 const SUPPORT_URL = "";
+
+// analytics (GoatCounter): set your site code (e.g. "catan-roleta") and the counter script loads.
+// register the code at goatcounter.com; page views only, no cookies.
+const GC_CODE = "";
 const wheel = document.getElementById("wheel");
 let drawn = new Set(), drawnOrder = [], rotation = 0, spinning = false;
+// OS-level "reduce motion": shorten the spin and its timers to match the 1.2s CSS transition
+const REDUCED_MOTION = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // wheel geometry (shared by builder and winner highlight)
 const GEO = {cx:200, cy:200, rRing:178};
@@ -1761,7 +1784,7 @@ function renderActive(newUid){
   listEl.innerHTML = active.map(a=>`
     <li class="entry ${a.t}${a.uid===newUid?' new':''}" data-uid="${a.uid}">
       <div class="e-title"><b>#${a.idx+1}</b>${esc(ruleName(a.idx))}</div>
-      <button class="e-x" data-uid="${a.uid}" title="Resolver / remover" aria-label="Remover regra">✕</button>
+      <button class="e-x" data-uid="${a.uid}" title="${UI[lang].removeTip}" aria-label="${UI[lang].removeTip}">✕</button>
       <div class="e-hint">${UI[lang].hintReread}</div>
     </li>`).join("");
   const has = active.length > 0;
@@ -1821,6 +1844,7 @@ const langSelect = document.getElementById("langSelect");
 function applyLang(){
   const u = UI[lang];
   document.documentElement.lang = u.htmlLang;
+  document.title = u.docTitle;
   document.getElementById("title").textContent = u.title;
   document.getElementById("sub").textContent = u.sub;
   document.getElementById("btn").textContent = u.spin;
@@ -1876,6 +1900,7 @@ function openHelp(){
   void helpEl.offsetWidth;
   helpEl.classList.add("show");
   helpBackdrop.classList.add("show");
+  document.getElementById("helpClose").focus();
 }
 function closeHelp(){
   helpEl.classList.remove("show");
@@ -1894,7 +1919,7 @@ function renderCustom(){
   list.innerHTML = CUSTOM.map((r,k)=>`
     <li class="cr-item ${r.t}">
       <b>#${RULES.length+k+1} ${esc(r.n)}</b>${esc(r.d)}
-      <button class="cr-x" data-k="${k}" aria-label="Remover">✕</button>
+      <button class="cr-x" data-k="${k}" title="${UI[lang].removeTip}" aria-label="${UI[lang].removeTip}">✕</button>
     </li>`).join("");
   const has = CUSTOM.length > 0;
   list.style.display = has ? "" : "none";
@@ -1909,6 +1934,7 @@ function openCustom(){
   void customEl.offsetWidth;
   customEl.classList.add("show");
   customBackdrop.classList.add("show");
+  document.getElementById("customClose").focus();
 }
 function closeCustom(){
   customEl.classList.remove("show");
@@ -2032,6 +2058,7 @@ function openHub(){
   void hubEl.offsetWidth;
   hubEl.classList.add("show");
   hubBackdrop.classList.add("show");
+  document.getElementById("hubClose").focus();
 }
 function closeHub(){
   hubEl.classList.remove("show");
@@ -2059,6 +2086,18 @@ document.getElementById("hub-list").addEventListener("click", e=>{
 });
 
 document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ closeHelp(); closeCustom(); closeHub(); setMenu(false); } });
+// keep Tab inside whichever modal is open (focus trap)
+document.addEventListener("keydown", e=>{
+  if(e.key!=="Tab") return;
+  const modal = [helpEl, customEl, hubEl].find(m=>m.classList.contains("show"));
+  if(!modal) return;
+  const foci = modal.querySelectorAll('button, [href], input, select, textarea');
+  if(!foci.length) return;
+  const first = foci[0], last = foci[foci.length-1];
+  if(e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
+  else if(!e.shiftKey && (document.activeElement===last || !modal.contains(document.activeElement))){ first.focus(); e.preventDefault(); }
+});
+
 // space bar spins (unless typing or a modal/menu is open)
 document.addEventListener("keydown", e=>{
   if(e.code!=="Space" && e.key!==" ") return;
@@ -2163,7 +2202,8 @@ function spin(){
   const target = 360*6 + (360 - segCenter) + jitter;
   rotation += target - (rotation % 360);
   wheel.style.transform = `rotate(${rotation}deg)`;
-  tickSchedule(4800);
+  const spinMs = REDUCED_MOTION ? 1300 : 5200;
+  tickSchedule(REDUCED_MOTION ? 1100 : 4800);
   setTimeout(()=>{
     fillResult(idx, false);
     highlightWinner(pos);
@@ -2174,7 +2214,7 @@ function spin(){
     updateRemaining(); renderProgress();
     spinning = false; btn.disabled = false;
     dismissTimer = setTimeout(dismissResult, 6000);
-  }, 5200);
+  }, spinMs);
 }
 
 // ---- init ----
@@ -2196,6 +2236,13 @@ try{ if(!localStorage.getItem(LS)) lang = detectLang(); }catch(e){}   // first v
 if(SUPPORT_URL){
   const sb = document.getElementById("supportBtn");
   sb.href = SUPPORT_URL; sb.hidden = false;
+}
+if(GC_CODE){
+  const gc = document.createElement("script");
+  gc.async = true;
+  gc.src = "https://gc.zgo.at/count.js";
+  gc.dataset.goatcounter = `https://${GC_CODE}.goatcounter.com/count`;
+  document.head.appendChild(gc);
 }
 buildWheel();  // wheel reflects the saved category filters
 applyLang();   // sets all UI text for the saved language + renders active list + remaining
