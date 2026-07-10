@@ -349,15 +349,13 @@
   </div>
   <div class="controls">
     <label><input type="checkbox" id="norepeat" checked> <span id="t-norepeat">Sem repetir</span></label>
-    <label><input type="checkbox" id="fLeve" checked> <span id="t-leve" style="color:var(--leve1)">🐑 Leves</span></label>
-    <label><input type="checkbox" id="fMedia" checked> <span id="t-media" style="color:var(--media1)">🌾 Médias</span></label>
+    <label><input type="checkbox" id="fMedia" checked> <span id="t-media" style="color:var(--media1)">🌾 Clássicas</span></label>
     <label><input type="checkbox" id="fCaos" checked> <span id="t-caos" style="color:var(--caos1)">🔥 Caos</span></label>
     <label><input type="checkbox" id="sound" checked> <span id="t-som">🔊 Som</span></label>
   </div>
   <div id="remaining"></div>
   <div class="legend">
-    <span><span class="dot" style="background:var(--leve1)"></span><span class="lg-leve">Leve — zoeira</span></span>
-    <span><span class="dot" style="background:var(--media1)"></span><span class="lg-media">Média — mexe no jogo</span></span>
+    <span><span class="dot" style="background:var(--media1)"></span><span class="lg-media">Clássica — mexe no jogo</span></span>
     <span><span class="dot" style="background:var(--caos1)"></span><span class="lg-caos">Caos — vira o jogo</span></span>
   </div>
   <div id="stats">
@@ -425,18 +423,7 @@
 
 <script>
 const RULES = [
- // ---- LEVES (1-10) ----
- {n:"Voto de Silêncio", d:"Até seu próximo turno você não pode falar. Negocie só por mímica. Falou? Perde 1 carta pro banco.", t:"leve"},
- {n:"Sotaque Obrigatório", d:"A mesa escolhe um sotaque. Você fala assim até seu próximo turno. Saiu do personagem? -1 carta.", t:"leve"},
- {n:"Batismo", d:"A mesa escolhe seu novo apelido até o fim do jogo. Quem te chamar pelo nome real te paga 1 recurso.", t:"leve"},
- {n:"Narrador Esportivo", d:"O jogador à sua esquerda narra todo o seu próximo turno como locutor de futebol. Golaço!", t:"leve"},
- {n:"Cantoria do Dado", d:"Nesta rodada, cante um trecho de música antes de cada rolagem sua. Esqueceu? -1 carta.", t:"leve"},
- {n:"Terceira Pessoa", d:"Fale de si mesmo apenas na 3ª pessoa até seu próximo turno. Cada erro: a mesa pode vaiar à vontade.", t:"leve"},
- {n:"Diplomata", d:"Antes de qualquer negociação sua, elogie sinceramente o adversário. Sem elogio, sem troca.", t:"leve"},
- {n:"Mão na Cabeça", d:"Até o próximo 7: quando sair 7, o último a pôr a mão na cabeça te dá 1 recurso.", t:"leve"},
- {n:"Dança das Cadeiras", d:"Todos levantam e trocam de lugar na mesa (as peças ficam!). Boa sorte lendo o jogo de outro ângulo.", t:"leve"},
- {n:"Discurso do Campeão", d:"Faça agora um discurso de vitória de 30 segundos. Se a mesa aplaudir, pegue 1 recurso à sua escolha.", t:"leve"},
- // ---- MÉDIAS ----
+ // ---- CLASSIC (media) ----
  {n:"Mercado Livre", d:"Até seu próximo turno, TODOS trocam com o banco a 3:1.", t:"media"},
  {n:"Mão Aberta", d:"Jogue com suas cartas viradas para cima na mesa até seu próximo turno.", t:"media"},
  {n:"Grande Rodízio", d:"Agora: todos passam 1 carta de recurso (escolhida por quem passa) para o jogador da esquerda.", t:"media"},
@@ -502,18 +489,7 @@ const RULES = [
 
 // English translations, same order/index as RULES
 const RULES_EN = [
- // ---- LIGHT ----
- {n:"Vow of Silence", d:"Until your next turn you can't speak. Negotiate only through mime. Spoke? Lose 1 card to the bank."},
- {n:"Forced Accent", d:"The table picks an accent. You talk like that until your next turn. Broke character? -1 card."},
- {n:"Baptism", d:"The table picks your new nickname until the game ends. Anyone who calls you by your real name pays you 1 resource."},
- {n:"Sports Commentator", d:"The player to your left narrates your entire next turn like a football announcer. Goooal!"},
- {n:"Dice Song", d:"This round, sing a snippet of a song before each of your rolls. Forgot? -1 card."},
- {n:"Third Person", d:"Refer to yourself only in the third person until your next turn. Each slip: the table may boo freely."},
- {n:"Diplomat", d:"Before any of your negotiations, sincerely compliment your opponent. No compliment, no trade."},
- {n:"Hands on Head", d:"Until the next 7: when a 7 is rolled, the last to put a hand on their head gives you 1 resource."},
- {n:"Musical Chairs", d:"Everyone stands and swaps seats at the table (pieces stay!). Good luck reading the board from a new angle."},
- {n:"Champion's Speech", d:"Give a 30-second victory speech right now. If the table applauds, take 1 resource of your choice."},
- // ---- MEDIUM ----
+ // ---- CLASSIC (media) ----
  {n:"Free Market", d:"Until your next turn, EVERYONE trades with the bank at 3:1."},
  {n:"Open Hand", d:"Play with your cards face up on the table until your next turn."},
  {n:"Grand Rotation", d:"Now: everyone passes 1 resource card (chosen by the giver) to the player on their left."},
@@ -579,16 +555,6 @@ const RULES_EN = [
 
 // Português europeu — tratamento por "tu", vocabulário PT-PT (alcunha, banca, telemóvel, lançar dados)
 const RULES_PTPT = [
- {n:"Voto de Silêncio", d:"Até ao teu próximo turno não podes falar. Negoceia só por mímica. Falaste? Perdes 1 carta para a banca."},
- {n:"Sotaque Obrigatório", d:"A mesa escolhe um sotaque. Falas assim até ao teu próximo turno. Saíste da personagem? -1 carta."},
- {n:"Batismo", d:"A mesa escolhe a tua nova alcunha até ao fim do jogo. Quem te chamar pelo nome verdadeiro paga-te 1 recurso."},
- {n:"Relator Desportivo", d:"O jogador à tua esquerda relata todo o teu próximo turno como um locutor de futebol. Golaço!"},
- {n:"Cantoria do Dado", d:"Nesta ronda, canta um trecho de uma música antes de cada lançamento teu. Esqueceste-te? -1 carta."},
- {n:"Terceira Pessoa", d:"Fala de ti apenas na 3.ª pessoa até ao teu próximo turno. Cada erro: a mesa pode apupar à vontade."},
- {n:"Diplomata", d:"Antes de qualquer negociação tua, elogia sinceramente o adversário. Sem elogio, não há troca."},
- {n:"Mão na Cabeça", d:"Até ao próximo 7: quando sair um 7, o último a pôr a mão na cabeça dá-te 1 recurso."},
- {n:"Dança das Cadeiras", d:"Todos se levantam e trocam de lugar à mesa (as peças ficam!). Boa sorte a ler o jogo de outro ângulo."},
- {n:"Discurso do Campeão", d:"Faz agora um discurso de vitória de 30 segundos. Se a mesa aplaudir, tira 1 recurso à tua escolha."},
  {n:"Mercado Livre", d:"Até ao teu próximo turno, TODOS trocam com a banca a 3:1."},
  {n:"Mão Aberta", d:"Joga com as cartas viradas para cima na mesa até ao teu próximo turno."},
  {n:"Grande Rodízio", d:"Agora: todos passam 1 carta de recurso (escolhida por quem a dá) ao jogador da esquerda."},
@@ -653,16 +619,6 @@ const RULES_PTPT = [
 
 // Español — tuteo, términos de Catán (ladrón, poblado, carta de desarrollo, Gran Ejército, Gran Ruta Comercial)
 const RULES_ES = [
- {n:"Voto de Silencio", d:"Hasta tu próximo turno no puedes hablar. Negocia solo con mímica. ¿Hablaste? Pierdes 1 carta, que va a la banca."},
- {n:"Acento Obligatorio", d:"La mesa elige un acento. Hablas así hasta tu próximo turno. ¿Saliste del personaje? -1 carta."},
- {n:"Bautizo", d:"La mesa elige tu nuevo apodo hasta el final de la partida. Quien te llame por tu nombre real te paga 1 recurso."},
- {n:"Narrador Deportivo", d:"El jugador a tu izquierda narra todo tu próximo turno como un comentarista de fútbol. ¡Golazo!"},
- {n:"Canto del Dado", d:"Esta ronda, canta un trozo de una canción antes de cada tirada tuya. ¿Se te olvidó? -1 carta."},
- {n:"Tercera Persona", d:"Habla de ti mismo solo en tercera persona hasta tu próximo turno. Cada fallo: la mesa puede abuchear a gusto."},
- {n:"Diplomático", d:"Antes de cualquier negociación tuya, elogia sinceramente a tu adversario. Sin elogio no hay trato."},
- {n:"Manos a la Cabeza", d:"Hasta el próximo 7: cuando salga un 7, el último en ponerse la mano en la cabeza te da 1 recurso."},
- {n:"Sillas Musicales", d:"Todos se levantan y cambian de sitio en la mesa (¡las piezas se quedan!). Suerte leyendo el tablero desde otro ángulo."},
- {n:"Discurso del Campeón", d:"Da ahora un discurso de victoria de 30 segundos. Si la mesa aplaude, coge 1 recurso a tu elección."},
  {n:"Mercado Libre", d:"Hasta tu próximo turno, TODOS comercian con la banca a 3:1."},
  {n:"Mano Abierta", d:"Juega con tus cartas boca arriba sobre la mesa hasta tu próximo turno."},
  {n:"Gran Rotación", d:"Ahora: todos pasan 1 carta de recurso (elegida por quien la da) al jugador de su izquierda."},
@@ -727,16 +683,6 @@ const RULES_ES = [
 
 // Deutsch — Duzen, Catan-Begriffe (Räuber, Rohstoff, Entwicklungskarte, Siedlung, Größte Rittermacht, Längste Handelsstraße)
 const RULES_DE = [
- {n:"Schweigegelübde", d:"Bis zu deinem nächsten Zug darfst du nicht sprechen. Verhandle nur mit Pantomime. Gesprochen? 1 Karte an die Bank."},
- {n:"Zwangsakzent", d:"Der Tisch wählt einen Akzent. So sprichst du bis zu deinem nächsten Zug. Aus der Rolle gefallen? -1 Karte."},
- {n:"Taufe", d:"Der Tisch wählt deinen neuen Spitznamen bis zum Spielende. Wer dich beim echten Namen nennt, zahlt dir 1 Rohstoff."},
- {n:"Sportkommentator", d:"Der Spieler links von dir kommentiert deinen ganzen nächsten Zug wie ein Fußballreporter. Tooor!"},
- {n:"Würfellied", d:"Singe in dieser Runde vor jedem deiner Würfe ein Stück eines Liedes. Vergessen? -1 Karte."},
- {n:"Dritte Person", d:"Sprich bis zu deinem nächsten Zug nur in der dritten Person über dich. Jeder Fehler: der Tisch darf nach Herzenslust buhen."},
- {n:"Diplomat", d:"Mach vor jeder deiner Verhandlungen deinem Gegenüber ein ehrliches Kompliment. Ohne Kompliment kein Handel."},
- {n:"Hand an den Kopf", d:"Bis zur nächsten 7: Fällt eine 7, gibt dir der Letzte, der die Hand an den Kopf legt, 1 Rohstoff."},
- {n:"Reise nach Jerusalem", d:"Alle stehen auf und tauschen die Plätze (die Figuren bleiben!). Viel Glück beim Lesen des Bretts aus neuem Winkel."},
- {n:"Siegerrede", d:"Halte jetzt eine 30-Sekunden-Siegesrede. Applaudiert der Tisch, nimm dir 1 Rohstoff deiner Wahl."},
  {n:"Freier Markt", d:"Bis zu deinem nächsten Zug handeln ALLE mit der Bank zu 3:1."},
  {n:"Offene Hand", d:"Spiele bis zu deinem nächsten Zug mit offenen Karten auf dem Tisch."},
  {n:"Großer Wechsel", d:"Jetzt: Jeder gibt 1 Rohstoffkarte (vom Geber gewählt) an den linken Nachbarn weiter."},
@@ -801,16 +747,6 @@ const RULES_DE = [
 
 // Français — tutoiement, termes de Catane (voleur, colonie, carte développement, armée la plus puissante, route la plus longue)
 const RULES_FR = [
- {n:"Vœu de Silence", d:"Jusqu'à ton prochain tour, interdit de parler. Négocie uniquement en mime. Tu as parlé ? Perds 1 carte pour la banque."},
- {n:"Accent Obligatoire", d:"La table choisit un accent. Tu parles ainsi jusqu'à ton prochain tour. Sorti du personnage ? -1 carte."},
- {n:"Baptême", d:"La table choisit ton nouveau surnom jusqu'à la fin de la partie. Qui t'appelle par ton vrai nom te paie 1 ressource."},
- {n:"Commentateur Sportif", d:"Le joueur à ta gauche commente tout ton prochain tour comme un match de foot. Quel but !"},
- {n:"Chanson du Dé", d:"Cette manche, chante un bout de chanson avant chacun de tes lancers. Oublié ? -1 carte."},
- {n:"Troisième Personne", d:"Parle de toi uniquement à la troisième personne jusqu'à ton prochain tour. Chaque erreur : la table peut huer à volonté."},
- {n:"Diplomate", d:"Avant chacune de tes négociations, complimente sincèrement ton adversaire. Pas de compliment, pas d'échange."},
- {n:"Main sur la Tête", d:"Jusqu'au prochain 7 : quand un 7 sort, le dernier à poser la main sur sa tête te donne 1 ressource."},
- {n:"Chaises Musicales", d:"Tout le monde se lève et change de place (les pions restent !). Bon courage pour lire le plateau sous un autre angle."},
- {n:"Discours du Champion", d:"Fais maintenant un discours de victoire de 30 secondes. Si la table applaudit, prends 1 ressource de ton choix."},
  {n:"Marché Libre", d:"Jusqu'à ton prochain tour, TOUT LE MONDE commerce avec la banque à 3:1."},
  {n:"Main Ouverte", d:"Joue cartes face visible sur la table jusqu'à ton prochain tour."},
  {n:"Grande Tournante", d:"Maintenant : chacun passe 1 carte ressource (choisie par le donneur) au joueur à sa gauche."},
@@ -875,16 +811,6 @@ const RULES_FR = [
 
 // Italiano — dare del tu, termini di Catan (brigante, colonia, carta sviluppo, esercito più grande, strada più lunga)
 const RULES_IT = [
- {n:"Voto del Silenzio", d:"Fino al tuo prossimo turno non puoi parlare. Negozia solo a gesti. Hai parlato? Perdi 1 carta, che va alla banca."},
- {n:"Accento Obbligatorio", d:"Il tavolo sceglie un accento. Parli così fino al tuo prossimo turno. Uscito dal personaggio? -1 carta."},
- {n:"Battesimo", d:"Il tavolo sceglie il tuo nuovo soprannome fino a fine partita. Chi ti chiama col vero nome ti paga 1 risorsa."},
- {n:"Telecronista Sportivo", d:"Il giocatore alla tua sinistra racconta tutto il tuo prossimo turno come un telecronista di calcio. Goool!"},
- {n:"Canzone del Dado", d:"In questo giro, canta un pezzo di canzone prima di ogni tuo lancio. Dimenticato? -1 carta."},
- {n:"Terza Persona", d:"Parla di te solo in terza persona fino al tuo prossimo turno. Ogni errore: il tavolo può fischiare a piacere."},
- {n:"Diplomatico", d:"Prima di ogni tua trattativa, fai un complimento sincero all'avversario. Niente complimento, niente scambio."},
- {n:"Mano sulla Testa", d:"Fino al prossimo 7: quando esce un 7, l'ultimo a mettersi la mano in testa ti dà 1 risorsa."},
- {n:"Gioco delle Sedie", d:"Tutti si alzano e si scambiano di posto (i pezzi restano!). Buona fortuna a leggere il tabellone da un'altra angolazione."},
- {n:"Discorso del Campione", d:"Fai ora un discorso di vittoria di 30 secondi. Se il tavolo applaude, prendi 1 risorsa a tua scelta."},
  {n:"Mercato Libero", d:"Fino al tuo prossimo turno, TUTTI commerciano con la banca a 3:1."},
  {n:"Mano Scoperta", d:"Gioca con le carte scoperte sul tavolo fino al tuo prossimo turno."},
  {n:"Grande Giro", d:"Ora: tutti passano 1 carta risorsa (scelta da chi la dà) al giocatore alla propria sinistra."},
@@ -959,7 +885,7 @@ const UI = {
     sub:"Colonos de Catan · Gire e obedeça — reclamar custa 1 madeira",
     spin:"GIRAR",
     options:"⚙ Opções",
-    norepeat:"Sem repetir", leves:"🐑 Leves", medias:"🌾 Médias", caos:"🔥 Caos", som:"🔊 Som",
+    norepeat:"Sem repetir", leves:"🐑 Leves", medias:"🌾 Clássicas", caos:"🔥 Caos", som:"🔊 Som",
     howto:"📜 Como jogar", newgame:"↺ Nova partida",
     inEffect:"⚜ Em vigor", clear:"limpar",
     empty:"Nenhuma regra ativa.<br>Gire a roleta 🎲",
@@ -968,7 +894,7 @@ const UI = {
     hintClose:"toque para fechar",
     hintReread:"toque para reler",
     ruleTag:i=>`⚜ REGRA #${i} ⚜`,
-    tag:{leve:"Leve — zoeira", media:"Média — mexe no jogo", caos:"CAOS — vira o jogo"},
+    tag:{leve:"Leve — zoeira", media:"Clássica — mexe no jogo", caos:"CAOS — vira o jogo"},
     legend:["Leve — zoeira","Média — mexe no jogo","Caos — vira o jogo"],
     poolEmpty:'Acabaram as regras dessa seleção. Desmarque "sem repetir" ou libere mais categorias.',
     confirmNew:"Nova partida? Isso limpa as regras em vigor e o histórico de sorteios.",
@@ -985,7 +911,7 @@ const UI = {
     sub:"Settlers of Catan · Spin and obey — complaining costs 1 wood",
     spin:"SPIN",
     options:"⚙ Options",
-    norepeat:"No repeats", leves:"🐑 Light", medias:"🌾 Medium", caos:"🔥 Chaos", som:"🔊 Sound",
+    norepeat:"No repeats", leves:"🐑 Light", medias:"🌾 Classic", caos:"🔥 Chaos", som:"🔊 Sound",
     howto:"📜 How to play", newgame:"↺ New game",
     inEffect:"⚜ In effect", clear:"clear",
     empty:"No active rules.<br>Spin the wheel 🎲",
@@ -994,7 +920,7 @@ const UI = {
     hintClose:"tap to close",
     hintReread:"tap to reread",
     ruleTag:i=>`⚜ RULE #${i} ⚜`,
-    tag:{leve:"Light — banter", media:"Medium — shifts the game", caos:"CHAOS — flips the game"},
+    tag:{leve:"Light — banter", media:"Classic — shifts the game", caos:"CHAOS — flips the game"},
     legend:["Light — banter","Medium — shifts the game","Chaos — flips the game"],
     poolEmpty:'No rules left in this selection. Uncheck "no repeats" or enable more categories.',
     confirmNew:"New game? This clears the rules in effect and the draw history.",
@@ -1011,7 +937,7 @@ const UI = {
     sub:"Colonizadores de Catan · Gira e obedece — reclamar custa 1 madeira",
     spin:"GIRAR",
     options:"⚙ Opções",
-    norepeat:"Sem repetir", leves:"🐑 Leves", medias:"🌾 Médias", caos:"🔥 Caos", som:"🔊 Som",
+    norepeat:"Sem repetir", leves:"🐑 Leves", medias:"🌾 Clássicas", caos:"🔥 Caos", som:"🔊 Som",
     howto:"📜 Como jogar", newgame:"↺ Nova partida",
     inEffect:"⚜ Em vigor", clear:"limpar",
     empty:"Nenhuma regra ativa.<br>Gira a roleta 🎲",
@@ -1020,7 +946,7 @@ const UI = {
     hintClose:"toca para fechar",
     hintReread:"toca para reler",
     ruleTag:i=>`⚜ REGRA #${i} ⚜`,
-    tag:{leve:"Leve — galhofa", media:"Média — mexe com o jogo", caos:"CAOS — vira o jogo"},
+    tag:{leve:"Leve — galhofa", media:"Clássica — mexe com o jogo", caos:"CAOS — vira o jogo"},
     legend:["Leve — galhofa","Média — mexe com o jogo","Caos — vira o jogo"],
     poolEmpty:'Acabaram as regras desta seleção. Desmarca "sem repetir" ou liberta mais categorias.',
     confirmNew:"Nova partida? Isto limpa as regras em vigor e o histórico de sorteios.",
@@ -1037,7 +963,7 @@ const UI = {
     sub:"Colonos de Catán · Gira y obedece — quejarse cuesta 1 madera",
     spin:"GIRAR",
     options:"⚙ Opciones",
-    norepeat:"Sin repetir", leves:"🐑 Suaves", medias:"🌾 Medias", caos:"🔥 Caos", som:"🔊 Sonido",
+    norepeat:"Sin repetir", leves:"🐑 Suaves", medias:"🌾 Clásicas", caos:"🔥 Caos", som:"🔊 Sonido",
     howto:"📜 Cómo jugar", newgame:"↺ Nueva partida",
     inEffect:"⚜ En vigor", clear:"limpiar",
     empty:"Ninguna regla activa.<br>Gira la ruleta 🎲",
@@ -1046,7 +972,7 @@ const UI = {
     hintClose:"toca para cerrar",
     hintReread:"toca para releer",
     ruleTag:i=>`⚜ REGLA #${i} ⚜`,
-    tag:{leve:"Suave — cachondeo", media:"Media — mueve la partida", caos:"CAOS — da la vuelta al juego"},
+    tag:{leve:"Suave — cachondeo", media:"Clásica — mueve la partida", caos:"CAOS — da la vuelta al juego"},
     legend:["Suave — cachondeo","Media — mueve la partida","Caos — da la vuelta al juego"],
     poolEmpty:'Se acabaron las reglas de esta selección. Desmarca "sin repetir" o activa más categorías.',
     confirmNew:"¿Nueva partida? Esto borra las reglas en vigor y el historial de sorteos.",
@@ -1063,7 +989,7 @@ const UI = {
     sub:"Die Siedler von Catan · Dreh und gehorche — Meckern kostet 1 Holz",
     spin:"DREHEN",
     options:"⚙ Optionen",
-    norepeat:"Ohne Wiederholung", leves:"🐑 Leicht", medias:"🌾 Mittel", caos:"🔥 Chaos", som:"🔊 Ton",
+    norepeat:"Ohne Wiederholung", leves:"🐑 Leicht", medias:"🌾 Klassisch", caos:"🔥 Chaos", som:"🔊 Ton",
     howto:"📜 Spielanleitung", newgame:"↺ Neue Partie",
     inEffect:"⚜ In Kraft", clear:"leeren",
     empty:"Keine aktive Regel.<br>Dreh am Rad 🎲",
@@ -1072,7 +998,7 @@ const UI = {
     hintClose:"tippen zum Schließen",
     hintReread:"tippen zum Nachlesen",
     ruleTag:i=>`⚜ REGEL #${i} ⚜`,
-    tag:{leve:"Leicht — Spaß", media:"Mittel — greift ins Spiel ein", caos:"CHAOS — stellt das Spiel auf den Kopf"},
+    tag:{leve:"Leicht — Spaß", media:"Klassisch — greift ins Spiel ein", caos:"CHAOS — stellt das Spiel auf den Kopf"},
     legend:["Leicht — Spaß","Mittel — greift ins Spiel ein","Chaos — stellt das Spiel auf den Kopf"],
     poolEmpty:"Keine Regeln mehr in dieser Auswahl. „Ohne Wiederholung“ abwählen oder mehr Kategorien freigeben.",
     confirmNew:"Neue Partie? Das löscht die geltenden Regeln und den Verlauf der Ziehungen.",
@@ -1089,7 +1015,7 @@ const UI = {
     sub:"Les Colons de Catane · Tourne et obéis — râler coûte 1 bois",
     spin:"TOURNER",
     options:"⚙ Options",
-    norepeat:"Sans répétition", leves:"🐑 Légères", medias:"🌾 Moyennes", caos:"🔥 Chaos", som:"🔊 Son",
+    norepeat:"Sans répétition", leves:"🐑 Légères", medias:"🌾 Classiques", caos:"🔥 Chaos", som:"🔊 Son",
     howto:"📜 Comment jouer", newgame:"↺ Nouvelle partie",
     inEffect:"⚜ En vigueur", clear:"vider",
     empty:"Aucune règle active.<br>Tourne la roue 🎲",
@@ -1098,7 +1024,7 @@ const UI = {
     hintClose:"touche pour fermer",
     hintReread:"touche pour relire",
     ruleTag:i=>`⚜ RÈGLE #${i} ⚜`,
-    tag:{leve:"Légère — pour rire", media:"Moyenne — change la partie", caos:"CHAOS — renverse le jeu"},
+    tag:{leve:"Légère — pour rire", media:"Classique — change la partie", caos:"CHAOS — renverse le jeu"},
     legend:["Légère — pour rire","Moyenne — change la partie","Chaos — renverse le jeu"],
     poolEmpty:"Plus de règles dans cette sélection. Décoche « sans répétition » ou active plus de catégories.",
     confirmNew:"Nouvelle partie ? Cela efface les règles en vigueur et l'historique des tirages.",
@@ -1115,7 +1041,7 @@ const UI = {
     sub:"Coloni di Catan · Gira e obbedisci — lamentarsi costa 1 legno",
     spin:"GIRA",
     options:"⚙ Opzioni",
-    norepeat:"Senza ripetere", leves:"🐑 Leggere", medias:"🌾 Medie", caos:"🔥 Caos", som:"🔊 Suono",
+    norepeat:"Senza ripetere", leves:"🐑 Leggere", medias:"🌾 Classiche", caos:"🔥 Caos", som:"🔊 Suono",
     howto:"📜 Come si gioca", newgame:"↺ Nuova partita",
     inEffect:"⚜ In vigore", clear:"svuota",
     empty:"Nessuna regola attiva.<br>Gira la ruota 🎲",
@@ -1124,7 +1050,7 @@ const UI = {
     hintClose:"tocca per chiudere",
     hintReread:"tocca per rileggere",
     ruleTag:i=>`⚜ REGOLA #${i} ⚜`,
-    tag:{leve:"Leggera — goliardia", media:"Media — tocca la partita", caos:"CAOS — ribalta il gioco"},
+    tag:{leve:"Leggera — goliardia", media:"Classica — tocca la partita", caos:"CAOS — ribalta il gioco"},
     legend:["Leggera — goliardia","Media — tocca la partita","Caos — ribalta il gioco"],
     poolEmpty:'Finite le regole di questa selezione. Togli "senza ripetere" o attiva altre categorie.',
     confirmNew:"Nuova partita? Cancella le regole in vigore e la cronologia delle estrazioni.",
@@ -1164,7 +1090,7 @@ function wedgePath(p){
   return `M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${rRing},${rRing} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z`;
 }
 function visibleIndices(){
-  const f = {leve:fLeve.checked, media:fMedia.checked, caos:fCaos.checked};
+  const f = {media:fMedia.checked, caos:fCaos.checked};
   return RULES.map((r,i)=>i).filter(i=>f[RULES[i].t]);
 }
 
@@ -1227,14 +1153,14 @@ function clearWinner(){
 
 // ---- pool / remaining ----
 function pool(){
-  const f = {leve:fLeve.checked, media:fMedia.checked, caos:fCaos.checked};
+  const f = {media:fMedia.checked, caos:fCaos.checked};
   return RULES.map((r,i)=>i).filter(i=>f[RULES[i].t] && !(norepeat.checked && drawn.has(i)));
 }
 function updateRemaining(){
   remaining.textContent = norepeat.checked ? UI[lang].remaining(pool().length) : "";
 }
-["norepeat","fLeve","fMedia","fCaos","sound"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
-  if(id==="fLeve"||id==="fMedia"||id==="fCaos") buildWheel();   // category toggled → rebuild the wheel
+["norepeat","fMedia","fCaos","sound"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
+  if(id==="fMedia"||id==="fCaos") buildWheel();   // category toggled → rebuild the wheel
   updateRemaining(); save();
 }));
 
@@ -1262,12 +1188,12 @@ function tickSchedule(total){
 }
 
 // ---- persistence ----
-const LS = "catan-roleta-v2"; // v2: lista de regras expandida (índices antigos incompatíveis)
+const LS = "catan-roleta-v3"; // v3: categoria Light removida; índices deslocados (v2 incompatível)
 function save(){
   try{
     localStorage.setItem(LS, JSON.stringify({
       drawn:[...drawn], drawnOrder, active, uidSeq, lang,
-      f:{leve:fLeve.checked, media:fMedia.checked, caos:fCaos.checked, norepeat:norepeat.checked, sound:sound.checked}
+      f:{media:fMedia.checked, caos:fCaos.checked, norepeat:norepeat.checked, sound:sound.checked}
     }));
   }catch(e){}
 }
@@ -1282,7 +1208,7 @@ function load(){
     if(UI[s.lang]) lang = s.lang;
     else if(s.lang==="pt") lang = "pt-BR";   // migração do toggle antigo PT/EN
     if(s.f){
-      fLeve.checked=s.f.leve; fMedia.checked=s.f.media; fCaos.checked=s.f.caos;
+      fMedia.checked=s.f.media; fCaos.checked=s.f.caos;
       norepeat.checked=s.f.norepeat; sound.checked=s.f.sound;
     }
   }catch(e){}
@@ -1318,12 +1244,12 @@ const histList = document.getElementById("hist-list");
 const histEmpty = document.getElementById("hist-empty");
 function renderProgress(){
   const u = UI[lang], TOTAL = RULES.length;
-  const c = {leve:0, media:0, caos:0};
+  const c = {media:0, caos:0};
   drawn.forEach(i=>c[RULES[i].t]++);
   document.getElementById("stat-bar").innerHTML =
-    ["leve","media","caos"].map(t=>`<i style="width:${(c[t]/TOTAL*100).toFixed(2)}%; background:${COLORS[t][0]}"></i>`).join("");
+    ["media","caos"].map(t=>`<i style="width:${(c[t]/TOTAL*100).toFixed(2)}%; background:${COLORS[t][0]}"></i>`).join("");
   document.getElementById("stat-cats").innerHTML =
-    `<span>${EMOJI.leve} ${c.leve}</span><span>${EMOJI.media} ${c.media}</span><span>${EMOJI.caos} ${c.caos}</span>`;
+    `<span>${EMOJI.media} ${c.media}</span><span>${EMOJI.caos} ${c.caos}</span>`;
   document.getElementById("stat-lived").textContent = u.lived(drawn.size, TOTAL);
   document.getElementById("hist-title").textContent = u.histTitle;
   document.getElementById("hist-count").textContent = drawnOrder.length ? drawnOrder.length : "";
@@ -1367,7 +1293,6 @@ function applyLang(){
   optionsToggle.textContent = u.options;
   document.getElementById("side-title").textContent = u.options;
   document.getElementById("t-norepeat").textContent = u.norepeat;
-  document.getElementById("t-leve").textContent = u.leves;
   document.getElementById("t-media").textContent = u.medias;
   document.getElementById("t-caos").textContent = u.caos;
   document.getElementById("t-som").textContent = u.som;
@@ -1376,9 +1301,8 @@ function applyLang(){
   document.getElementById("panel-title").textContent = u.inEffect;
   document.getElementById("clearActive").textContent = u.clear;
   emptyEl.innerHTML = u.empty;
-  document.querySelector(".legend .lg-leve").textContent  = u.legend[0];
-  document.querySelector(".legend .lg-media").textContent = u.legend[1];
-  document.querySelector(".legend .lg-caos").textContent  = u.legend[2];
+  document.querySelector(".legend .lg-media").textContent = u.tag.media;
+  document.querySelector(".legend .lg-caos").textContent  = u.tag.caos;
   document.getElementById("help-body").innerHTML = u.helpBody;
   helpEl.setAttribute("aria-label", u.helpAria);
   langSelect.value = lang;
